@@ -1,6 +1,13 @@
 // UI event handlers and state management
 import { addMarker } from './map-init.js';
-import { debounce, sanitizeInput, Pagination, UndoRedoManager } from './utils.js';
+import {
+    debounce,
+    sanitizeInput,
+    Pagination,
+    UndoRedoManager,
+    Validator,
+    PerformanceMonitor
+} from './utils.js';
 
 /** @type {Array<MapPoint>} */
 let points = [];
@@ -8,163 +15,253 @@ let currentFilter = 'all';
 let currentGroupFilter = null;
 let pagination = new Pagination([]);
 let undoRedoManager = new UndoRedoManager();
+let performanceMonitor = new PerformanceMonitor();
 
 // Initialize UI handlers
 export function initUIHandlers() {
-    // Add point button
-    const addPointBtn = document.getElementById('addPointBtn');
-    if (addPointBtn) {
-        addPointBtn.addEventListener('click', () => {
-            window.isAddingPoint = true;
-            showToast('Click on the map to add a point');
+    try {
+        performanceMonitor.start('initUIHandlers');
+
+        // Add point button
+        const addPointBtn = document.getElementById('addPointBtn');
+        if (addPointBtn) {
+            addPointBtn.addEventListener('click', () => {
+                window.isAddingPoint = true;
+                showToast('Click on the map to add a point');
+            });
+        }
+
+        // Status filter buttons
+        document.querySelectorAll('.status-filter button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const status = e.target.dataset.status || 'all';
+                filterPoints(status);
+            });
         });
+
+        // Search input with debouncing
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', debounce((e) => {
+                const query = sanitizeInput(e.target.value.toLowerCase());
+                searchPoints(query);
+            }, 300));
+        }
+
+        // Sort select
+        const sortSelect = document.getElementById('sortSelect');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', (e) => {
+                sortPoints(e.target.value);
+            });
+        }
+
+        // Pagination controls
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        if (prevPageBtn && nextPageBtn) {
+            prevPageBtn.addEventListener('click', () => {
+                pagination.setPage(pagination.currentPage - 1);
+                updatePointsList();
+            });
+            nextPageBtn.addEventListener('click', () => {
+                pagination.setPage(pagination.currentPage + 1);
+                updatePointsList();
+            });
+        }
+
+        // Undo/Redo buttons
+        const undoBtn = document.getElementById('undoBtn');
+        const redoBtn = document.getElementById('redoBtn');
+        if (undoBtn && redoBtn) {
+            undoBtn.addEventListener('click', handleUndo);
+            redoBtn.addEventListener('click', handleRedo);
+        }
+
+        // Form submission
+        const pointDataForm = document.getElementById('pointDataForm');
+        if (pointDataForm) {
+            pointDataForm.addEventListener('submit', handlePointSubmit);
+        }
+
+        // Initialize offline detection
+        initOfflineDetection();
+
+        const duration = performanceMonitor.end('initUIHandlers');
+        console.debug(`UI Handlers initialized in ${duration}ms`);
+    } catch (error) {
+        console.error('Error initializing UI handlers:', error);
+        showToast('Error initializing UI handlers');
     }
-
-    // Status filter buttons
-    document.querySelectorAll('.status-filter button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const status = e.target.dataset.status || 'all';
-            filterPoints(status);
-        });
-    });
-
-    // Search input
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', debounce((e) => {
-            const query = sanitizeInput(e.target.value.toLowerCase());
-            searchPoints(query);
-        }, 300));
-    }
-
-    // Sort select
-    const sortSelect = document.getElementById('sortSelect');
-    if (sortSelect) {
-        sortSelect.addEventListener('change', (e) => {
-            sortPoints(e.target.value);
-        });
-    }
-
-    // Pagination controls
-    const prevPageBtn = document.getElementById('prevPageBtn');
-    const nextPageBtn = document.getElementById('nextPageBtn');
-    if (prevPageBtn && nextPageBtn) {
-        prevPageBtn.addEventListener('click', () => {
-            pagination.setPage(pagination.currentPage - 1);
-            updatePointsList();
-        });
-        nextPageBtn.addEventListener('click', () => {
-            pagination.setPage(pagination.currentPage + 1);
-            updatePointsList();
-        });
-    }
-
-    // Undo/Redo buttons
-    const undoBtn = document.getElementById('undoBtn');
-    const redoBtn = document.getElementById('redoBtn');
-    if (undoBtn && redoBtn) {
-        undoBtn.addEventListener('click', handleUndo);
-        redoBtn.addEventListener('click', handleRedo);
-    }
-
-    // Form submission
-    const pointDataForm = document.getElementById('pointDataForm');
-    if (pointDataForm) {
-        pointDataForm.addEventListener('submit', handlePointSubmit);
-    }
-
-    // Initialize offline detection
-    initOfflineDetection();
 }
 
-// Search points
+// Handle point form submission
+async function handlePointSubmit(e) {
+    e.preventDefault();
+    performanceMonitor.start('handlePointSubmit');
+
+    try {
+        const formData = {
+            id: document.getElementById('pointId').value || Date.now().toString(),
+            name: document.getElementById('pointName').value,
+            status: document.getElementById('pointStatus').value,
+            description: document.getElementById('pointDescription').value,
+            group: document.getElementById('pointGroup').value,
+            latlng: window.currentLatLng,
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+        };
+
+        // Validate point data
+        const errors = Validator.validatePoint(formData);
+        if (errors.length > 0) {
+            errors.forEach(error => {
+                showToast(`${error.field}: ${error.message}`, 5000);
+            });
+            return;
+        }
+
+        // Add custom fields
+        const customFields = {};
+        document.querySelectorAll('#customFieldsContainer input').forEach(input => {
+            customFields[input.name] = input.value;
+        });
+        formData.customFields = customFields;
+
+        // Begin undo group for the save operation
+        undoRedoManager.beginGroup();
+
+        // Save point
+        const success = await savePoint(formData);
+        if (success) {
+            // End undo group
+            undoRedoManager.endGroup();
+
+            // Update UI
+            hidePointForm();
+            updatePointsList();
+            updateStatistics();
+            showToast('Point saved successfully');
+        }
+    } catch (error) {
+        console.error('Error saving point:', error);
+        showToast('Error saving point: ' + error.message);
+    } finally {
+        const duration = performanceMonitor.end('handlePointSubmit');
+        console.debug(`Point submission handled in ${duration}ms`);
+    }
+}
+
+// Search points with performance monitoring
 function searchPoints(query) {
-    const filteredPoints = points.filter(point =>
-        point.name.toLowerCase().includes(query) ||
-        point.description.toLowerCase().includes(query) ||
-        point.group.toLowerCase().includes(query)
-    );
+    performanceMonitor.start('searchPoints');
+    try {
+        const filteredPoints = points.filter(point =>
+            point.name.toLowerCase().includes(query) ||
+            point.description.toLowerCase().includes(query) ||
+            point.group.toLowerCase().includes(query)
+        );
 
-    pagination = new Pagination(filteredPoints);
-    updatePointsList();
+        pagination.setItems(filteredPoints);
+        updatePointsList();
+    } catch (error) {
+        console.error('Error searching points:', error);
+        showToast('Error searching points');
+    } finally {
+        const duration = performanceMonitor.end('searchPoints');
+        console.debug(`Search completed in ${duration}ms`);
+    }
 }
 
-// Sort points
+// Sort points with performance monitoring
 function sortPoints(sortBy) {
-    const sortedPoints = [...points].sort((a, b) => {
-        switch (sortBy) {
-            case 'name':
-                return a.name.localeCompare(b.name);
-            case 'status':
-                return a.status.localeCompare(b.status);
-            case 'group':
-                return (a.group || '').localeCompare(b.group || '');
-            case 'date':
-                return new Date(b.id) - new Date(a.id);
-            default:
-                return 0;
-        }
-    });
+    performanceMonitor.start('sortPoints');
+    try {
+        const sortedPoints = [...points].sort((a, b) => {
+            switch (sortBy) {
+                case 'name':
+                    return a.name.localeCompare(b.name);
+                case 'status':
+                    return a.status.localeCompare(b.status);
+                case 'group':
+                    return (a.group || '').localeCompare(b.group || '');
+                case 'date':
+                    return b.createdAt - a.createdAt;
+                default:
+                    return 0;
+            }
+        });
 
-    pagination = new Pagination(sortedPoints);
-    updatePointsList();
-}
-
-// Handle undo
-function handleUndo() {
-    const action = undoRedoManager.undo();
-    if (action) {
-        switch (action.type) {
-            case 'add':
-                points = points.filter(p => p.id !== action.point.id);
-                break;
-            case 'edit':
-                const index = points.findIndex(p => p.id === action.oldPoint.id);
-                if (index >= 0) {
-                    points[index] = action.oldPoint;
-                }
-                break;
-            case 'delete':
-                points.push(action.point);
-                break;
-        }
-        updateUI();
+        pagination.setItems(sortedPoints);
+        updatePointsList();
+    } catch (error) {
+        console.error('Error sorting points:', error);
+        showToast('Error sorting points');
+    } finally {
+        const duration = performanceMonitor.end('sortPoints');
+        console.debug(`Sort completed in ${duration}ms`);
     }
 }
 
-// Handle redo
-function handleRedo() {
-    const action = undoRedoManager.redo();
-    if (action) {
-        switch (action.type) {
-            case 'add':
-                points.push(action.point);
-                break;
-            case 'edit':
-                const index = points.findIndex(p => p.id === action.newPoint.id);
-                if (index >= 0) {
-                    points[index] = action.newPoint;
-                }
-                break;
-            case 'delete':
-                points = points.filter(p => p.id !== action.point.id);
-                break;
-        }
-        updateUI();
-    }
-}
-
-// Update UI elements
+// Update UI elements with performance monitoring
 function updateUI() {
-    updatePointsList();
-    updateStatistics();
-    updateMapMarkers();
+    performanceMonitor.start('updateUI');
+    try {
+        updatePointsList();
+        updateStatistics();
+        updateMapMarkers();
 
-    // Update undo/redo buttons
-    const undoBtn = document.getElementById('undoBtn');
-    const redoBtn = document.getElementById('redoBtn');
-    if (undoBtn) undoBtn.disabled = !undoRedoManager.canUndo();
-    if (redoBtn) redoBtn.disabled = !undoRedoManager.canRedo();
+        // Update undo/redo buttons
+        const undoBtn = document.getElementById('undoBtn');
+        const redoBtn = document.getElementById('redoBtn');
+        if (undoBtn) undoBtn.disabled = !undoRedoManager.canUndo();
+        if (redoBtn) redoBtn.disabled = !undoRedoManager.canRedo();
+    } catch (error) {
+        console.error('Error updating UI:', error);
+        showToast('Error updating UI');
+    } finally {
+        const duration = performanceMonitor.end('updateUI');
+        console.debug(`UI updated in ${duration}ms`);
+    }
+}
+
+// Update points list with pagination and performance monitoring
+export function updatePointsList() {
+    performanceMonitor.start('updatePointsList');
+    try {
+        const container = document.getElementById('pointsListContent');
+        const currentPoints = pagination.getCurrentPage();
+        const pageInfo = pagination.getPageInfo();
+
+        container.innerHTML = currentPoints.map(point => `
+            <div class="point-item" data-id="${point.id}">
+                <h4>${sanitizeInput(point.name)}</h4>
+                <p>Status: ${sanitizeInput(point.status)}</p>
+                ${point.group ? `<p>Group: ${sanitizeInput(point.group)}</p>` : ''}
+                <p>Created: ${new Date(point.createdAt).toLocaleString()}</p>
+                <button onclick="editPoint('${point.id}')">Edit</button>
+                <button onclick="deletePoint('${point.id}')">Delete</button>
+            </div>
+        `).join('');
+
+        // Update pagination controls
+        const pageInfoElement = document.getElementById('pageInfo');
+        if (pageInfoElement) {
+            pageInfoElement.textContent = `Page ${pageInfo.currentPage} of ${pageInfo.totalPages}`;
+        }
+
+        // Update pagination buttons
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        if (prevPageBtn) prevPageBtn.disabled = !pageInfo.hasPreviousPage;
+        if (nextPageBtn) nextPageBtn.disabled = !pageInfo.hasNextPage;
+    } catch (error) {
+        console.error('Error updating points list:', error);
+        showToast('Error updating points list');
+    } finally {
+        const duration = performanceMonitor.end('updatePointsList');
+        console.debug(`Points list updated in ${duration}ms`);
+    }
 }
 
 // Show/hide point form
@@ -186,36 +283,6 @@ export function hidePointForm() {
     document.getElementById('pointForm').style.display = 'none';
     window.isAddingPoint = false;
     window.currentLatLng = null;
-}
-
-// Handle point form submission
-async function handlePointSubmit(e) {
-    e.preventDefault();
-
-    const formData = {
-        id: document.getElementById('pointId').value || Date.now().toString(),
-        name: document.getElementById('pointName').value,
-        status: document.getElementById('pointStatus').value,
-        description: document.getElementById('pointDescription').value,
-        group: document.getElementById('pointGroup').value,
-        latlng: window.currentLatLng
-    };
-
-    // Add custom fields
-    const customFields = {};
-    document.querySelectorAll('#customFieldsContainer input').forEach(input => {
-        customFields[input.name] = input.value;
-    });
-    formData.customFields = customFields;
-
-    // Save point
-    await savePoint(formData);
-
-    // Update UI
-    hidePointForm();
-    updatePointsList();
-    updateStatistics();
-    showToast('Point saved successfully');
 }
 
 // Filter points by status
@@ -263,28 +330,6 @@ function initOfflineDetection() {
         banner.style.display = 'block';
         showToast('You are offline. Changes saved locally.');
     });
-}
-
-// Update points list with pagination
-export function updatePointsList() {
-    const container = document.getElementById('pointsListContent');
-    const currentPoints = pagination.getCurrentPage();
-
-    container.innerHTML = currentPoints.map(point => `
-        <div class="point-item">
-            <h4>${sanitizeInput(point.name)}</h4>
-            <p>Status: ${sanitizeInput(point.status)}</p>
-            ${point.group ? `<p>Group: ${sanitizeInput(point.group)}</p>` : ''}
-            <button onclick="editPoint('${point.id}')">Edit</button>
-            <button onclick="deletePoint('${point.id}')">Delete</button>
-        </div>
-    `).join('');
-
-    // Update pagination controls
-    const pageInfo = document.getElementById('pageInfo');
-    if (pageInfo) {
-        pageInfo.textContent = `Page ${pagination.currentPage} of ${pagination.getTotalPages()}`;
-    }
 }
 
 // Update statistics
