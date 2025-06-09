@@ -28,7 +28,7 @@ describe('DataExport CSV export', () => {
         return Promise.resolve(this.data);
       }
     }
-    // @ts-ignore
+    // @ts-expect-error
     global.Blob = MockBlob as unknown as typeof Blob;
     // @ts-ignore - assign to readonly property for test
     global.URL.createObjectURL = createObjectURL;
