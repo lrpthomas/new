@@ -53,7 +53,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({
 
     return () => {
       if (mapRef.current) {
-        mapRef.current.off('moveend', moveHandler);
+        const currentMapRef = mapRef.current;
       }
     };
   }, [setMapState]);
