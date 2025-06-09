@@ -18,6 +18,7 @@ describe('DataExport CSV export', () => {
 
     let csvContent = '';
     let readerPromise: Promise<void> | null = null;
+
     const createObjectURL = jest.fn((blob: Blob) => {
       readerPromise = new Promise<void>((resolve, reject) => {
         const reader = new FileReader();
@@ -30,18 +31,20 @@ describe('DataExport CSV export', () => {
       });
       return 'blob:url';
     });
+
     const revokeObjectURL = jest.fn();
-    // @ts-ignore - assign to readonly property for test
-    global.URL.createObjectURL = createObjectURL;
-    // @ts-ignore - assign to readonly property for test
-    global.URL.revokeObjectURL = revokeObjectURL;
+
+    (global.URL as any).createObjectURL = createObjectURL;
+    (global.URL as any).revokeObjectURL = revokeObjectURL;
 
     const { getByTitle } = render(<DataExport points={points} />);
     fireEvent.click(getByTitle('Export as CSV'));
 
     await readerPromise;
 
-    expect(csvContent).toContain('zeroValue,falseValue');
-    expect(csvContent.trim().split('\n')[1]).toBe('1,10,20,0,false');
+    // Header should match implementation
+    expect(csvContent).toContain('id,lat,lng,zeroValue,falseValue');
+    const dataRow = csvContent.trim().split('\n')[1];
+    expect(dataRow).toBe('1,10,20,0,false');
   });
 });
