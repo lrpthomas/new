@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -17,14 +17,24 @@ export const MapComponent: React.FC<MapComponentProps> = ({
   onMapClick,
 }) => {
   const mapRef = useRef<L.Map>(null);
+  const clickHandlerRef = useRef<(e: L.LeafletMouseEvent) => void>();
   const { center, zoom, setMapState } = useMapState();
 
   useEffect(() => {
-    if (mapRef.current) {
-      mapRef.current.on('click', (e: L.LeafletMouseEvent) => {
-        onMapClick?.([e.latlng.lat, e.latlng.lng]);
-      });
-    }
+    if (!mapRef.current) return;
+
+    const handler = (e: L.LeafletMouseEvent) => {
+      onMapClick?.([e.latlng.lat, e.latlng.lng]);
+    };
+
+    clickHandlerRef.current = handler;
+    mapRef.current.on('click', handler);
+
+    return () => {
+      if (mapRef.current && clickHandlerRef.current) {
+        mapRef.current.off('click', clickHandlerRef.current);
+      }
+    };
   }, [onMapClick]);
 
   const handleMarkerDragEnd = (marker: MapMarker, e: L.DragEndEvent) => {
