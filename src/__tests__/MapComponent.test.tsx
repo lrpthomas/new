@@ -22,7 +22,7 @@ jest.mock('react-leaflet', () => {
   MockMapContainer.displayName = 'MapContainer';
   return {
     MapContainer: MockMapContainer,
-    TileLayer: (props: any) => React.createElement('div', null, props.children),
+    TileLayer: (props: unknown) => React.createElement('div', null, props.children),
     Marker: (props: any) => React.createElement('div', null, props.children),
     Popup: (props: any) => React.createElement('div', null, props.children),
   };
