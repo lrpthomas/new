@@ -13,19 +13,19 @@ export const DataExport: React.FC<DataExportProps> = ({
   points,
   onExportStart,
   onExportComplete,
-  onExportError
+  onExportError,
 }) => {
   const convertToGeoJSON = useCallback((points: MapPoint[]): GeoJSONFeature[] => {
     return points.map(point => ({
       type: 'Feature',
       geometry: {
         type: 'Point',
-        coordinates: [point.position.lng, point.position.lat]
+        coordinates: [point.position.lng, point.position.lat],
       },
       properties: {
         id: point.id,
-        ...point.properties
-      }
+        ...point.properties,
+      },
     }));
   }, []);
 
@@ -53,8 +53,8 @@ export const DataExport: React.FC<DataExportProps> = ({
           // Escape commas and quotes in CSV
           return typeof value === 'string' && (value.includes(',') || value.includes('"'))
             ? `"${value.replace(/"/g, '""')}"`
-            : value || '';
-        })
+            : (value ?? '');
+        }),
       ];
       return values.join(',');
     });
@@ -62,44 +62,51 @@ export const DataExport: React.FC<DataExportProps> = ({
     return [headerRow, ...rows].join('\n');
   }, []);
 
-  const handleExport = useCallback(async (format: 'csv' | 'geojson') => {
-    try {
-      onExportStart?.();
+  const handleExport = useCallback(
+    async (format: 'csv' | 'geojson') => {
+      try {
+        onExportStart?.();
 
-      let content: string;
-      let filename: string;
-      let mimeType: string;
+        let content: string;
+        let filename: string;
+        let mimeType: string;
 
-      if (format === 'csv') {
-        content = convertToCSV(points);
-        filename = 'map-points.csv';
-        mimeType = 'text/csv';
-      } else {
-        const features = convertToGeoJSON(points);
-        content = JSON.stringify({
-          type: 'FeatureCollection',
-          features
-        }, null, 2);
-        filename = 'map-points.geojson';
-        mimeType = 'application/json';
+        if (format === 'csv') {
+          content = convertToCSV(points);
+          filename = 'map-points.csv';
+          mimeType = 'text/csv';
+        } else {
+          const features = convertToGeoJSON(points);
+          content = JSON.stringify(
+            {
+              type: 'FeatureCollection',
+              features,
+            },
+            null,
+            2
+          );
+          filename = 'map-points.geojson';
+          mimeType = 'application/json';
+        }
+
+        // Create and trigger download
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        onExportComplete?.();
+      } catch (error) {
+        onExportError?.(error as Error);
       }
-
-      // Create and trigger download
-      const blob = new Blob([content], { type: mimeType });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      onExportComplete?.();
-    } catch (error) {
-      onExportError?.(error as Error);
-    }
-  }, [points, convertToCSV, convertToGeoJSON, onExportStart, onExportComplete, onExportError]);
+    },
+    [points, convertToCSV, convertToGeoJSON, onExportStart, onExportComplete, onExportError]
+  );
 
   return (
     <div className={styles.container}>
@@ -124,10 +131,8 @@ export const DataExport: React.FC<DataExportProps> = ({
         </button>
       </div>
       {points.length === 0 && (
-        <div className={styles.emptyState}>
-          No points available to export
-        </div>
+        <div className={styles.emptyState}>No points available to export</div>
       )}
     </div>
   );
-}; 
+};
