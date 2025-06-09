@@ -8,41 +8,44 @@ interface DataImportProps {
   onError?: (error: MapError) => void;
 }
 
-export const DataImport: React.FC<DataImportProps> = ({
-  onImportComplete,
-  onError
-}) => {
+export const DataImport: React.FC<DataImportProps> = ({ onImportComplete, onError }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
-  const { processCSV, processGeoJSON, isLoading, errors } = useDataProcessing();
+  const { processCSV, processGeoJSON, isLoading, errors, warnings } = useDataProcessing();
 
-  const handleFileSelect = useCallback(async (file: File) => {
-    try {
-      const content = await file.text();
-      setFileName(file.name);
+  const handleFileSelect = useCallback(
+    async (file: File) => {
+      try {
+        const content = await file.text();
+        setFileName(file.name);
 
-      let result;
-      if (file.name.toLowerCase().endsWith('.csv')) {
-        result = await processCSV(content);
-      } else if (file.name.toLowerCase().endsWith('.geojson') || file.name.toLowerCase().endsWith('.json')) {
-        result = await processGeoJSON(content);
-      } else {
-        throw new Error('Unsupported file format. Please use CSV or GeoJSON files.');
+        let result;
+        if (file.name.toLowerCase().endsWith('.csv')) {
+          result = await processCSV(content);
+        } else if (
+          file.name.toLowerCase().endsWith('.geojson') ||
+          file.name.toLowerCase().endsWith('.json')
+        ) {
+          result = await processGeoJSON(content);
+        } else {
+          throw new Error('Unsupported file format. Please use CSV or GeoJSON files.');
+        }
+
+        if (result.errors.length > 0) {
+          result.errors.forEach(error => onError?.(error));
+        } else {
+          onImportComplete?.(result.data);
+        }
+      } catch (error) {
+        onError?.({
+          message: (error as Error).message,
+          code: 'FILE_PROCESSING_ERROR',
+          details: error,
+        });
       }
-
-      if (result.errors.length > 0) {
-        result.errors.forEach(error => onError?.(error));
-      } else {
-        onImportComplete?.(result.data);
-      }
-    } catch (error) {
-      onError?.({
-        message: (error as Error).message,
-        code: 'FILE_PROCESSING_ERROR',
-        details: error
-      });
-    }
-  }, [processCSV, processGeoJSON, onImportComplete, onError]);
+    },
+    [processCSV, processGeoJSON, onImportComplete, onError]
+  );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -54,22 +57,28 @@ export const DataImport: React.FC<DataImportProps> = ({
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
 
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-  }, [handleFileSelect]);
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        handleFileSelect(file);
+      }
+    },
+    [handleFileSelect]
+  );
 
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-  }, [handleFileSelect]);
+  const handleFileInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        handleFileSelect(file);
+      }
+    },
+    [handleFileSelect]
+  );
 
   return (
     <div className={styles.container}>
@@ -100,9 +109,7 @@ export const DataImport: React.FC<DataImportProps> = ({
                 <span className={styles.primary}>
                   {fileName || 'Drop your file here or click to browse'}
                 </span>
-                <span className={styles.secondary}>
-                  Supports CSV and GeoJSON files
-                </span>
+                <span className={styles.secondary}>Supports CSV and GeoJSON files</span>
               </div>
             </>
           )}
@@ -119,6 +126,17 @@ export const DataImport: React.FC<DataImportProps> = ({
           ))}
         </div>
       )}
+
+      {warnings.length > 0 && (
+        <div className={styles.warningContainer}>
+          {warnings.map((warning, index) => (
+            <div key={index} className={styles.warning}>
+              <span className={styles.warningIcon}>⚠️</span>
+              <span className={styles.warningMessage}>{warning}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
-}; 
+};
