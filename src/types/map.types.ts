@@ -16,6 +16,11 @@ export interface MapState {
   error: string | null;
 }
 
+export interface MapViewState {
+  center: Position;
+  zoom: number;
+}
+
 export interface MapBounds {
   north: number;
   south: number;
