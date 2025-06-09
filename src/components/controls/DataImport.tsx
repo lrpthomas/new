@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { useDataProcessing } from '../../hooks/useDataProcessing';
-import { MapError } from '../../types/map.types';
+import { MapPoint, MapError } from '../../types/map.types';
 import styles from '../../styles/components/data-import.module.scss';
 
 interface DataImportProps {
-  onImportComplete?: (points: any[]) => void;
+  onImportComplete?: (points: MapPoint[]) => void;
   onError?: (error: MapError) => void;
 }
 
