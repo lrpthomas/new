@@ -28,7 +28,7 @@ describe('DataExport CSV export', () => {
         return Promise.resolve(this.data);
       }
     }
-    // @ts-expect-error
+    // @ts-expect-error: MockBlob is used for testing purposes to mimic Blob functionality
     global.Blob = MockBlob as unknown as typeof Blob;
     // @ts-ignore - assign to readonly property for test
     global.URL.createObjectURL = createObjectURL;
