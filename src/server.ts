@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import apiRouter from './routes/api';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -22,6 +23,8 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files from the public directory
 app.use(express.static('public'));
 
+app.use('/api', apiRouter);
+
 // Error handling middleware
 app.use((err: Error, _req: express.Request, res: express.Response) => {
   console.error(err.stack);
@@ -38,6 +41,5 @@ app.get('*', (req, res) => {
 
 // Start server
 app.listen(port, () => {
-  
-  
+  console.log(`Server listening on port ${port}`);
 });
