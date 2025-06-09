@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import { DataExport } from '../components/controls/DataExport';
+import { DataExport } from '../components/controls/data-export';
 import { MapPoint } from '../types/map.types';
 
 describe('DataExport CSV export', () => {
