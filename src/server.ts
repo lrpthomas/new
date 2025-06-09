@@ -23,10 +23,11 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files from the public directory
 app.use(express.static('public'));
 
+// Mount API router
 app.use('/api', apiRouter);
 
 // Error handling middleware
-app.use((err: Error, _req: express.Request, res: express.Response) => {
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err.stack);
   res.status(500).json({
     error: 'Something went wrong!',
@@ -34,12 +35,12 @@ app.use((err: Error, _req: express.Request, res: express.Response) => {
   });
 });
 
-// Serve index.html for all routes
-app.get('*', (req, res) => {
+// Catch-all: serve frontend
+app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start server
 app.listen(port, () => {
-  
+  console.log(`🚀 Server running at http://localhost:${port}`);
 });
