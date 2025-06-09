@@ -105,13 +105,14 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
   }, []);
 
   const updatePoint = useCallback((id: string, updates: Partial<MapPoint>): MapPoint => {
+    let updatedPoint!: MapPoint;
     setPoints(prevPoints => {
       const pointIndex = prevPoints.findIndex(p => p.id === id);
       if (pointIndex === -1) {
         throw new Error(`Point with id ${id} not found`);
       }
 
-      const updatedPoint = {
+      updatedPoint = {
         ...prevPoints[pointIndex],
         ...updates
       };
@@ -132,7 +133,8 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
       }
     });
 
-    return points.find(p => p.id === id)!;
+    // updatedPoint is set synchronously inside setPoints
+    return updatedPoint;
   }, [points]);
 
   const deletePoint = useCallback((id: string) => {
@@ -150,4 +152,4 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
     warnings,
     isLoading
   };
-}; 
+};
