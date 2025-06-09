@@ -1,21 +1,18 @@
-# MAP TAP
+# Maptap
 
-## Project Overview
+Enhanced Mobile Map CSV Editor for quickly editing and previewing geospatial data.
 
-Enhanced Mobile Map CSV Editor for quickly editing geospatial data and previewing it on a map.
+## 🚀 Project Overview
 
-## Installing dependencies
+Maptap is a browser-based tool for visualizing, editing, and exporting geospatial point data (e.g., latitude/longitude) via CSV. It supports:
+- Map view with live marker updates
+- CSV import/export with validation
+- Editable point metadata
+- Integration with Firebase or local storage (if enabled)
 
-Run `pnpm install` to install all project dependencies.
+## 📦 Installing Dependencies
 
-## Running in development
+Use [pnpm](https://pnpm.io/) for dependency management:
 
-Use `pnpm dev` to start the development server with automatic reload.
-
-## Building
-
-Generate a production build with `pnpm build`.
-
-## Running tests
-
-Run unit tests with `pnpm test`.
+```bash
+pnpm install
