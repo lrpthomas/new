@@ -38,6 +38,26 @@ export const MapComponent: React.FC<MapComponentProps> = ({
     };
   }, [onMapClick]);
 
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    const moveHandler = () => {
+      if (!mapRef.current) return;
+      setMapState({
+        center: mapRef.current.getCenter(),
+        zoom: mapRef.current.getZoom(),
+      });
+    };
+
+    mapRef.current.on('moveend', moveHandler);
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.off('moveend', moveHandler);
+      }
+    };
+  }, [setMapState]);
+
   const handleMarkerDragEnd = (marker: MapMarker, e: L.DragEndEvent) => {
     const newPosition: [number, number] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
     onMarkerDragEnd?.(marker, newPosition);
