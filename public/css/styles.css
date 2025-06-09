@@ -1,0 +1,353 @@
+/* ===== Theme Variables ===== */
+
+:root {
+    --stihl-orange: #af2c1d;
+    --stihl-orange-bright: #f75e25;
+    --stihl-gray: #d7d7d7;
+    --stihl-white: #f4f4f4;
+    --stihl-black: #1a1a1a;
+}
+
+
+/* ===== Reset & Base Styles ===== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto Condensed', sans-serif;
+    background: #f0f0f0;
+    color: #1a1a1a;
+    height: 100vh;
+    overflow: hidden;
+}
+
+
+/* ===== Map Container ===== */
+
+#map {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+    background: transparent !important;
+}
+
+
+/* ===== Controls Container ===== */
+
+.controls-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    border-top: 2px solid var(--stihl-orange);
+}
+
+
+/* ===== Buttons ===== */
+
+.button {
+    background: var(--stihl-orange);
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 16px;
+    flex: 1;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    touch-action: manipulation;
+    min-height: 44px;
+}
+
+.button:hover {
+    background: var(--stihl-orange-bright);
+}
+
+.button.secondary {
+    background: var(--stihl-gray);
+    color: var(--stihl-black);
+}
+
+
+/* ===== Status Filter ===== */
+
+.status-filter {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    border-bottom: 2px solid var(--stihl-orange);
+}
+
+.status-filter button {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    background: var(--stihl-gray);
+    color: var(--stihl-black);
+    font-family: 'Oswald', sans-serif;
+    font-size: 14px;
+    touch-action: manipulation;
+    min-height: 44px;
+}
+
+.status-filter button.active {
+    background: var(--stihl-orange);
+    color: white;
+}
+
+
+/* ===== Offline Banner ===== */
+
+.offline-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #f44336;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    z-index: 2000;
+    display: none;
+}
+
+
+/* ===== Legend ===== */
+
+.legend {
+    position: fixed;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    bottom: unset;
+    right: unset;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid var(--stihl-orange);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    border: 1px solid var(--stihl-black);
+}
+
+.legend-color.active {
+    background: var(--stihl-orange);
+}
+
+.legend-color.pending {
+    background: var(--stihl-orange-bright);
+}
+
+.legend-color.completed {
+    background: #4CAF50;
+}
+
+.legend-color.delayed {
+    background: #f44336;
+}
+
+.legend-color.inactive {
+    background: var(--stihl-gray);
+}
+
+
+/* ===== Modals ===== */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-content {
+    background: white;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 95%;
+    position: relative;
+    top: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close-modal {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--stihl-orange);
+    cursor: pointer;
+    z-index: 2001;
+}
+
+
+/* ===== Tables ===== */
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.preview-table th,
+.preview-table td {
+    border: 1px solid var(--stihl-gray);
+    padding: 8px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.preview-table th {
+    background: var(--stihl-gray);
+    position: sticky;
+    top: 0;
+}
+
+
+/* ===== Forms ===== */
+
+.form-group {
+    margin: 8px 0;
+}
+
+label {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid var(--stihl-gray);
+    border-radius: 6px;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 14px;
+    min-height: 44px;
+}
+
+
+/* ===== Markers ===== */
+
+.marker-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 2px #000;
+    margin: 1px auto;
+    background: var(--stihl-gray);
+    display: block;
+}
+
+.marker-dot.active {
+    background: var(--stihl-orange);
+}
+
+.marker-dot.pending {
+    background: var(--stihl-orange-bright);
+}
+
+.marker-dot.completed {
+    background: #4CAF50;
+}
+
+.marker-dot.delayed {
+    background: #f44336;
+}
+
+.marker-dot.inactive {
+    background: var(--stihl-gray);
+}
+
+.custom-svg-marker svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+
+/* ===== Mobile Responsive ===== */
+
+@media (max-width: 768px) {
+    .controls-container {
+        flex-direction: column;
+    }
+    .status-filter {
+        flex-direction: column;
+    }
+    .status-filter button {
+        width: 100%;
+    }
+    .legend {
+        left: 5px;
+        right: 5px;
+        top: auto;
+        bottom: 80px;
+        transform: none;
+    }
+    .modal-content {
+        margin: 10px;
+        width: calc(100% - 20px);
+    }
+}

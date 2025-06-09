@@ -1,0 +1,31 @@
+.mapContainer {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.markerPopup {
+     :global {
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .leaflet-popup-content {
+            margin: 0;
+            min-width: 200px;
+        }
+        h3 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+    }
+}

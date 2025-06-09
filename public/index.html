@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Mobile Map CSV Editor</title>
+    <meta name="description" content="A robust, mobile-friendly, offline-capable map CSV editor with point management, statistics, and import/export features." />
+    <meta name="theme-color" content="#af2c1d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Map Editor">
+
+    <!-- External CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Oswald&family=Roboto+Condensed&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+    <!-- ===== Main Map Container ===== -->
+    <div id="map"></div>
+
+    <!-- ===== Hidden File Input ===== -->
+    <input type="file" id="csvFile" accept=".csv" style="display:none" />
+
+    <!-- ===== Offline Banner ===== -->
+    <div class="offline-banner" id="offlineBanner" role="status" aria-live="polite" aria-label="Offline notification">
+        You are offline. Changes saved locally.
+    </div>
+
+    <!-- ===== Toast/Feedback Banner ===== -->
+    <div id="toast" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;padding:12px 24px;border-radius:8px;z-index:3000;font-size:16px;min-width:200px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.2);"
+        role="status" aria-live="polite"></div>
+
+    <!-- ===== Controls ===== -->
+    <div class="controls-container" aria-label="Main controls">
+        <button class="button" id="addPointBtn" aria-label="Add Point"><svg width="20" height="20"><use href="icons/icons.svg#plus"></use></svg> Add Point</button>
+        <button class="button secondary" id="pointsListBtn" aria-label="Show Points List"><svg width="20" height="20"><use href="icons/icons.svg#list"></use></svg> Points List</button>
+        <button class="button secondary" id="exportCsvBtn" aria-label="Export to CSV"><svg width="20" height="20"><use href="icons/icons.svg#export"></use></svg> Export CSV</button>
+        <button class="button secondary" id="importCsvBtn" aria-label="Import from CSV"><svg width="20" height="20"><use href="icons/icons.svg#import"></use></svg> Import CSV</button>
+        <button class="button secondary" id="toggleLayersButton" aria-expanded="false" aria-controls="layerControls" aria-label="Toggle Map Layers"><svg width="20" height="20"><use href="icons/icons.svg#layers"></use></svg> Layers</button>
+        <button class="button secondary" id="statsBtn" aria-label="Show Statistics"><svg width="20" height="20"><use href="icons/icons.svg#stats"></use></svg> Stats</button>
+        <button id="importGeoJsonBtn" class="button" type="button"><svg width="20" height="20"><use href="icons/icons.svg#import"></use></svg> Import GeoJSON</button>
+        <button id="exportGeoJsonBtn" class="button" type="button"><svg width="20" height="20"><use href="icons/icons.svg#export"></use></svg> Export GeoJSON</button>
+        <button id="importJsonBtn" class="button" type="button"><svg width="20" height="20"><use href="icons/icons.svg#import"></use></svg> Import JSON</button>
+        <button id="exportJsonBtn" class="button" type="button"><svg width="20" height="20"><use href="icons/icons.svg#export"></use></svg> Export JSON</button>
+        <button id="syncPreviewBtn" class="button secondary" type="button"><svg width="20" height="20"><use href="icons/icons.svg#list"></use></svg> Sync Preview</button>
+        <button id="customMarkerBtn" class="button secondary" type="button"><svg width="20" height="20"><use href="icons/icons.svg#marker"></use></svg> Custom Marker Icon</button>
+        <button id="printMapBtn" class="button secondary" type="button"><svg width="20" height="20"><use href="icons/icons.svg#export"></use></svg> Print/Export Map</button>
+        <button id="clearDataBtn" class="button secondary" type="button" style="background:#f44336;color:#fff;"><svg width="20" height="20"><use href="icons/icons.svg#trash"></use></svg> Clear Data</button>
+    </div>
+
+    <!-- ===== Layer Controls ===== -->
+    <div id="layerControls" class="layer-controls hidden" role="region" aria-label="Map Layers">
+        <h3>Map Layers</h3>
+        <label><input type="radio" name="basemap" checked> OpenStreetMap</label>
+        <label><input type="radio" name="basemap"> Satellite</label>
+        <label><input type="radio" name="basemap"> Terrain</label>
+    </div>
+
+    <!-- ===== Statistics Panel ===== -->
+    <div id="statisticsPanel" class="statistics-panel hidden" role="region" aria-label="Point Statistics">
+        <h3>Point Statistics</h3>
+        <div class="stat-item">Total Points: <span id="totalPoints">0</span></div>
+        <div class="stat-item">Active: <span id="activePoints">0</span></div>
+        <div class="stat-item">Pending: <span id="pendingPoints">0</span></div>
+        <div class="stat-item">Completed: <span id="completedPoints">0</span></div>
+        <div class="stat-item">Delayed: <span id="delayedPoints">0</span></div>
+        <div class="stat-item">Inactive: <span id="inactivePoints">0</span></div>
+        <div class="stat-item">Groups: <span id="totalGroups">0</span></div>
+    </div>
+
+    <!-- ===== Status Filter ===== -->
+    <div class="status-filter" role="tablist" aria-label="Point Status Filter">
+        <button data-status="all" class="active" role="tab" aria-selected="true">All</button>
+        <button data-status="active" role="tab" aria-selected="false">Active</button>
+        <button data-status="inactive" role="tab" aria-selected="false">Inactive</button>
+        <button data-status="pending" role="tab" aria-selected="false">Pending</button>
+        <button data-status="completed" role="tab" aria-selected="false">Completed</button>
+        <button data-status="delayed" role="tab" aria-selected="false">Delayed</button>
+        <button data-status="groups" role="tab" aria-selected="false">Groups</button>
+    </div>
+
+    <!-- ===== Add/Edit Point Form Modal ===== -->
+    <div id="pointForm" class="modal" role="dialog" aria-modal="true" aria-labelledby="pointFormTitle" tabindex="-1">
+        <div class="modal-content">
+            <span class="close-modal" id="closePointFormBtn" tabindex="0" aria-label="Close Add/Edit Point Modal">&times;</span>
+            <h3 id="pointFormTitle">Add/Edit Point</h3>
+            <div id="formError" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-live="assertive"></div>
+            <form id="pointDataForm">
+                <input type="hidden" id="pointId" />
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="pointName" required autocomplete="name" />
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="pointStatus" required autocomplete="off">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="delayed">Delayed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="pointDescription" autocomplete="off"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Group</label>
+                    <input type="text" id="pointGroup" autocomplete="organization" />
+                </div>
+                <div class="form-group">
+                    <label>Custom Fields</label>
+                    <div id="customFieldsContainer"></div>
+                    <button type="button" class="button secondary" id="addCustomFieldBtn" style="margin-top:8px;">Add Custom Field</button>
+                </div>
+                <button type="submit" class="button">Save</button>
+                <button type="button" class="button secondary" id="cancelPointFormBtn">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== Points List Modal ===== -->
+    <div id="pointsList" class="modal" role="dialog" aria-modal="true" aria-labelledby="pointsListTitle" tabindex="-1">
+        <div class="modal-content">
+            <span class="close-modal" id="closePointsListBtn" tabindex="0" aria-label="Close Points List Modal">&times;</span>
+            <h3 id="pointsListTitle">Points List</h3>
+            <div style="margin-bottom:8px;display:flex;gap:8px;">
+                <button class="button secondary" id="bulkEditBtn" type="button">Bulk Edit</button>
+                <button class="button secondary" id="bulkDeleteBtn" type="button">Bulk Delete</button>
+            </div>
+            <div id="pointsListContent"></div>
+        </div>
+    </div>
+
+    <!-- ===== CSV Preview Modal ===== -->
+    <div id="csvPreviewModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="csvPreviewTitle" tabindex="-1">
+        <div class="modal-content">
+            <span class="close-modal" id="closeCsvPreviewBtn" tabindex="0" aria-label="Close CSV Preview Modal">&times;</span>
+            <h3 id="csvPreviewTitle">CSV Preview</h3>
+            <div class="form-group">
+                <label>Latitude Field</label>
+                <select id="latField"></select>
+            </div>
+            <div class="form-group">
+                <label>Longitude Field</label>
+                <select id="lngField"></select>
+            </div>
+            <div class="form-group">
+                <label>Label Field</label>
+                <select id="labelField"></select>
+            </div>
+            <div id="csvPreviewTable" style="max-height:200px; overflow-y:auto;"></div>
+            <button class="button" id="confirmCsvImportBtn">Import Data</button>
+            <button class="button secondary" id="cancelCsvImportBtn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ===== Group Filter Modal ===== -->
+    <div id="groupFilterModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="groupFilterTitle" tabindex="-1">
+        <div class="modal-content">
+            <span class="close-modal" id="closeGroupFilterBtn" tabindex="0" aria-label="Close Group Filter Modal">&times;</span>
+            <h3 id="groupFilterTitle">Filter by Group</h3>
+            <div id="groupFilterList"></div>
+            <button class="button" id="applyGroupFilterBtn">Apply</button>
+            <button class="button secondary" id="cancelGroupFilterBtn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ===== Advanced Search Modal ===== -->
+    <div id="advancedSearch" class="modal" role="dialog" aria-modal="true" aria-labelledby="advancedSearchTitle" tabindex="-1">
+        <div class="modal-content">
+            <span class="close-modal" id="closeAdvancedSearchBtn" tabindex="0" aria-label="Close Advanced Search Modal">&times;</span>
+            <h3 id="advancedSearchTitle">Advanced Search</h3>
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="searchName" placeholder="Name..." />
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="searchStatus">
+                    <option value="">Any</option>
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Group</label>
+                <input type="text" id="searchGroup" placeholder="Group..." />
+            </div>
+            <button class="button" id="applySearchBtn">Apply</button>
+            <button class="button secondary" id="resetSearchBtn">Reset</button>
+        </div>
+    </div>
+
+    <!-- ===== Bulk Edit Modal ===== -->
+    <div id="bulkEditModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="bulkEditTitle" tabindex="-1">
+        <div class="modal-content">
+            <span class="close-modal" id="closeBulkEditBtn" tabindex="0" aria-label="Close Bulk Edit Modal">&times;</span>
+            <h3 id="bulkEditTitle">Bulk Edit Points</h3>
+            <form id="bulkEditForm"></form>
+            <button class="button" id="applyBulkEditBtn" type="button">Apply</button>
+            <button class="button secondary" id="cancelBulkEditBtn" type="button">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ===== Legend ===== -->
+    <div class="legend" role="region" aria-label="Point Status Legend">
+        <div class="legend-item">
+            <div class="legend-color active"></div>
+            <span>Active</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color pending"></div>
+            <span>Pending</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color completed"></div>
+            <span>Completed</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color delayed"></div>
+            <span>Delayed</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color inactive"></div>
+            <span>Inactive</span>
+        </div>
+    </div>
+
+    <!-- ===== External Scripts ===== -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+    <!-- ===== Custom Scripts ===== -->
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,108 @@
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.dropZone {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    &:hover {
+        border-color: #666;
+        background-color: #f5f5f5;
+    }
+    &.dragging {
+        border-color: #2196f3;
+        background-color: #e3f2fd;
+    }
+}
+
+.fileInput {
+    display: none;
+}
+
+.fileLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+}
+
+.icon {
+    font-size: 2.5rem;
+    color: #666;
+}
+
+.text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.primary {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.secondary {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #2196f3;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.errorContainer {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background-color: #ffebee;
+    border-radius: 4px;
+    color: #c62828;
+}
+
+.errorIcon {
+    font-size: 1.2rem;
+}
+
+.errorMessage {
+    font-size: 0.9rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
