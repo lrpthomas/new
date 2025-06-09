@@ -40,7 +40,7 @@ export const processCSVData = (data: string): CSVRow[] => {
       return row;
     });
   } catch (error) {
-    throw new Error(`CSV processing failed: ${error.message}`);
+    throw new Error(`CSV processing failed: ${(error as Error).message}`);
   }
 };
 
@@ -68,7 +68,7 @@ export const csvToGeoJSON = (csvData: CSVRow[]): GeoJSONFeature[] => {
       };
     });
   } catch (error) {
-    throw new Error(`GeoJSON conversion failed: ${error.message}`);
+    throw new Error(`GeoJSON conversion failed: ${(error as Error).message}`);
   }
 };
 
@@ -104,7 +104,7 @@ export const processGeoJSONData = (data: string): GeoJSONFeature[] => {
       return feature;
     });
   } catch (error) {
-    throw new Error(`GeoJSON processing failed: ${error.message}`);
+    throw new Error(`GeoJSON processing failed: ${(error as Error).message}`);
   }
 };
 
@@ -123,7 +123,7 @@ export const geoJSONToMapPoints = (features: GeoJSONFeature[]): MapPoint[] => {
       };
     });
   } catch (error) {
-    throw new Error(`Map point conversion failed: ${error.message}`);
+    throw new Error(`Map point conversion failed: ${(error as Error).message}`);
   }
 };
 

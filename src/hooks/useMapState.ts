@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { MapState } from '../types/map.types';
 
-const DEFAULT_CENTER: [number, number] = [0, 0];
+const DEFAULT_CENTER: { lat: number; lng: number } = { lat: 0, lng: 0 };
 const DEFAULT_ZOOM = 2;
 
 export const useMapState = () => {

@@ -97,7 +97,7 @@ export const DataExport: React.FC<DataExportProps> = ({
 
       onExportComplete?.();
     } catch (error) {
-      onExportError?.(error);
+      onExportError?.(error as Error);
     }
   }, [points, convertToCSV, convertToGeoJSON, onExportStart, onExportComplete, onExportError]);
 

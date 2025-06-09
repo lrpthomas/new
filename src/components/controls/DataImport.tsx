@@ -37,7 +37,7 @@ export const DataImport: React.FC<DataImportProps> = ({
       }
     } catch (error) {
       onError?.({
-        message: error.message,
+        message: (error as Error).message,
         code: 'FILE_PROCESSING_ERROR',
         details: error
       });

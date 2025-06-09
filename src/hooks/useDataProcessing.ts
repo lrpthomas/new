@@ -47,7 +47,7 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
       return { data: newPoints, warnings, errors };
     } catch (error) {
       const mapError: MapError = {
-        message: error.message,
+        message: (error as Error).message,
         code: 'CSV_PROCESSING_ERROR',
         details: error
       };
@@ -71,7 +71,7 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
       return { data: newPoints, warnings, errors };
     } catch (error) {
       const mapError: MapError = {
-        message: error.message,
+        message: (error as Error).message,
         code: 'GEOJSON_PROCESSING_ERROR',
         details: error
       };
@@ -95,7 +95,7 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
       return newPoint;
     } catch (error) {
       const mapError: MapError = {
-        message: error.message,
+        message: (error as Error).message,
         code: 'POINT_VALIDATION_ERROR',
         details: error
       };
@@ -123,7 +123,7 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
         return newPoints;
       } catch (error) {
         const mapError: MapError = {
-          message: error.message,
+          message: (error as Error).message,
           code: 'POINT_UPDATE_ERROR',
           details: error
         };
