@@ -1,6 +1,5 @@
-
 import '@testing-library/jest-dom';
-=======
+
 // Polyfill Blob.text for environments lacking it
 if (typeof Blob !== 'undefined' && !Blob.prototype.text) {
   Blob.prototype.text = function () {
@@ -12,4 +11,3 @@ if (typeof Blob !== 'undefined' && !Blob.prototype.text) {
     });
   };
 }
- main
