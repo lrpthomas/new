@@ -16,7 +16,20 @@ describe('DataExport CSV export', () => {
       },
     ];
 
-    const createObjectURL = jest.fn(() => 'blob:url');
+    let csvContent = '';
+    let readerPromise: Promise<void> | null = null;
+    const createObjectURL = jest.fn((blob: Blob) => {
+      readerPromise = new Promise<void>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          csvContent = reader.result as string;
+          resolve();
+        };
+        reader.onerror = () => reject(reader.error);
+        reader.readAsText(blob);
+      });
+      return 'blob:url';
+    });
     const revokeObjectURL = jest.fn();
     // @ts-ignore - assign to readonly property for test
     global.URL.createObjectURL = createObjectURL;
@@ -26,8 +39,7 @@ describe('DataExport CSV export', () => {
     const { getByTitle } = render(<DataExport points={points} />);
     fireEvent.click(getByTitle('Export as CSV'));
 
-    const blob = createObjectURL.mock.calls[0][0] as Blob;
-    const csvContent = await blob.text();
+    await readerPromise;
 
     expect(csvContent).toContain('zeroValue,falseValue');
     expect(csvContent.trim().split('\n')[1]).toBe('1,10,20,0,false');
