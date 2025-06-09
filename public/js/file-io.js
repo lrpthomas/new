@@ -221,52 +221,54 @@ export function importFromGeoJSON(file) {
     reader.readAsText(file);
 }
 
-// Import points from JSON
+// Import points from JSON file
 export function importFromJSON(file) {
-    if (!file) {
-        showToast('No file selected');
-        return;
-    }
-
     const reader = new FileReader();
+    
     reader.onload = function(e) {
         try {
-            const data = JSON.parse(e.target.result);
+            const importedPoints = JSON.parse(e.target.result);
             
-            if (!Array.isArray(data)) {
-                throw new Error('Invalid JSON format: Must be an array of points');
+            // Validate imported data
+            if (!Array.isArray(importedPoints)) {
+                throw new Error('Invalid file format: expected array of points');
             }
 
-            const newPoints = data.map(point => {
-                if (!point.latlng || typeof point.latlng.lat !== 'number' || typeof point.latlng.lng !== 'number') {
-                    throw new Error(`Invalid point data: ${JSON.stringify(point)}`);
+            // Validate each point
+            importedPoints.forEach(point => {
+                if (!point.name || !point.latlng || !point.latlng.lat || !point.latlng.lng) {
+                    throw new Error('Invalid point data: missing required fields');
                 }
-
-                if (point.latlng.lat < -90 || point.latlng.lat > 90 || 
-                    point.latlng.lng < -180 || point.latlng.lng > 180) {
-                    throw new Error(`Invalid coordinates in point: ${JSON.stringify(point)}`);
-                }
-
-                return {
-                    name: point.name || 'Unnamed Point',
-                    latlng: L.latLng(point.latlng.lat, point.latlng.lng),
-                    status: point.status || 'active',
-                    description: point.description || '',
-                    group: point.group || '',
-                    customFields: point.customFields || {}
-                };
             });
+
+            // Merge with existing points, avoiding duplicates
+            const newPoints = importedPoints.filter(newPoint => 
+                !points.some(existingPoint => existingPoint.id === newPoint.id)
+            );
+
+            // Add new points
+            points = [...points, ...newPoints];
             
-            importPoints(newPoints);
+            // Save to localStorage
+            localStorage.setItem('mapPoints', JSON.stringify(points));
+
+            // Update UI
+            markers.clearLayers();
+            points.forEach(point => addMarker(point.latlng, point));
+            updatePointsList();
+            updateStatistics();
+            
+            showToast(`Successfully imported ${newPoints.length} points`);
         } catch (error) {
-            showToast(`Error importing JSON: ${error.message}`);
-            console.error('JSON Import Error:', error);
+            console.error('Import Error:', error);
+            showToast('Error importing file: ' + error.message);
         }
     };
+
     reader.onerror = function() {
-        showToast('Error reading JSON file');
-        console.error('JSON Read Error:', reader.error);
+        showToast('Error reading file');
     };
+
     reader.readAsText(file);
 }
 
