@@ -4,7 +4,7 @@ import { DataExport } from '../components/controls/data-export';
 import { MapPoint } from '../types/map.types';
 
 describe('DataExport CSV export', () => {
-  it('preserves 0 and false values when exporting CSV', async () => {
+  it('preserves 0 and false values when exporting CSV', () => {
     const points: MapPoint[] = [
       {
         id: '1',
@@ -15,9 +15,9 @@ describe('DataExport CSV export', () => {
         },
       },
     ];
-    const createObjectURL = jest.fn(() => 'blob:url');
-    const revokeObjectURL = jest.fn();
+
     const captured: string[] = [];
+
     class MockBlob {
       private data: string;
       constructor(parts: string[]) {
@@ -28,11 +28,15 @@ describe('DataExport CSV export', () => {
         return Promise.resolve(this.data);
       }
     }
+
+    const createObjectURL = jest.fn(() => 'blob:url');
+    const revokeObjectURL = jest.fn();
+
     // @ts-expect-error: MockBlob is used for testing purposes to mimic Blob functionality
     global.Blob = MockBlob as unknown as typeof Blob;
-    // @ts-ignore - assign to readonly property for test
+    // @ts-ignore: overriding readonly property
     global.URL.createObjectURL = createObjectURL;
-    // @ts-ignore - assign to readonly property for test
+    // @ts-ignore: overriding readonly property
     global.URL.revokeObjectURL = revokeObjectURL;
 
     const { getByTitle } = render(<DataExport points={points} />);
@@ -40,7 +44,9 @@ describe('DataExport CSV export', () => {
 
     const csvContent = captured[0];
 
-    expect(csvContent).toContain('zeroValue,falseValue');
-    expect(csvContent.trim().split('\n')[1]).toBe('1,10,20,0,false');
+    // Validate headers and values
+    expect(csvContent).toContain('id,lat,lng,zeroValue,falseValue');
+    const dataRow = csvContent.trim().split('\n')[1];
+    expect(dataRow).toBe('1,10,20,0,false');
   });
 });
