@@ -18,6 +18,7 @@ describe('DataExport CSV export', () => {
 
     const captured: string[] = [];
 
+    // Mock Blob to intercept CSV data
     class MockBlob {
       private data: string;
       constructor(parts: string[]) {
@@ -32,11 +33,11 @@ describe('DataExport CSV export', () => {
     const createObjectURL = jest.fn(() => 'blob:url');
     const revokeObjectURL = jest.fn();
 
-    // @ts-expect-error: MockBlob is used for testing purposes to mimic Blob functionality
+    // @ts-expect-error: MockBlob used for testing
     global.Blob = MockBlob as unknown as typeof Blob;
-    // @ts-ignore: overriding readonly property
+    // @ts-ignore: override readonly properties for testing
     global.URL.createObjectURL = createObjectURL;
-    // @ts-ignore: overriding readonly property
+    // @ts-ignore
     global.URL.revokeObjectURL = revokeObjectURL;
 
     const { getByTitle } = render(<DataExport points={points} />);
@@ -44,7 +45,7 @@ describe('DataExport CSV export', () => {
 
     const csvContent = captured[0];
 
-    // Validate headers and values
+    // Verify CSV header and row values
     expect(csvContent).toContain('id,lat,lng,zeroValue,falseValue');
     const dataRow = csvContent.trim().split('\n')[1];
     expect(dataRow).toBe('1,10,20,0,false');
