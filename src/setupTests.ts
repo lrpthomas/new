@@ -1,3 +1,5 @@
+import '@testing-library/jest-dom';
+
 // Polyfill Blob.text for environments lacking it
 if (typeof Blob !== 'undefined' && !Blob.prototype.text) {
   // eslint-disable-next-line no-extend-native
