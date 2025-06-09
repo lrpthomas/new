@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import styles from '../../styles/components/map.module.scss';
 import { useMapState } from '../../hooks/useMapState';
 import { MapMarker } from '../../types/map.types';
 
@@ -38,31 +39,23 @@ export const MapComponent: React.FC<MapComponentProps> = ({
   }, [onMapClick]);
 
   const handleMarkerDragEnd = (marker: MapMarker, e: L.DragEndEvent) => {
-    const newPosition: [number, number] = [
-      e.target.getLatLng().lat,
-      e.target.getLatLng().lng,
-    ];
+    const newPosition: [number, number] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
     onMarkerDragEnd?.(marker, newPosition);
   };
 
   return (
-    <MapContainer
-      center={center}
-      zoom={zoom}
-      style={{ height: '100%', width: '100%' }}
-      ref={mapRef}
-    >
+    <MapContainer center={center} zoom={zoom} className={styles.mapContainer} ref={mapRef}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {markers.map((marker) => (
+      {markers.map(marker => (
         <Marker
           key={marker.id}
           position={[marker.lat, marker.lng]}
           draggable={true}
           eventHandlers={{
-            dragend: (e) => handleMarkerDragEnd(marker, e),
+            dragend: e => handleMarkerDragEnd(marker, e),
           }}
         >
           <Popup>
@@ -75,4 +68,4 @@ export const MapComponent: React.FC<MapComponentProps> = ({
       ))}
     </MapContainer>
   );
-}; 
+};
