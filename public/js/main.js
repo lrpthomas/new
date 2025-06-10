@@ -130,7 +130,7 @@ function initApp() {
     });
   } catch (error) {
     console.error('Error initializing app:', error);
-    showToast('Error initializing app');
+    if (typeof showToast === 'function') showToast('Error initializing app');
   }
 }
 
