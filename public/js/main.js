@@ -32,7 +32,7 @@ function loadSavedPoints() {
       points = JSON.parse(savedPoints);
       points.forEach(point => addMarker(point.latlng, point));
       import { updatePointsList } from './modals.js';
-      updateStatistics();
+      import { updateStatistics } from './modals.js';
     }
   } catch (error) {
     console.error('Error loading saved points:', error);
