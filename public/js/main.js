@@ -7,21 +7,20 @@ import {
   exportToGeoJSON,
   importFromGeoJSON,
   exportToJSON,
-  importFromJSON
+  importFromJSON,
 } from './file-io.js';
 import {
-  // toggleModal,
+  toggleModal,
   togglePointsList,
   toggleLayerControls,
-  // toggleStatistics, 
+  toggleStatistics,
   showGroupFilter,
   closeGroupFilter,
-  applyAdvancedSearch,
+  applyGroupFilter,
   toggleAdvancedSearch,
   applyAdvancedSearch,
-  import { toggleModal, togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, closeGroupFilter, applyGroupFilter, toggleAdvancedSearch, applyAdvancedSearch, toggleBulkEdit, applyBulkEdit } from './modals.js';
   toggleBulkEdit,
-  applyBulkEdit
+  applyBulkEdit,
 } from './modals.js';
 
 // Load saved points from localStorage
@@ -31,8 +30,6 @@ function loadSavedPoints() {
     if (savedPoints) {
       points = JSON.parse(savedPoints);
       points.forEach(point => addMarker(point.latlng, point));
-      import { updatePointsList } from './modals.js';
-      import { updateStatistics } from './modals.js';
     }
   } catch (error) {
     console.error('Error loading saved points:', error);
@@ -55,16 +52,16 @@ function initApp() {
     // Set up event listeners
     document.getElementById('addPointBtn').addEventListener('click', () => {
       window.isAddingPoint = true;
-      function showToast(message) { console.log(message); }
+      function showToast(message) { console.log(message); } showToast('Point addition started.');
+        
+      }
     });
 
     // Register service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/service-worker.js')
-        .then(() => {
-          
-        })
+        .then(() => {})
         .catch(err => {
           console.error('ServiceWorker registration failed:', err);
         });
@@ -78,12 +75,8 @@ function initApp() {
     });
 
     // Set up export buttons
-    document
-      .getElementById('exportGeoJsonBtn')
-      .addEventListener('click', exportToGeoJSON);
-    document
-      .getElementById('exportJsonBtn')
-      .addEventListener('click', exportToJSON);
+    document.getElementById('exportGeoJsonBtn').addEventListener('click', exportToGeoJSON);
+    document.getElementById('exportJsonBtn').addEventListener('click', exportToJSON);
 
     // Set up import buttons
     document.getElementById('importGeoJsonBtn').addEventListener('click', () => {
@@ -111,12 +104,8 @@ function initApp() {
     });
 
     // Set up bulk edit button
-    document
-      .getElementById('bulkEditBtn')
-      .addEventListener('click', toggleBulkEdit);
-    document
-      .getElementById('applyBulkEditBtn')
-      .addEventListener('click', applyBulkEdit);
+    document.getElementById('bulkEditBtn').addEventListener('click', toggleBulkEdit);
+    document.getElementById('applyBulkEditBtn').addEventListener('click', applyBulkEdit);
 
     // Set up clear data button
     document.getElementById('clearDataBtn').addEventListener('click', () => {
