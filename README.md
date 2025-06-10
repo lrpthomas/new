@@ -1,3 +1,4 @@
+````markdown
 # Maptap
 
 Enhanced Mobile Map CSV Editor for quickly editing and previewing geospatial data.
@@ -16,6 +17,14 @@ Use [pnpm](https://pnpm.io/) for dependency management:
 
 ```bash
 pnpm install
+````
+
+## 🧹 Linting
+
+Run ESLint to check code quality:
+
+```bash
+pnpm lint
 ```
 
 ## 🏃‍♂️ Running Maptap
@@ -26,7 +35,7 @@ Start the development server:
 pnpm dev
 ```
 
-Open <http://localhost:3000> in your browser to view the app.
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the app.
 
 To build and run for production:
 
@@ -44,3 +53,6 @@ pnpm test
 ```
 
 Use `pnpm test:watch` while developing to re-run tests on file changes.
+
+```
+```
