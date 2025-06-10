@@ -52,7 +52,7 @@ function initApp() {
     // Set up event listeners
     document.getElementById('addPointBtn').addEventListener('click', () => {
       window.isAddingPoint = true;
-      function showToast(message) {
+      function showToast(message) { console.log(message); } showToast('Point addition started.');
         console.log(message);
       }
     });
