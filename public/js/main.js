@@ -19,7 +19,7 @@ import {
   applyAdvancedSearch,
   toggleAdvancedSearch,
   applyAdvancedSearch,
-  resetAdvancedSearch,
+  import { toggleModal, togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, closeGroupFilter, applyGroupFilter, toggleAdvancedSearch, applyAdvancedSearch, toggleBulkEdit, applyBulkEdit } from './modals.js';
   toggleBulkEdit,
   applyBulkEdit
 } from './modals.js';
