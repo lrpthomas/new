@@ -121,7 +121,7 @@ function initApp() {
     // Set up clear data button
     document.getElementById('clearDataBtn').addEventListener('click', () => {
       if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
-        points = [];
+        let points = []; // or const points = []; depending on your use case
         markers.clearLayers();
         updatePointsList();
         updateStatistics();
