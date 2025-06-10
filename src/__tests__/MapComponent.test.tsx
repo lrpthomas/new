@@ -57,5 +57,11 @@ describe('MapComponent moveend handler', () => {
     expect(setMapState).toHaveBeenCalledWith({ center: { lat: 10, lng: 20 }, zoom: 5 });
 
     unmount();
+
+    const offCall = offMock.mock.calls.find(c => c[0] === 'moveend');
+    expect(offCall).toBeTruthy();
+    if (offCall) {
+      expect(offCall[1]).toBe(handler);
+    }
   });
 });
