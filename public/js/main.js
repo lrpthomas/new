@@ -55,7 +55,7 @@ function initApp() {
     // Set up event listeners
     document.getElementById('addPointBtn').addEventListener('click', () => {
       window.isAddingPoint = true;
-      showToast('Click on the map to add a point');
+      function showToast(message) { console.log(message); }
     });
 
     // Register service worker
