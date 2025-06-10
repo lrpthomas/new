@@ -16,3 +16,31 @@ Use [pnpm](https://pnpm.io/) for dependency management:
 
 ```bash
 pnpm install
+```
+
+## 🏃‍♂️ Running Maptap
+
+Start the development server:
+
+```bash
+pnpm dev
+```
+
+Open <http://localhost:3000> in your browser to view the app.
+
+To build and run for production:
+
+```bash
+pnpm build
+pnpm start
+```
+
+## 🧪 Running Tests
+
+Run the test suite with:
+
+```bash
+pnpm test
+```
+
+Use `pnpm test:watch` while developing to re-run tests on file changes.
