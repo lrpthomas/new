@@ -41,20 +41,19 @@ export const MapComponent: React.FC<MapComponentProps> = ({
   useEffect(() => {
     if (!mapRef.current) return;
 
+    const mapInstance = mapRef.current;
+
     const moveHandler = () => {
-      if (!mapRef.current) return;
       setMapState({
-        center: mapRef.current.getCenter(),
-        zoom: mapRef.current.getZoom(),
+        center: mapInstance.getCenter(),
+        zoom: mapInstance.getZoom(),
       });
     };
 
-    mapRef.current.on('moveend', moveHandler);
+    mapInstance.on('moveend', moveHandler);
 
     return () => {
-      if (mapRef.current) {
-        const currentMapRef = mapRef.current;
-      }
+      mapInstance.off('moveend', moveHandler);
     };
   }, [setMapState]);
 
