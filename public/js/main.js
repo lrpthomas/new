@@ -13,7 +13,7 @@ import {
   // toggleModal,
   togglePointsList,
   toggleLayerControls,
-  toggleStatistics,
+  // toggleStatistics, 
   showGroupFilter,
   closeGroupFilter,
   applyAdvancedSearch,
