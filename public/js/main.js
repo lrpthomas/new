@@ -10,7 +10,7 @@ import {
   importFromJSON
 } from './file-io.js';
 import {
-  toggleModal,
+  // toggleModal,
   togglePointsList,
   toggleLayerControls,
   toggleStatistics,
