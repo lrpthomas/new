@@ -5,6 +5,7 @@ Enhanced Mobile Map CSV Editor for quickly editing and previewing geospatial dat
 ## 🚀 Project Overview
 
 Maptap is a browser-based tool for visualizing, editing, and exporting geospatial point data (e.g., latitude/longitude) via CSV. It supports:
+
 - Map view with live marker updates
 - CSV import/export with validation
 - Editable point metadata
@@ -16,3 +17,12 @@ Use [pnpm](https://pnpm.io/) for dependency management:
 
 ```bash
 pnpm install
+```
+
+## 🧹 Linting
+
+Run ESLint to check code quality:
+
+```bash
+pnpm lint
+```
