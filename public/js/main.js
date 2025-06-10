@@ -16,7 +16,7 @@ import {
   toggleStatistics,
   showGroupFilter,
   closeGroupFilter,
-  applyGroupFilter,
+  applyAdvancedSearch,
   toggleAdvancedSearch,
   applyAdvancedSearch,
   resetAdvancedSearch,
