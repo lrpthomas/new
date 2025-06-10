@@ -31,7 +31,7 @@ function loadSavedPoints() {
     if (savedPoints) {
       points = JSON.parse(savedPoints);
       points.forEach(point => addMarker(point.latlng, point));
-      updatePointsList();
+      import { updatePointsList } from './modals.js';
       updateStatistics();
     }
   } catch (error) {
