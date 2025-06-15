@@ -5,49 +5,61 @@ import { MapPoint } from '../types/map.types';
 
 describe('DataExport CSV export', () => {
   it('preserves 0 and false values when exporting CSV', () => {
-    const points: MapPoint[] = [
-      {
-        id: '1',
-        position: { lat: 10, lng: 20 },
-        properties: {
-          zeroValue: 0,
-          falseValue: false,
+    const originalBlob = global.Blob;
+    const originalCreateObjectURL = global.URL.createObjectURL;
+    const originalRevokeObjectURL = global.URL.revokeObjectURL;
+
+    try {
+      const points: MapPoint[] = [
+        {
+          id: '1',
+          position: { lat: 10, lng: 20 },
+          properties: {
+            zeroValue: 0,
+            falseValue: false,
+          },
         },
-      },
-    ];
+      ];
 
-    const captured: string[] = [];
+      const captured: string[] = [];
 
-    // Mock Blob to intercept CSV data
-    class MockBlob {
-      private data: string;
-      constructor(parts: string[]) {
-        this.data = parts.join('');
-        captured.push(this.data);
+      // Mock Blob to intercept CSV data
+      class MockBlob {
+        private data: string;
+        constructor(parts: string[]) {
+          this.data = parts.join('');
+          captured.push(this.data);
+        }
+        text() {
+          return Promise.resolve(this.data);
+        }
       }
-      text() {
-        return Promise.resolve(this.data);
-      }
+
+      const createObjectURL = jest.fn(() => 'blob:url');
+      const revokeObjectURL = jest.fn();
+
+      // @ts-expect-error: MockBlob used for testing
+      global.Blob = MockBlob as unknown as typeof Blob;
+      // @ts-ignore: override readonly properties for testing
+      global.URL.createObjectURL = createObjectURL;
+      // @ts-ignore
+      global.URL.revokeObjectURL = revokeObjectURL;
+
+      const { getByTitle } = render(<DataExport points={points} />);
+      fireEvent.click(getByTitle('Export as CSV'));
+
+      const csvContent = captured[0];
+
+      // Verify CSV header and row values
+      expect(csvContent).toContain('id,lat,lng,zeroValue,falseValue');
+      const dataRow = csvContent.trim().split('\n')[1];
+      expect(dataRow).toBe('1,10,20,0,false');
+    } finally {
+      global.Blob = originalBlob;
+      // @ts-ignore
+      global.URL.createObjectURL = originalCreateObjectURL;
+      // @ts-ignore
+      global.URL.revokeObjectURL = originalRevokeObjectURL;
     }
-
-    const createObjectURL = jest.fn(() => 'blob:url');
-    const revokeObjectURL = jest.fn();
-
-    // @ts-expect-error: MockBlob used for testing
-    global.Blob = MockBlob as unknown as typeof Blob;
-    // @ts-ignore: override readonly properties for testing
-    global.URL.createObjectURL = createObjectURL;
-    // @ts-ignore
-    global.URL.revokeObjectURL = revokeObjectURL;
-
-    const { getByTitle } = render(<DataExport points={points} />);
-    fireEvent.click(getByTitle('Export as CSV'));
-
-    const csvContent = captured[0];
-
-    // Verify CSV header and row values
-    expect(csvContent).toContain('id,lat,lng,zeroValue,falseValue');
-    const dataRow = csvContent.trim().split('\n')[1];
-    expect(dataRow).toBe('1,10,20,0,false');
   });
 });
