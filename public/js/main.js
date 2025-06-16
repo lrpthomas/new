@@ -113,7 +113,7 @@ function clearAllData() {
     while (points.length) {
       removePoint(points[0].id);
     }
-    markers?.clearLayers?.();
+    markers && markers.clearLayers();
     updatePointsList();
     updateStatistics();
     showToast('All data cleared');
