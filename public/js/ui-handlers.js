@@ -1,21 +1,16 @@
 // UI event handlers and state management
 import { addMarker } from './map-init.js';
+import { debounce, sanitizeInput, Validator } from './utils.js';
 import {
-    debounce,
-    sanitizeInput,
-    Pagination,
-    UndoRedoManager,
-    Validator,
-    PerformanceMonitor
-} from './utils.js';
+  points,
+  currentFilter,
+  currentGroupFilter,
+  pagination,
+  undoRedoManager,
+  performanceMonitor,
+  setCurrentFilter
+} from './state.js';
 
-/** @type {Array<MapPoint>} */
-let points = [];
-let currentFilter = 'all';
-let currentGroupFilter = null;
-let pagination = new Pagination([]);
-let undoRedoManager = new UndoRedoManager();
-let performanceMonitor = new PerformanceMonitor();
 
 // Initialize UI handlers
 export function initUIHandlers() {
@@ -287,7 +282,7 @@ export function hidePointForm() {
 
 // Filter points by status
 export function filterPoints(status) {
-    currentFilter = status;
+    setCurrentFilter(status);
 
     // Update active button
     document.querySelectorAll('.status-filter button').forEach(button => {
