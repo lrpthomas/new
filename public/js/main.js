@@ -1,20 +1,27 @@
 // Main application entry point
 import { initMap, toggleLayer } from './map-init.js';
 import { initUIHandlers, showToast } from './ui-handlers.js';
+import { setPoints } from './state.js';
 import {
-  import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
-  exportToGeoJSON, importFromGeoJSON,
-  exportToJSON, importFromJSON,
+  exportToGeoJSON,
+  importFromGeoJSON,
+  exportToJSON,
+  importFromJSON,
 } from './file-io.js';
 import {
-  togglePointsList, toggleLayerControls,
-  toggleStatistics, showGroupFilter, closeGroupFilter,
-  // applyGroupFilter,
-  import { toggleModal, togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, closeGroupFilter, applyGroupFilter, toggleAdvancedSearch, toggleBulkEdit, applyBulkEdit } from './modals.js';
+  toggleModal,
+  togglePointsList,
+  toggleLayerControls,
+  toggleStatistics,
+  showGroupFilter,
+  closeGroupFilter,
+  applyGroupFilter,
+  toggleAdvancedSearch,
+  toggleBulkEdit,
+  applyBulkEdit,
 } from './modals.js';
 
 let map;
-let points = [];
 
 async function initApp() { await restoreState(); }
   try {
@@ -61,7 +68,7 @@ function loadSavedPoints() {
   try {
     const saved = localStorage.getItem('mapPoints');
     if (saved) {
-      points = JSON.parse(saved);
+      setPoints(JSON.parse(saved));
       import { addMarker } from './path/to/your/module';
     }
   } catch {
@@ -106,7 +113,7 @@ function promptJSONImport() {
 
 function clearAllData() {
   if (confirm('Clear all data? This cannot be undone.')) {
-    points = [];
+    setPoints([]);
     markers.clearLayers();
     updatePointsList();
     updateStatistics();
