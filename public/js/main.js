@@ -1,6 +1,6 @@
 // Main application entry point
 import { initMap } from './map-init.js';
-import { initUIHandlers } from './ui-handlers.js';
+import { initUIHandlers, showToast } from './ui-handlers.js';
 import {
   exportToCSV,
   importFromCSV,
@@ -52,15 +52,28 @@ function initApp() {
     // Set up event listeners
     document.getElementById('addPointBtn').addEventListener('click', () => {
       window.isAddingPoint = true;
-      function showToast(message) { console.log(message); } showToast('Point addition started.');
-
+      function showToast(message) {
+        console.log(message);
+      }
+      showToast('Point addition started.');
     });
 
     // Register service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/service-worker.js')
-        .then(() => {})
+        .then(reg => {
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  showToast('New version available. Refresh to update.');
+                }
+              });
+            }
+          });
+        })
         .catch(err => {
           console.error('ServiceWorker registration failed:', err);
         });
