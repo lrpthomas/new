@@ -1,21 +1,16 @@
 // UI event handlers and state management
 import { addMarker } from './map-init.js';
+import { debounce, sanitizeInput, Validator } from './utils.js';
 import {
-    debounce,
-    sanitizeInput,
-    Pagination,
-    UndoRedoManager,
-    Validator,
-    PerformanceMonitor
-} from './utils.js';
+  points,
+  import { addMarker } from './map-init.js'; import { debounce, sanitizeInput, Validator } from './utils.js'; import { points, currentGroupFilter, pagination, undoRedoManager, performanceMonitor, setCurrentFilter } from './state.js';
+  currentGroupFilter,
+  pagination,
+  undoRedoManager,
+  performanceMonitor,
+  setCurrentFilter
+} from './state.js';
 
-/** @type {Array<MapPoint>} */
-let points = [];
-let currentFilter = 'all';
-let currentGroupFilter = null;
-let pagination = new Pagination([]);
-let undoRedoManager = new UndoRedoManager();
-let performanceMonitor = new PerformanceMonitor();
 
 // Initialize UI handlers
 export function initUIHandlers() {
@@ -235,6 +230,7 @@ export function updatePointsList() {
 
         container.innerHTML = currentPoints.map(point => `
             <div class="point-item" data-id="${point.id}">
+                <input type="checkbox" class="point-select" onchange="togglePointSelection('${point.id}', this.checked)" ${point.selected ? 'checked' : ''}>
                 <h4>${sanitizeInput(point.name)}</h4>
                 <p>Status: ${sanitizeInput(point.status)}</p>
                 ${point.group ? `<p>Group: ${sanitizeInput(point.group)}</p>` : ''}
@@ -264,6 +260,13 @@ export function updatePointsList() {
     }
 }
 
+export function togglePointSelection(pointId, isSelected) {
+    const point = points.find(p => p.id === pointId);
+    if (point) {
+        point.selected = isSelected;
+    }
+}
+
 // Show/hide point form
 export function showPointForm(latlng = null) {
     const form = document.getElementById('pointForm');
@@ -287,7 +290,7 @@ export function hidePointForm() {
 
 // Filter points by status
 export function filterPoints(status) {
-    currentFilter = status;
+    setCurrentFilter(status);
 
     // Update active button
     document.querySelectorAll('.status-filter button').forEach(button => {

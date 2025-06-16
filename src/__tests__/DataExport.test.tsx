@@ -51,7 +51,7 @@ describe('DataExport CSV export', () => {
       const csvContent = captured[0];
 
       // Verify CSV header and row values
-      expect(csvContent).toContain('id,lat,lng,zeroValue,falseValue');
+      expect(csvContent).toContain('id,latitude,longitude,zeroValue,falseValue');
       const dataRow = csvContent.trim().split('\n')[1];
       expect(dataRow).toBe('1,10,20,0,false');
     } finally {
