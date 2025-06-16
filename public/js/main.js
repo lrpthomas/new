@@ -62,7 +62,7 @@ function loadSavedPoints() {
     const saved = localStorage.getItem('mapPoints');
     if (saved) {
       points = JSON.parse(saved);
-      points.forEach(p => addMarker(p.latlng, p));
+      import { addMarker } from './path/to/your/module';
     }
   } catch {
     console.error('Error loading saved points');
