@@ -7,7 +7,7 @@ import {
   toggleLayerControls,
   toggleStatistics,
   showGroupFilter,
-  closeGroupFilter,
+  import { togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
   toggleBulkEdit,
   applyBulkEdit,
 } from './modals.js';
