@@ -1,15 +1,6 @@
-// UI event handlers and state management
 import { addMarker } from './map-init.js';
 import { debounce, sanitizeInput, Validator } from './utils.js';
-import {
-  points,
-  import { addMarker } from './map-init.js'; import { debounce, sanitizeInput, Validator } from './utils.js'; import { points, currentGroupFilter, pagination, undoRedoManager, performanceMonitor, setCurrentFilter } from './state.js';
-  currentGroupFilter,
-  pagination,
-  undoRedoManager,
-  performanceMonitor,
-  setCurrentFilter
-} from './state.js';
+import { points, currentGroupFilter, pagination, undoRedoManager, performanceMonitor, setCurrentFilter } from './state.js';
 
 
 // Initialize UI handlers
