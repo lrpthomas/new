@@ -48,6 +48,13 @@ export function toggleLayer(layerName) {
     map.removeLayer(window.mapLayers[currentLayer]);
     map.addLayer(window.mapLayers[layerName]);
     currentLayer = layerName;
+
+    const radio = document.querySelector(`input[name="basemap"][value="${layerName}"]`);
+    if (radio) radio.checked = true;
+}
+
+export function getCurrentLayer() {
+    return currentLayer;
 }
 
 // Add marker to map
