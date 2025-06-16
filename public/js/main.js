@@ -5,7 +5,7 @@ import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from
 import {
   togglePointsList,
   toggleLayerControls,
-  toggleStatistics,
+  import { togglePointsList, toggleLayerControls, showGroupFilter, closeGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
   showGroupFilter,
   import { togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
   toggleBulkEdit,
