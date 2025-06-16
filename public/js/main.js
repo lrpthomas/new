@@ -2,7 +2,7 @@
 import { initMap, toggleLayer } from './map-init.js';
 import { initUIHandlers, showToast } from './ui-handlers.js';
 import {
-  exportToCSV, importFromCSV,
+  import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
   exportToGeoJSON, importFromGeoJSON,
   exportToJSON, importFromJSON,
 } from './file-io.js';
