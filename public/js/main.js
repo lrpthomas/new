@@ -1,6 +1,17 @@
 // Main application entry point
 import { initMap, toggleLayer } from './map-init.js';
-import { initUIHandlers } from './ui-handlers.js';
+import { initUIHandlers, showToast } from './ui-handlers.js';
+
+// Initialize map and UI
+const map = initMap();
+initUIHandlers(map);
+
+// Example usage of toggleLayer and showToast if needed:
+document.getElementById('layerToggleBtn').addEventListener('click', () => {
+  toggleLayer(map, 'myLayerId');
+  showToast('Layer toggled');
+});
+
 import {
   exportToCSV,
   importFromCSV,
@@ -65,8 +76,7 @@ function initApp() {
     // Set up event listeners
     document.getElementById('addPointBtn').addEventListener('click', () => {
       window.isAddingPoint = true;
-      function showToast(message) { console.log(message); } showToast('Point addition started.');
-
+      showToast('Point addition started.');
     });
 
     // Register service worker
@@ -122,7 +132,7 @@ function initApp() {
     // Set up clear data button
     document.getElementById('clearDataBtn').addEventListener('click', () => {
       if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
-        let points = []; // or const points = []; depending on your use case
+        let points = [];
         markers.clearLayers();
         updatePointsList();
         updateStatistics();
