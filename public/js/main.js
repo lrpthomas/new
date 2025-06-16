@@ -1,148 +1,132 @@
 // Main application entry point
 import { initMap, toggleLayer } from './map-init.js';
 import { initUIHandlers, showToast } from './ui-handlers.js';
-
-// Initialize map and UI
-const map = initMap();
-initUIHandlers(map);
-
-// Example usage of toggleLayer and showToast if needed:
-document.getElementById('layerToggleBtn').addEventListener('click', () => {
-  toggleLayer(map, 'myLayerId');
-  showToast('Layer toggled');
-});
-
 import {
-  exportToCSV,
-  importFromCSV,
-  exportToGeoJSON,
-  importFromGeoJSON,
-  exportToJSON,
-  importFromJSON,
+  import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
+  exportToGeoJSON, importFromGeoJSON,
+  exportToJSON, importFromJSON,
 } from './file-io.js';
 import {
-  toggleModal,
-  togglePointsList,
-  toggleLayerControls,
-  toggleStatistics,
-  showGroupFilter,
-  closeGroupFilter,
-  applyGroupFilter,
-  toggleAdvancedSearch,
-  applyAdvancedSearch,
-  toggleBulkEdit,
-  applyBulkEdit,
+  togglePointsList, toggleLayerControls,
+  toggleStatistics, showGroupFilter, closeGroupFilter,
+  // applyGroupFilter,
+  import { toggleModal, togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, closeGroupFilter, applyGroupFilter, toggleAdvancedSearch, toggleBulkEdit, applyBulkEdit } from './modals.js';
 } from './modals.js';
 
-// Load saved points from localStorage
-function loadSavedPoints() {
+let map;
+let points = [];
+
+async function initApp() { await restoreState(); }
   try {
-    const savedPoints = localStorage.getItem('mapPoints');
-    if (savedPoints) {
-      points = JSON.parse(savedPoints);
-      points.forEach(point => addMarker(point.latlng, point));
-    }
-  } catch (error) {
-    console.error('Error loading saved points:', error);
-    showToast('Error loading saved points');
-  }
-}
+    // 1. Map + UI
+    map = await initMap({ enableTileCache: true });
+    initUIHandlers(map);
 
-function initLayerControls() {
-  const radios = document.querySelectorAll('input[name="basemap"]');
-  radios.forEach(radio => {
-    radio.addEventListener('change', e => {
-      if (e.target.checked) {
-        toggleLayer(e.target.value);
-      }
-    });
-  });
-}
+    // 2. Restore state
+    const savedLayer = localStorage.getItem('activeLayerId');
+    if (savedLayer) toggleLayer(map, savedLayer);
+    loadSavedPoints();
+    setupLayerRadios();
 
-// Initialize application
-function initApp() {
-  try {
-    // Initialize map
-    initMap();
-
-    // Initialize UI handlers
-    initUIHandlers();
-
-  // Load saved points
-  loadSavedPoints();
-
-  initLayerControls();
-
-    // Set up event listeners
-    document.getElementById('addPointBtn').addEventListener('click', () => {
+    // 3. Button wiring
+    document.getElementById('layerToggleBtn')?.addEventListener('click', handleLayerToggle);
+    document.getElementById('addPointBtn')?.addEventListener('click', () => {
       window.isAddingPoint = true;
       showToast('Point addition started.');
     });
 
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/service-worker.js')
-        .then(() => {})
-        .catch(err => {
-          console.error('ServiceWorker registration failed:', err);
-        });
-    }
-
-    // Set up file input handlers
-    document.getElementById('csvFile').addEventListener('change', e => {
-      if (e.target.files.length) {
-        importFromCSV(e.target.files[0]);
-      }
+    // 4. File I/O
+    document.getElementById('csvFile')?.addEventListener('change', e => {
+      if (e.target.files.length) importFromCSV(e.target.files[0]);
     });
+    document.getElementById('exportGeoJsonBtn')?.addEventListener('click', exportToGeoJSON);
+    document.getElementById('exportJsonBtn')?.addEventListener('click', exportToJSON);
+    document.getElementById('importGeoJsonBtn')?.addEventListener('click', promptGeoJSONImport);
+    document.getElementById('importJsonBtn')?.addEventListener('click', promptJSONImport);
 
-    // Set up export buttons
-    document.getElementById('exportGeoJsonBtn').addEventListener('click', exportToGeoJSON);
-    document.getElementById('exportJsonBtn').addEventListener('click', exportToJSON);
+    // 5. Bulk edit & clear
+    document.getElementById('bulkEditBtn')?.addEventListener('click', toggleBulkEdit);
+    document.getElementById('applyBulkEditBtn')?.addEventListener('click', applyBulkEdit);
+    document.getElementById('clearDataBtn')?.addEventListener('click', clearAllData);
 
-    // Set up import buttons
-    document.getElementById('importGeoJsonBtn').addEventListener('click', () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.geojson';
-      input.onchange = e => {
-        if (e.target.files.length) {
-          importFromGeoJSON(e.target.files[0]);
-        }
-      };
-      input.click();
-    });
-
-    document.getElementById('importJsonBtn').addEventListener('click', () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.json';
-      input.onchange = e => {
-        if (e.target.files.length) {
-          importFromJSON(e.target.files[0]);
-        }
-      };
-      input.click();
-    });
-
-    // Set up bulk edit button
-    document.getElementById('bulkEditBtn').addEventListener('click', toggleBulkEdit);
-    document.getElementById('applyBulkEditBtn').addEventListener('click', applyBulkEdit);
-
-    // Set up clear data button
-    document.getElementById('clearDataBtn').addEventListener('click', () => {
-      if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
-        let points = [];
-        markers.clearLayers();
-        updatePointsList();
-        updateStatistics();
-        showToast('All data cleared');
-      }
-    });
-  } catch (error) {
-    console.error('Error initializing app:', error);
-    if (typeof showToast === 'function') showToast('Error initializing app');
+    // 6. Service worker
+    registerServiceWorker();
+  } catch (err) {
+    console.error('Failed to initialize app:', err);
+    showToast('Application failed to start');
   }
+}
+
+function loadSavedPoints() {
+  try {
+    const saved = localStorage.getItem('mapPoints');
+    if (saved) {
+      points = JSON.parse(saved);
+      import { addMarker } from './path/to/your/module';
+    }
+  } catch {
+    console.error('Error loading saved points');
+    showToast('Error loading saved points');
+  }
+}
+
+function setupLayerRadios() {
+  document.querySelectorAll('input[name="basemap"]').forEach(radio =>
+    radio.addEventListener('change', e => {
+      if (e.target.checked) toggleLayer(map, e.target.value);
+    })
+  );
+}
+
+function handleLayerToggle() {
+  try {
+    const id = 'myLayerId';
+    toggleLayer(map, id);
+    localStorage.setItem('activeLayerId', id);
+    showToast('Layer toggled');
+  } catch (err) {
+    console.error('Error toggling layer:', err);
+    showToast('Failed to toggle layer');
+  }
+}
+
+function promptGeoJSONImport() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.geojson';
+  input.onchange = e => e.target.files[0] && importFromGeoJSON(e.target.files[0]);
+  input.click();
+}
+
+function promptJSONImport() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = e => e.target.files[0] && importFromJSON(e.target.files[0]);
+  input.click();
+}
+
+function clearAllData() {
+  if (confirm('Clear all data? This cannot be undone.')) {
+    points = [];
+    markers.clearLayers();
+    updatePointsList();
+    updateStatistics();
+    showToast('All data cleared');
+  }
+}
+
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.register('/service-worker.js')
+    .then(reg => {
+      reg.addEventListener('updatefound', () => {
+        const w = reg.installing;
+        w?.addEventListener('statechange', () => {
+          if (w.state === 'installed' && navigator.serviceWorker.controller)
+            showToast('New version available. Refresh to update.');
+        });
+      });
+    })
+    .catch(err => console.error('ServiceWorker registration failed:', err));
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
