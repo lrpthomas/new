@@ -10,7 +10,7 @@ import {
   togglePointsList, toggleLayerControls,
   toggleStatistics, showGroupFilter, closeGroupFilter,
   applyGroupFilter, toggleAdvancedSearch,
-  applyAdvancedSearch, toggleBulkEdit, applyBulkEdit,
+  import { toggleModal, togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, closeGroupFilter, applyGroupFilter, toggleAdvancedSearch, toggleBulkEdit, applyBulkEdit } from './modals.js';
 } from './modals.js';
 
 let map;
