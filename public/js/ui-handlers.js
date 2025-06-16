@@ -3,7 +3,7 @@ import { addMarker } from './map-init.js';
 import { debounce, sanitizeInput, Validator } from './utils.js';
 import {
   points,
-  currentFilter,
+  import { addMarker } from './map-init.js'; import { debounce, sanitizeInput, Validator } from './utils.js'; import { points, currentGroupFilter, pagination, undoRedoManager, performanceMonitor, setCurrentFilter } from './state.js';
   currentGroupFilter,
   pagination,
   undoRedoManager,
