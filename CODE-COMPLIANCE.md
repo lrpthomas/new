@@ -6,30 +6,48 @@ This document outlines the code compliance rules for the MAP TAP project. All co
 
 > Mark each item as `[x]` when verified complete and working. For each section in the code, add a comment: `// DO NOT ALTER - VERIFIED COMPLETE` once checked off here.
 
-- [ ] CSV Import (all fields, template mode)
-- [ ] CSV Export
-- [ ] Multiple CSV Imports (field merge/template logic)
-- [ ] GeoJSON Import
-- [ ] GeoJSON Export
-- [ ] Map Display (clustering, layers, fallback)
-- [ ] Draggable Markers
-- [ ] Click-to-Add Points
-- [ ] Dynamic Marker Icon Color Updates
+- [ ] CSV Import (all fields, template mode) [MP-1]
+- [ ] CSV Export [MP-1]
+- [ ] Multiple CSV Imports (field merge/template logic) [MP-1]
+- [ ] GeoJSON Import [MP-2]
+- [ ] GeoJSON Export [MP-2]
+- [x] Map Display (clustering, layers, fallback) [MP-3]
+- [ ] Draggable Markers [MP-3]
+- [x] Click-to-Add Points [MP-3]
+- [ ] Dynamic Marker Icon Color Updates [MP-3]
 - [ ] Editable Fields (all CSV/GeoJSON fields)
 - [ ] Field Type Detection
 - [ ] Field Reordering
-- [ ] Bulk Edit/Delete
+- [x] Bulk Edit/Delete
 - [ ] Search/Filter by Any Field
 - [ ] Virtualized List (large datasets)
-- [ ] Manual Save/Restore as JSON
+- [x] Manual Save/Restore as JSON
 - [ ] Custom SVG Marker Icon Support
 - [ ] Map Print/Export
-- [ ] Accessibility (ARIA, keyboard, modals)
+- [ ] Accessibility (ARIA, keyboard, modals) [MP-4]
 - [ ] User Feedback (toasts, banners)
-- [ ] Offline/PWA Support
+- [x] Offline/PWA Support [MP-5]
 - [ ] Error Handling & User Feedback
 - [ ] Performance (no major bottlenecks)
 - [ ] General Maintainability (comments, structure)
+
+## Remaining Gaps
+
+The following items are not yet completed:
+
+- Draggable Markers
+- Dynamic Marker Icon Color Updates
+- Editable Fields
+- Field Type Detection
+- Field Reordering
+- Search/Filter by Any Field
+- Virtualized List (large datasets)
+- Custom SVG Marker Icon Support
+- Map Print/Export
+- User Feedback (toasts, banners)
+- Error Handling & User Feedback
+- Performance improvements
+- General Maintainability
 
 ---
 
