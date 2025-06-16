@@ -7,7 +7,7 @@ import {
   exportToJSON, importFromJSON,
 } from './file-io.js';
 import {
-  toggleModal, togglePointsList, toggleLayerControls,
+  togglePointsList, toggleLayerControls,
   toggleStatistics, showGroupFilter, closeGroupFilter,
   applyGroupFilter, toggleAdvancedSearch,
   applyAdvancedSearch, toggleBulkEdit, applyBulkEdit,
