@@ -1,5 +1,6 @@
 // Modal dialog management
 import { showToast } from './ui-handlers.js';
+import { points, currentFilter, setCurrentGroupFilter } from './state.js';
 
 // Toggle modal visibility
 export function toggleModal(modalId, show = true) {
@@ -66,7 +67,7 @@ export function closeGroupFilter() {
 
 // Apply group filter
 export function applyGroupFilter(group) {
-    currentGroupFilter = group;
+    setCurrentGroupFilter(group);
     filterPoints(currentFilter);
     closeGroupFilter();
     showToast(`Filtered by group: ${group}`);
@@ -146,6 +147,7 @@ export function applyBulkEdit() {
     selectedPoints.forEach(point => {
         if (status) point.status = status;
         if (group) point.group = group;
+        point.selected = false;
     });
 
     // Update UI

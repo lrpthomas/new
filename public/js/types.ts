@@ -10,6 +10,7 @@ export interface MapPoint {
     customFields?: Record<string, string>;
     createdAt: number;
     updatedAt: number;
+    selected?: boolean;
 }
 
 export type PointStatus = 'active' | 'pending' | 'completed' | 'delayed' | 'inactive';
