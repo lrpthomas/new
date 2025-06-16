@@ -1,41 +1,33 @@
 // Main application entry point
-import { initMap, toggleLayer } from './map-init.js';
-import { initUIHandlers, showToast } from './ui-handlers.js';
+import { initMap, toggleLayer, addMarker } from './map-init.js';
+import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
+import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
 import {
-  import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
-  exportToGeoJSON, importFromGeoJSON,
-  exportToJSON, importFromJSON,
-} from './file-io.js';
-import {
-  togglePointsList, toggleLayerControls,
-  toggleStatistics, showGroupFilter, closeGroupFilter,
-  // applyGroupFilter,
-  import { toggleModal, togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, closeGroupFilter, applyGroupFilter, toggleAdvancedSearch, toggleBulkEdit, applyBulkEdit } from './modals.js';
+  import { toggleLayerControls, toggleStatistics, showGroupFilter, closeGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
+  import { initMap, toggleLayer, addMarker } from './map-init.js'; // Removed toggleLayerControls from imports
+  import { togglePointsList, toggleLayerControls, showGroupFilter, closeGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
+  showGroupFilter,
+  import { togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
+  toggleBulkEdit,
+  applyBulkEdit,
 } from './modals.js';
+import { points, addPoint, removePoint } from './state.js';
 
 let map;
-let points = [];
 
-async function initApp() { await restoreState(); }
+document.getElementById('layerToggleBtn')?.addEventListener('click', handleLayerToggle); document.getElementById('addPointBtn')?.addEventListener('click', () => { window.isAddingPoint = true; showToast('Point addition started.'); });
   try {
-    // 1. Map + UI
     map = await initMap({ enableTileCache: true });
     initUIHandlers(map);
 
-    // 2. Restore state
-    const savedLayer = localStorage.getItem('activeLayerId');
-    if (savedLayer) toggleLayer(map, savedLayer);
-    loadSavedPoints();
-    setupLayerRadios();
+    restoreState();
 
-    // 3. Button wiring
     document.getElementById('layerToggleBtn')?.addEventListener('click', handleLayerToggle);
     document.getElementById('addPointBtn')?.addEventListener('click', () => {
       window.isAddingPoint = true;
       showToast('Point addition started.');
     });
 
-    // 4. File I/O
     document.getElementById('csvFile')?.addEventListener('change', e => {
       if (e.target.files.length) importFromCSV(e.target.files[0]);
     });
@@ -44,12 +36,10 @@ async function initApp() { await restoreState(); }
     document.getElementById('importGeoJsonBtn')?.addEventListener('click', promptGeoJSONImport);
     document.getElementById('importJsonBtn')?.addEventListener('click', promptJSONImport);
 
-    // 5. Bulk edit & clear
     document.getElementById('bulkEditBtn')?.addEventListener('click', toggleBulkEdit);
     document.getElementById('applyBulkEditBtn')?.addEventListener('click', applyBulkEdit);
     document.getElementById('clearDataBtn')?.addEventListener('click', clearAllData);
 
-    // 6. Service worker
     registerServiceWorker();
   } catch (err) {
     console.error('Failed to initialize app:', err);
@@ -57,12 +47,24 @@ async function initApp() { await restoreState(); }
   }
 }
 
+function restoreState() {
+  const savedLayer = localStorage.getItem('activeLayerId');
+  if (savedLayer) toggleLayer(map, savedLayer);
+  loadSavedPoints();
+  setupLayerRadios();
+}
+
 function loadSavedPoints() {
   try {
     const saved = localStorage.getItem('mapPoints');
     if (saved) {
-      points = JSON.parse(saved);
-      import { addMarker } from './path/to/your/module';
+      const savedPoints = JSON.parse(saved);
+      savedPoints.forEach(point => {
+        addPoint(point);
+        addMarker(point.latlng, point);
+      });
+      updatePointsList();
+      updateStatistics();
     }
   } catch {
     console.error('Error loading saved points');
@@ -92,22 +94,26 @@ function handleLayerToggle() {
 
 function promptGeoJSONImport() {
   const input = document.createElement('input');
-  input.type = 'file'; input.accept = '.geojson';
+  input.type = 'file';
+  input.accept = '.geojson';
   input.onchange = e => e.target.files[0] && importFromGeoJSON(e.target.files[0]);
   input.click();
 }
 
 function promptJSONImport() {
   const input = document.createElement('input');
-  input.type = 'file'; input.accept = '.json';
+  input.type = 'file';
+  input.accept = '.json';
   input.onchange = e => e.target.files[0] && importFromJSON(e.target.files[0]);
   input.click();
 }
 
 function clearAllData() {
   if (confirm('Clear all data? This cannot be undone.')) {
-    points = [];
-    markers.clearLayers();
+    while (points.length) {
+      removePoint(points[0].id);
+    }
+    markers && markers.clearLayers();
     updatePointsList();
     updateStatistics();
     showToast('All data cleared');
@@ -116,7 +122,8 @@ function clearAllData() {
 
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
-  navigator.serviceWorker.register('/service-worker.js')
+  navigator.serviceWorker
+    .register('/service-worker.js')
     .then(reg => {
       reg.addEventListener('updatefound', () => {
         const w = reg.installing;

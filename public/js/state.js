@@ -12,6 +12,17 @@ export function setPoints(newPoints) {
   points = newPoints;
 }
 
+export function addPoint(point) {
+  points.push(point);
+}
+
+export function removePoint(id) {
+  const index = points.findIndex(p => p.id === id);
+  if (index >= 0) {
+    points.splice(index, 1);
+  }
+}
+
 export function setCurrentFilter(filter) {
   currentFilter = filter;
 }
@@ -26,5 +37,7 @@ export {
   currentGroupFilter,
   pagination,
   undoRedoManager,
-  performanceMonitor
+  performanceMonitor,
+  addPoint,
+  removePoint,
 };
