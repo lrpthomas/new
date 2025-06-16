@@ -8,6 +8,17 @@ let pagination = new Pagination([]);
 let undoRedoManager = new UndoRedoManager();
 let performanceMonitor = new PerformanceMonitor();
 
+export function addPoint(point) {
+  points.push(point);
+}
+
+export function removePoint(id) {
+  const index = points.findIndex(p => p.id === id);
+  if (index !== -1) {
+    points.splice(index, 1);
+  }
+}
+
 export function setPoints(newPoints) {
   points = newPoints;
 }
@@ -22,6 +33,8 @@ export function setCurrentGroupFilter(group) {
 
 export {
   points,
+  addPoint,
+  removePoint,
   currentFilter,
   currentGroupFilter,
   pagination,
