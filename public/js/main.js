@@ -1,6 +1,17 @@
 // Main application entry point
-import { initMap } from './map-init.js';
+import { initMap, toggleLayer } from './map-init.js';
 import { initUIHandlers, showToast } from './ui-handlers.js';
+
+// Initialize map and UI
+const map = initMap();
+initUIHandlers(map);
+
+// Example usage of toggleLayer and showToast if needed:
+document.getElementById('layerToggleBtn').addEventListener('click', () => {
+  toggleLayer(map, 'myLayerId');
+  showToast('Layer toggled');
+});
+
 import {
   exportToCSV,
   importFromCSV,
@@ -37,6 +48,17 @@ function loadSavedPoints() {
   }
 }
 
+function initLayerControls() {
+  const radios = document.querySelectorAll('input[name="basemap"]');
+  radios.forEach(radio => {
+    radio.addEventListener('change', e => {
+      if (e.target.checked) {
+        toggleLayer(e.target.value);
+      }
+    });
+  });
+}
+
 // Initialize application
 function initApp() {
   try {
@@ -46,8 +68,10 @@ function initApp() {
     // Initialize UI handlers
     initUIHandlers();
 
-    // Load saved points
-    loadSavedPoints();
+  // Load saved points
+  loadSavedPoints();
+
+  initLayerControls();
 
     // Set up event listeners
     document.getElementById('addPointBtn').addEventListener('click', () => {
