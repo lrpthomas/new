@@ -15,7 +15,7 @@ import { points, addPoint, removePoint } from './state.js';
 
 let map;
 
-async function initApp() {
+document.getElementById('layerToggleBtn')?.addEventListener('click', handleLayerToggle); document.getElementById('addPointBtn')?.addEventListener('click', () => { window.isAddingPoint = true; showToast('Point addition started.'); });
   try {
     map = await initMap({ enableTileCache: true });
     initUIHandlers(map);
