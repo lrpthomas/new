@@ -16,7 +16,7 @@ import {
 let map;
 let points = [];
 
-async function initApp() {
+async function initApp() { await restoreState(); }
   try {
     // 1. Map + UI
     map = await initMap({ enableTileCache: true });
