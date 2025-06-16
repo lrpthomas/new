@@ -146,6 +146,7 @@ export function applyBulkEdit() {
     selectedPoints.forEach(point => {
         if (status) point.status = status;
         if (group) point.group = group;
+        point.selected = false;
     });
 
     // Update UI

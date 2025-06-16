@@ -235,6 +235,7 @@ export function updatePointsList() {
 
         container.innerHTML = currentPoints.map(point => `
             <div class="point-item" data-id="${point.id}">
+                <input type="checkbox" class="point-select" onchange="togglePointSelection('${point.id}', this.checked)" ${point.selected ? 'checked' : ''}>
                 <h4>${sanitizeInput(point.name)}</h4>
                 <p>Status: ${sanitizeInput(point.status)}</p>
                 ${point.group ? `<p>Group: ${sanitizeInput(point.group)}</p>` : ''}
@@ -261,6 +262,13 @@ export function updatePointsList() {
     } finally {
         const duration = performanceMonitor.end('updatePointsList');
         console.debug(`Points list updated in ${duration}ms`);
+    }
+}
+
+export function togglePointSelection(pointId, isSelected) {
+    const point = points.find(p => p.id === pointId);
+    if (point) {
+        point.selected = isSelected;
     }
 }
 
