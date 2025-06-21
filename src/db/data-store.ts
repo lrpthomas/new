@@ -1,5 +1,4 @@
-import { MapPoint } from '../types/map.types';
-import { User } from '../types/user.types';
+import { MapPoint, User } from '../types';
 
 export interface DataStore {
   listUsers(): Promise<User[]>;
