@@ -299,7 +299,7 @@ export function hidePointForm() {
 export function filterPoints(status) {
   setCurrentFilter(status);
 
-  // Update active button
+  // Update active button state
   document.querySelectorAll('.status-filter button').forEach(btn => {
     const btnStatus = btn.dataset.status || 'all';
     btn.classList.toggle('active', btnStatus === status);
