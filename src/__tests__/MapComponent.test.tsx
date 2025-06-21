@@ -28,6 +28,12 @@ jest.mock('react-leaflet', () => {
   };
 });
 
+jest.mock('react-leaflet-cluster', () => ({
+  __esModule: true,
+  default: (props: { children: React.ReactNode }) =>
+    React.createElement('div', null, props.children),
+}));
+
 const setMapState = jest.fn();
 
 jest.mock('../hooks/useMapState', () => ({
