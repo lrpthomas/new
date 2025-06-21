@@ -1,4 +1,4 @@
-import { Pagination, UndoRedoManager } from './utils.js';
+import { Pagination, UndoRedoManager, PerformanceMonitor } from './utils.js';
 
 /** @type {import('./types').MapPoint[]} */
 let points = [];
@@ -9,6 +9,7 @@ const undoRedoManager = new UndoRedoManager();
 
 let isAddingPoint = false;
 let currentLatLng = null;
+const performanceMonitor = new PerformanceMonitor();
 
 // expose globals for legacy usage
 Object.defineProperty(window, 'isAddingPoint', {
@@ -54,6 +55,7 @@ export const store = {
     currentGroupFilter = group;
   },
   pagination,
+  performanceMonitor,
   undoRedoManager,
   get isAddingPoint() {
     return isAddingPoint;

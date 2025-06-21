@@ -1,7 +1,7 @@
 import { addMarker } from './map-init.js';
 import { debounce, sanitizeInput, Validator } from './utils.js';
-import { performanceMonitor } from './state.js';
 import { store } from './store.js';
+const { performanceMonitor } = store;
 
 // Initialize UI handlers
 export function initUIHandlers() {
