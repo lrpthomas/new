@@ -1,6 +1,7 @@
 // Integration tests for UI handlers
 import { initUIHandlers, showPointForm, hidePointForm, filterPoints } from '../ui-handlers.js';
 import { addMarker } from '../map-init.js';
+import { toggleModal } from '../modals.js';
 import { addPoint, points } from '../state.js';
 
 // Mock DOM elements
@@ -176,6 +177,27 @@ describe('UI Handlers', () => {
             // Redo
             redoBtn.click();
             expect(points.length).toBe(1);
+        });
+    });
+
+    describe('modal focus management', () => {
+        it('should focus first element on open and restore focus on close', () => {
+            document.body.innerHTML += `
+                <button id="beforeBtn">Before</button>
+                <div id="testModal" class="modal" role="dialog" tabindex="-1">
+                    <button id="firstBtn">First</button>
+                    <button id="secondBtn">Second</button>
+                </div>
+            `;
+
+            const beforeBtn = document.getElementById('beforeBtn');
+            beforeBtn.focus();
+
+            toggleModal('testModal', true);
+            expect(document.activeElement).toBe(document.getElementById('firstBtn'));
+
+            toggleModal('testModal', false);
+            expect(document.activeElement).toBe(beforeBtn);
         });
     });
 });
