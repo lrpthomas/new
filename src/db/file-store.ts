@@ -11,7 +11,7 @@ export const fileStore: DataStore = {
   async createUser(_user: User): Promise<User> {
     throw new Error('FileStore not implemented');
   },
-  async updateUser(_id: string, _data: Partial<User>): Promise<User | undefined> {
+  async updateUser(id: string, _data: Partial<User>): Promise<User | undefined> {
     throw new Error('FileStore not implemented');
   },
   async deleteUser(_id: string): Promise<boolean> {
