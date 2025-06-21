@@ -32,13 +32,16 @@ app.get('*', (_req, res) => {
 });
 
 // Error handler
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+app.use(
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  (err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err.stack);
   res.status(500).json({
     error: 'Something went wrong!',
     message: process.env.NODE_ENV === 'development' ? err.message : undefined,
   });
-});
+  }
+);
 
 // Start server
 app.listen(port, () => {

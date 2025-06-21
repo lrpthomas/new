@@ -5,7 +5,6 @@ import styles from '../../styles/components/data-table.module.scss';
 interface DataTableProps {
   points: MapPoint[];
   onPointSelect?: (point: MapPoint) => void;
-  onPointUpdate?: (point: MapPoint) => void;
   onPointDelete?: (pointId: string) => void;
 }
 
@@ -19,8 +18,6 @@ interface SortConfig {
 export const DataTable: React.FC<DataTableProps> = ({
   points,
   onPointSelect,
-  onPointUpdate,
-  onPointDelete,
 }) => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'id', direction: 'asc' });
   const [filterText, setFilterText] = useState('');
@@ -45,11 +42,11 @@ export const DataTable: React.FC<DataTableProps> = ({
   }, []);
 
   const filteredAndSortedPoints = useMemo(() => {
-    let filtered = points.filter(point => {
+    const filtered = points.filter(point => {
       const searchText = filterText.toLowerCase();
       return (
         point.id.toLowerCase().includes(searchText) ||
-        Object.entries(point.properties).some(([key, value]) =>
+        Object.entries(point.properties).some(([, value]) =>
           String(value).toLowerCase().includes(searchText)
         )
       );

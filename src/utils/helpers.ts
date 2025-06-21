@@ -15,15 +15,14 @@ export function debounce<T extends (...args: unknown[]) => void>(
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | null = null;
   return function executedFunction(this: unknown, ...args: Parameters<T>): void {
-    const context = this;
     const later = () => {
       timeout = null;
-      if (!immediate) func.apply(context, args);
+      if (!immediate) func.apply(this, args);
     };
     const callNow = immediate && !timeout;
     if (timeout) clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
+    if (callNow) func.apply(this, args);
   };
 }
 
