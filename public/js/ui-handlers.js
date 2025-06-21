@@ -1,7 +1,15 @@
 import { addMarker } from './map-init.js';
 import { debounce, sanitizeInput, Validator } from './utils.js';
-import { points, currentGroupFilter, pagination, undoRedoManager, performanceMonitor, setCurrentFilter } from './state.js';
-
+import {
+  points,
+  currentGroupFilter,
+  pagination,
+  undoRedoManager,
+  performanceMonitor,
+  setCurrentFilter,
+  addPoint,
+  removePoint
+} from './state.js';
 
 // Initialize UI handlers
 export function initUIHandlers() {
@@ -360,7 +368,7 @@ async function savePoint(pointData) {
             points[existingIndex] = pointData;
         } else {
             // Add new point
-            points.push(pointData);
+            addPoint(pointData);
         }
 
         // Save to localStorage
@@ -407,7 +415,7 @@ export function deletePoint(pointId) {
     try {
         const index = points.findIndex(p => p.id === pointId);
         if (index >= 0) {
-            points.splice(index, 1);
+            removePoint(pointId);
             localStorage.setItem('mapPoints', JSON.stringify(points));
             
             // Update UI
