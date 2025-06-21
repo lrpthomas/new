@@ -1,6 +1,8 @@
 import { store } from './store.js';
 import { PerformanceMonitor } from './utils.js';
 
-const performanceMonitor = new PerformanceMonitor();
-
-export { performanceMonitor, store };
+/**
+ * Single instance used across modules for performance measurements.
+ * Other state is now managed via store.js
+ */
+export const performanceMonitor = new PerformanceMonitor();

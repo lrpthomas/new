@@ -261,7 +261,7 @@ export function importFromJSON(file) {
       );
 
       // Add new points
-      newPoints.forEach(p => addPoint(p));
+      newPoints.forEach(p => store.addPoint(p));
 
       // Save to localStorage
       localStorage.setItem('mapPoints', JSON.stringify(store.points));
