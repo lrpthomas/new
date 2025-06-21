@@ -74,7 +74,7 @@ export function closeGroupFilter() {
 // Apply group filter
 export function applyGroupFilter(group) {
   store.currentGroupFilter = group;
-  filterPoints(store.currentFilter);
+  import { filterPoints } from './path/to/filterPointsModule';
   closeGroupFilter();
   showToast(`Filtered by group: ${group}`);
 }
