@@ -1,15 +1,7 @@
 import { addMarker } from './map-init.js';
 import { debounce, sanitizeInput, Validator } from './utils.js';
-import {
-  points,
-  currentGroupFilter,
-  pagination,
-  undoRedoManager,
-  performanceMonitor,
-  setCurrentFilter,
-  addPoint,
-  removePoint,
-} from './state.js';
+import { store } from './store.js';
+import { performanceMonitor } from './state.js';
 
 // Initialize UI handlers
 export function initUIHandlers() {
@@ -20,7 +12,7 @@ export function initUIHandlers() {
     const addPointBtn = document.getElementById('addPointBtn');
     if (addPointBtn) {
       addPointBtn.addEventListener('click', () => {
-        window.isAddingPoint = true;
+        store.isAddingPoint = true;
         showToast('Click on the map to add a point');
       });
     }
@@ -104,7 +96,7 @@ async function handlePointSubmit(e) {
       status: document.getElementById('pointStatus').value,
       description: document.getElementById('pointDescription').value,
       group: document.getElementById('pointGroup').value,
-      latlng: window.currentLatLng,
+      latlng: store.currentLatLng,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -267,8 +259,8 @@ export function updatePointsList() {
   }
 }
 // Point selection handling
-export function togglePointSelection(id, selected) {
-  const point = points.find(p => p.id === id);
+export function togglePointSelection(pointId, isSelected) {
+  const point = store.points.find(p => p.id === pointId);
   if (point) {
     point.selected = selected;
   }
@@ -283,7 +275,7 @@ export function showPointForm(latlng = null) {
     title.textContent = 'Add Point';
     document.getElementById('pointId').value = '';
     document.getElementById('pointDataForm').reset();
-    window.currentLatLng = latlng;
+    store.currentLatLng = latlng;
   }
 
   form.style.display = 'block';
@@ -291,8 +283,8 @@ export function showPointForm(latlng = null) {
 
 export function hidePointForm() {
   document.getElementById('pointForm').style.display = 'none';
-  window.isAddingPoint = false;
-  window.currentLatLng = null;
+  store.isAddingPoint = false;
+  store.currentLatLng = null;
 }
 
 // Filter points by status
@@ -307,10 +299,9 @@ export function filterPoints(status) {
 
   // Filter markers
   markers.clearLayers();
-  points
+  store.points
     .filter(point => {
       if (status === 'all') return true;
-      if (currentGroupFilter) return point.group === currentGroupFilter;
       return point.status === status;
     })
     .forEach(point => {
@@ -412,7 +403,7 @@ export function editPoint(pointId) {
   document.getElementById('pointStatus').value = point.status;
   document.getElementById('pointDescription').value = point.description || '';
   document.getElementById('pointGroup').value = point.group || '';
-  window.currentLatLng = point.latlng;
+  store.currentLatLng = point.latlng;
 
   // Show form
   showPointForm();
