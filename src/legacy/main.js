@@ -21,7 +21,7 @@ import {
   exportToJSON,
   importFromJSON
 } from './file-io';
-import { removePoint } from './state';
+import { store } from './store';
 import { store } from './store';
 
 let map;
