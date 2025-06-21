@@ -9,8 +9,6 @@ import {
 } from '../utils/dataProcessing';
 import {
   MapPoint,
-  GeoJSONFeature,
-  CSVRow,
   DataProcessingResult,
   MapError
 } from '../types/map.types';

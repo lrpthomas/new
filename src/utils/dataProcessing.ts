@@ -50,7 +50,7 @@ export const processCSVData = (data: string): CSVRow[] => {
  */
 export const csvToGeoJSON = (csvData: CSVRow[]): GeoJSONFeature[] => {
   try {
-    return csvData.map((row, index) => {
+    return csvData.map(row => {
       const lat = parseFloat(row.latitude);
       const lng = parseFloat(row.longitude);
       
