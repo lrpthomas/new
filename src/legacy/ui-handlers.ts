@@ -13,7 +13,7 @@ import {
 } from './state';
 
 // Initialize UI handlers
-export function initUIHandlers(): void {
+const addPointBtn = document.getElementById('addPointBtn'); if (addPointBtn) { addPointBtn.addEventListener('click', handleAddPoint); }
   try {
     performanceMonitor.start('initUIHandlers');
 
