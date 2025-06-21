@@ -82,8 +82,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     [onPointDelete]
   );
 
-  const Row = useCallback(
-    ({ index, style }: ListChildComponentProps) => {
+  const Row = useCallback(function Row({ index, style }: ListChildComponentProps) {
       const point = filteredAndSortedPoints[index];
       return (
         <tr
@@ -112,6 +111,10 @@ export const DataTable: React.FC<DataTableProps> = ({
     },
     [filteredAndSortedPoints, handleRowClick, handleDelete, allProperties]
   );
+
+  const OuterElement = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(function OuterElement(props, ref) {
+    return <tbody {...props} ref={ref as React.RefObject<HTMLTableSectionElement>} />;
+  });
 
   return (
     <div className={styles.container}>
@@ -157,9 +160,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             itemCount={filteredAndSortedPoints.length}
             itemSize={40}
             width="100%"
-            outerElementType={React.forwardRef<HTMLTableSectionElement>((props, ref) => (
-              <tbody {...props} ref={ref as React.RefObject<HTMLTableSectionElement>} />
-            ))}
+            outerElementType={OuterElement}
           >
             {Row}
           </FixedSizeList>
