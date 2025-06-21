@@ -1,13 +1,13 @@
 // File import/export operations
 import { addMarker } from './map-init.js';
 import { showToast } from './ui-handlers.js';
-import { store } from './store.js';
+import { points, addPoint } from './state.js';
 
 // Export points to CSV
 export function exportToCSV() {
   try {
     const csv = Papa.unparse(
-      store.points.map(point => ({
+      points.map(point => ({
         name: point.name,
         status: point.status,
         description: point.description,
@@ -154,7 +154,7 @@ export function importFromCSV(file) {
 export function exportToGeoJSON() {
   const geojson = {
     type: 'FeatureCollection',
-    features: store.points.map(point => ({
+    features: points.map(point => ({
       type: 'Feature',
       geometry: {
         type: 'Point',
@@ -254,27 +254,20 @@ export function importFromJSON(file) {
         throw new Error('Invalid file format: expected array of points');
       }
 
-      // Validate each point
-      importedPoints.forEach(point => {
-        if (!point.name || !point.latlng || !point.latlng.lat || !point.latlng.lng) {
-          throw new Error('Invalid point data: missing required fields');
-        }
-      });
-
       // Merge with existing points, avoiding duplicates
       const newPoints = importedPoints.filter(
-        newPoint => !store.points.some(existingPoint => existingPoint.id === newPoint.id)
+        newPoint => !points.some(existingPoint => existingPoint.id === newPoint.id)
       );
 
       // Add new points
-      store.points = [...store.points, ...newPoints];
-
+      newPoints.forEach(p => addPoint(p));
+      
       // Save to localStorage
-      localStorage.setItem('mapPoints', JSON.stringify(store.points));
+      localStorage.setItem('mapPoints', JSON.stringify(points));
 
       // Update UI
       markers.clearLayers();
-      store.points.forEach(point => addMarker(point.latlng, point));
+      points.forEach(point => addMarker(point.latlng, point));
       updatePointsList();
       updateStatistics();
 
@@ -294,7 +287,7 @@ export function importFromJSON(file) {
 
 // Export points to JSON
 export function exportToJSON() {
-  downloadFile(JSON.stringify(store.points), 'points.json', 'application/json');
+  downloadFile(JSON.stringify(points), 'points.json', 'application/json');
 }
 
 // Helper function to download files
@@ -312,7 +305,7 @@ function downloadFile(content, filename, type) {
 
 // Import points and update UI
 function importPoints(newPoints) {
-  store.points = [...store.points, ...newPoints];
+  newPoints.forEach(point => addPoint(point));
   newPoints.forEach(point => addMarker(point.latlng, point));
   updatePointsList();
   updateStatistics();
