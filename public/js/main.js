@@ -4,7 +4,7 @@ import { initUIHandlers, showToast, updatePointsList, updateStatistics } from '.
 import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
 import {
   togglePointsList,
-  toggleLayerControls,
+  import { togglePointsList, toggleStatistics, showGroupFilter, closeGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
   toggleStatistics,
   showGroupFilter,
   import { togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
