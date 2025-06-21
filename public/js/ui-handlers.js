@@ -1,4 +1,3 @@
-// UI event handlers and state management
 import { addMarker } from './map-init.js';
 import { debounce, sanitizeInput, Validator } from './utils.js';
 import {
@@ -11,7 +10,6 @@ import {
   addPoint,
   removePoint
 } from './state.js';
-
 
 // Initialize UI handlers
 export function initUIHandlers() {
