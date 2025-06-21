@@ -1,16 +1,16 @@
 // Main application entry point
 import { initMap, toggleLayer, addMarker } from './map-init.js';
+import {
+  togglePointsList,
+  toggleLayerControls,
+  toggleStatistics,
+  showGroupFilter,
+  closeGroupFilter,
+  toggleBulkEdit,
+  applyBulkEdit
+} from './modals.js';
 import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
 import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
-import {
-  import { toggleLayerControls, toggleStatistics, showGroupFilter, closeGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
-  import { initMap, toggleLayer, addMarker } from './map-init.js'; // Removed toggleLayerControls from imports
-  import { togglePointsList, toggleLayerControls, showGroupFilter, closeGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
-  showGroupFilter,
-  import { togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
-  toggleBulkEdit,
-  applyBulkEdit,
-} from './modals.js';
 import { points, addPoint, removePoint } from './state.js';
 
 let map;
