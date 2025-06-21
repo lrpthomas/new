@@ -2,7 +2,7 @@
 import { initUIHandlers, showPointForm, hidePointForm, filterPoints } from '../ui-handlers.js';
 import { addMarker } from '../map-init.js';
 import { toggleModal } from '../modals.js';
-import { addPoint, points } from '../state.js';
+import { store } from '../store.js';
 
 // Mock DOM elements
 document.body.innerHTML = `
@@ -159,10 +159,10 @@ describe('UI Handlers', () => {
             const nextPageBtn = document.getElementById('nextPageBtn');
 
             nextPageBtn.click();
-            expect(pagination.currentPage).toBe(2);
+            expect(store.pagination.currentPage).toBe(2);
 
             prevPageBtn.click();
-            expect(pagination.currentPage).toBe(1);
+            expect(store.pagination.currentPage).toBe(1);
         });
     });
 
@@ -173,15 +173,15 @@ describe('UI Handlers', () => {
 
             // Add a point
             const point = { id: 1, name: 'Test Point' };
-            addPoint(point);
+            store.addPoint(point);
 
             // Undo
             undoBtn.click();
-            expect(points.length).toBe(0);
+            expect(store.points.length).toBe(0);
 
             // Redo
             redoBtn.click();
-            expect(points.length).toBe(1);
+            expect(store.points.length).toBe(1);
         });
     });
 
