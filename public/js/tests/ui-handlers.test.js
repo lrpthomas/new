@@ -1,6 +1,7 @@
 // Integration tests for UI handlers
 import { initUIHandlers, showPointForm, hidePointForm, filterPoints } from '../ui-handlers.js';
 import { addMarker } from '../map-init.js';
+import { addPoint, points } from '../state.js';
 
 // Mock DOM elements
 document.body.innerHTML = `
@@ -156,7 +157,7 @@ describe('UI Handlers', () => {
 
             // Add a point
             const point = { id: 1, name: 'Test Point' };
-            points.push(point);
+            addPoint(point);
 
             // Undo
             undoBtn.click();

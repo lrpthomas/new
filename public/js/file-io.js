@@ -1,7 +1,7 @@
 // File import/export operations
 import { addMarker } from './map-init.js';
 import { showToast } from './ui-handlers.js';
-import { points, setPoints } from './state.js';
+import { points, addPoint } from './state.js';
 
 // Export points to CSV
 export function exportToCSV() {
@@ -248,7 +248,7 @@ export function importFromJSON(file) {
             );
 
             // Add new points
-            setPoints([...points, ...newPoints]);
+            newPoints.forEach(p => addPoint(p));
             
             // Save to localStorage
             localStorage.setItem('mapPoints', JSON.stringify(points));
@@ -293,7 +293,7 @@ function downloadFile(content, filename, type) {
 
 // Import points and update UI
 function importPoints(newPoints) {
-    setPoints([...points, ...newPoints]);
+    newPoints.forEach(point => addPoint(point));
     newPoints.forEach(point => addMarker(point.latlng, point));
     updatePointsList();
     updateStatistics();

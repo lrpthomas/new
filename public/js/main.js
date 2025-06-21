@@ -6,16 +6,20 @@ import {
   toggleStatistics,
   showGroupFilter,
   closeGroupFilter,
+  applyGroupFilter,
+  toggleAdvancedSearch,
   toggleBulkEdit,
   applyBulkEdit
 } from './modals.js';
 import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
 import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
-import { points, addPoint, removePoint } from './state.js';
+import { points, addPoint, removePoint, setPoints } from './state.js';
 
 let map;
 
-document.getElementById('layerToggleBtn')?.addEventListener('click', handleLayerToggle); document.getElementById('addPointBtn')?.addEventListener('click', () => { window.isAddingPoint = true; showToast('Point addition started.'); });
+document.addEventListener('DOMContentLoaded', initApp);
+
+async function initApp() {
   try {
     map = await initMap({ enableTileCache: true });
     initUIHandlers(map);
@@ -135,5 +139,3 @@ function registerServiceWorker() {
     })
     .catch(err => console.error('ServiceWorker registration failed:', err));
 }
-
-document.addEventListener('DOMContentLoaded', initApp);
