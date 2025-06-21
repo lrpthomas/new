@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { DataExport } from '../components/controls/data-export';
-import { MapPoint } from '../types/map.types';
+import { MapPoint } from '../types';
 
 describe('DataExport CSV export', () => {
   it('preserves 0 and false values when exporting CSV', () => {

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useDataProcessing } from '../../hooks/useDataProcessing';
-import { MapPoint, MapError } from '../../types/map.types';
+import { MapPoint, MapError } from '../../types';
 import styles from '../../styles/components/data-import.module.scss';
 
 interface DataImportProps {
@@ -62,19 +62,17 @@ export const DataImport: React.FC<DataImportProps> = ({ onImportComplete, onErro
       e.preventDefault();
       setIsDragging(false);
 
-      const file = e.dataTransfer.files[0];
-      if (file) {
+      Array.from(e.dataTransfer.files).forEach(file => {
         handleFileSelect(file);
-      }
+      });
     },
     [handleFileSelect]
   );
 
   const handleFileInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        handleFileSelect(file);
+      if (e.target.files) {
+        Array.from(e.target.files).forEach(file => handleFileSelect(file));
       }
     },
     [handleFileSelect]
@@ -93,6 +91,7 @@ export const DataImport: React.FC<DataImportProps> = ({ onImportComplete, onErro
           id="fileInput"
           className={styles.fileInput}
           accept=".csv,.geojson,.json"
+          multiple
           onChange={handleFileInput}
           disabled={isLoading}
         />

@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import styles from '../../styles/components/map.module.scss';
 import { useMapState } from '../../hooks/useMapState';
-import { MapMarker } from '../../types/map.types';
+import { MapMarker } from '../../types';
 
 interface MapComponentProps {
   markers: MapMarker[];
@@ -20,6 +20,16 @@ export const MapComponent: React.FC<MapComponentProps> = ({
   const mapRef = useRef<L.Map>(null);
   const clickHandlerRef = useRef<(e: L.LeafletMouseEvent) => void>();
   const { center, zoom, setMapState } = useMapState();
+
+  const createColoredIcon = useCallback((color?: string) => {
+    if (!color) return undefined;
+    return L.divIcon({
+      className: styles.customIcon,
+      html: `<span class="marker-icon" style="background:${color}"></span>`,
+      iconSize: [20, 20],
+      iconAnchor: [10, 20],
+    });
+  }, []);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -72,6 +82,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({
         <Marker
           key={marker.id}
           position={[marker.lat, marker.lng]}
+          icon={createColoredIcon(marker.color)}
           draggable={true}
           eventHandlers={{
             dragend: e => handleMarkerDragEnd(marker, e),

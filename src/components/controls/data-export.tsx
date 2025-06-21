@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
-import { MapPoint, GeoJSONFeature } from '../../types/map.types';
+import { MapPoint, GeoJSONFeature } from '../../types';
 import styles from '../../styles/components/data-export.module.scss';
+import { MapPrintButton } from './map-print';
 
 interface DataExportProps {
   points: MapPoint[];
@@ -29,8 +30,8 @@ export const DataExport: React.FC<DataExportProps> = ({
     }));
   }, []);
 
-  const convertToCSV = useCallback((points: MapPoint[]): string => {
-    if (points.length === 0) return '';
+  const convertToCSV = useCallback((points: MapPoint[], template = false): string => {
+    if (points.length === 0 && !template) return '';
 
     // Get all unique property keys
     const allProperties = new Set<string>();
@@ -58,12 +59,11 @@ export const DataExport: React.FC<DataExportProps> = ({
       ];
       return values.join(',');
     });
-
-    return [headerRow, ...rows].join('\n');
+    return template ? headerRow : [headerRow, ...rows].join('\n');
   }, []);
 
   const handleExport = useCallback(
-    async (format: 'csv' | 'geojson') => {
+    async (format: 'csv' | 'geojson', template = false) => {
       try {
         onExportStart?.();
 
@@ -72,8 +72,8 @@ export const DataExport: React.FC<DataExportProps> = ({
         let mimeType: string;
 
         if (format === 'csv') {
-          content = convertToCSV(points);
-          filename = 'map-points.csv';
+          content = convertToCSV(points, template);
+          filename = template ? 'map-template.csv' : 'map-points.csv';
           mimeType = 'text/csv';
         } else {
           const features = convertToGeoJSON(points);
@@ -121,6 +121,14 @@ export const DataExport: React.FC<DataExportProps> = ({
           <span className={styles.text}>Export CSV</span>
         </button>
         <button
+          onClick={() => handleExport('csv', true)}
+          className={styles.exportButton}
+          title="Download CSV Template"
+        >
+          <span className={styles.icon}>📄</span>
+          <span className={styles.text}>Export Template</span>
+        </button>
+        <button
           onClick={() => handleExport('geojson')}
           className={styles.exportButton}
           disabled={points.length === 0}
@@ -129,6 +137,7 @@ export const DataExport: React.FC<DataExportProps> = ({
           <span className={styles.icon}>🗺️</span>
           <span className={styles.text}>Export GeoJSON</span>
         </button>
+        <MapPrintButton />
       </div>
       {points.length === 0 && (
         <div className={styles.emptyState}>No points available to export</div>
