@@ -6,7 +6,7 @@ import type { MapPoint } from '../types/legacy.types';
 
 let map: L.Map;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let markers: any = L.markerClusterGroup();
+const markers: any = L.markerClusterGroup();
 let currentLayer = 'osm';
 
 // Initialize the map
