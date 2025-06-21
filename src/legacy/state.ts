@@ -4,7 +4,7 @@ import type { MapPoint } from '../types/legacy.types';
 let points: MapPoint[] = [];
 let currentFilter = 'all';
 let currentGroupFilter = null;
-let pagination = new Pagination([] as MapPoint[]);
+const pagination = new Pagination([] as MapPoint[]);
 let undoRedoManager = new UndoRedoManager();
 let performanceMonitor = new PerformanceMonitor();
 
