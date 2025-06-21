@@ -1,44 +1,7 @@
 import { PerformanceMonitor } from './utils.js';
 
-/** @type {Array<MapPoint>} */
-let points = [];
-let currentFilter = 'all';
-let currentGroupFilter = null;
-let pagination = new Pagination([]);
-let undoRedoManager = new UndoRedoManager();
-let performanceMonitor = new PerformanceMonitor();
-
-export function addPoint(point) {
-  points.push(point);
-}
-
-export function removePoint(id) {
-  const index = points.findIndex(p => p.id === id);
-  if (index !== -1) {
-    points.splice(index, 1);
-  }
-}
-
-export function setPoints(newPoints) {
-  points = newPoints;
-}
-
-export function setCurrentFilter(filter) {
-  currentFilter = filter;
-}
-
-export function setCurrentGroupFilter(group) {
-  currentGroupFilter = group;
-}
-
-export {
-  points,
-  addPoint,
-  removePoint,
-  setPoints,
-  currentFilter,
-  currentGroupFilter,
-  pagination,
-  undoRedoManager,
-  performanceMonitor,
-};
+/**
+ * Single instance used across modules for performance measurements.
+ * Other state is now managed via store.js
+ */
+export const performanceMonitor = new PerformanceMonitor();

@@ -2,7 +2,7 @@
 import { initUIHandlers, showPointForm, hidePointForm, filterPoints } from '../ui-handlers.js';
 import { addMarker } from '../map-init.js';
 import { toggleModal } from '../modals.js';
-import { addPoint, points } from '../state.js';
+import { store } from '../store.js';
 
 // Mock DOM elements
 document.body.innerHTML = `
@@ -30,159 +30,160 @@ document.body.innerHTML = `
 
 // Mock map functions
 jest.mock('../map-init.js', () => ({
-    addMarker: jest.fn()
+  addMarker: jest.fn(),
 }));
 
 describe('UI Handlers', () => {
-    beforeEach(() => {
-        // Reset mocks
-        jest.clearAllMocks();
+  beforeEach(() => {
+    // Reset mocks
+    jest.clearAllMocks();
 
-        // Reset DOM
-        document.getElementById('pointDataForm').reset();
-        document.getElementById('pointsListContent').innerHTML = '';
+    // Reset DOM
+    document.getElementById('pointDataForm').reset();
+    document.getElementById('pointsListContent').innerHTML = '';
+  });
+
+  describe('initUIHandlers', () => {
+    it('should initialize all event listeners', () => {
+      const addPointBtn = document.getElementById('addPointBtn');
+      const statusFilterBtn = document.querySelector('.status-filter button');
+      const pointDataForm = document.getElementById('pointDataForm');
+
+      initUIHandlers();
+
+      // Test add point button
+      addPointBtn.click();
+      expect(window.isAddingPoint).toBe(true);
+
+      // Test status filter
+      statusFilterBtn.click();
+      expect(store.currentFilter).toBe('all');
+
+      // Test form submission
+      const submitEvent = new Event('submit');
+      pointDataForm.dispatchEvent(submitEvent);
+    });
+  });
+
+  describe('showPointForm', () => {
+    it('should show form with correct title', () => {
+      const latlng = { lat: 0, lng: 0 };
+      showPointForm(latlng);
+
+      const form = document.getElementById('pointForm');
+      const title = document.getElementById('pointFormTitle');
+
+      expect(form.style.display).toBe('block');
+      expect(title.textContent).toBe('Add Point');
+      expect(window.currentLatLng).toBe(latlng);
+    });
+  });
+
+  describe('hidePointForm', () => {
+    it('should hide form and reset state', () => {
+      window.isAddingPoint = true;
+      window.currentLatLng = { lat: 0, lng: 0 };
+
+      hidePointForm();
+
+      const form = document.getElementById('pointForm');
+      expect(form.style.display).toBe('none');
+      expect(window.isAddingPoint).toBe(false);
+      expect(window.currentLatLng).toBeNull();
+    });
+  });
+
+  describe('filterPoints', () => {
+    it('should filter points by status', () => {
+      const points = [
+        { id: 1, status: 'active', latlng: { lat: 0, lng: 0 } },
+        { id: 2, status: 'pending', latlng: { lat: 1, lng: 1 } },
+      ];
+
+      filterPoints('active');
+
+      expect(addMarker).toHaveBeenCalledTimes(1);
+      expect(addMarker).toHaveBeenCalledWith(
+        { lat: 0, lng: 0 },
+        expect.objectContaining({ status: 'active' })
+      );
     });
 
-    describe('initUIHandlers', () => {
-        it('should initialize all event listeners', () => {
-            const addPointBtn = document.getElementById('addPointBtn');
-            const statusFilterBtn = document.querySelector('.status-filter button');
-            const pointDataForm = document.getElementById('pointDataForm');
+    it('should update active class on status buttons', () => {
+      const allBtn = document.querySelector('[data-status="all"]');
+      const activeBtn = document.querySelector('[data-status="active"]');
 
-            initUIHandlers();
+      filterPoints('active');
 
-            // Test add point button
-            addPointBtn.click();
-            expect(window.isAddingPoint).toBe(true);
-
-            // Test status filter
-            statusFilterBtn.click();
-            expect(currentFilter).toBe('all');
-
-            // Test form submission
-            const submitEvent = new Event('submit');
-            pointDataForm.dispatchEvent(submitEvent);
-        });
+      expect(activeBtn.classList.contains('active')).toBe(true);
+      expect(allBtn.classList.contains('active')).toBe(false);
     });
+  });
 
-    describe('showPointForm', () => {
-        it('should show form with correct title', () => {
-            const latlng = { lat: 0, lng: 0 };
-            showPointForm(latlng);
+  describe('searchPoints', () => {
+    it('should filter points by search query', () => {
+      const searchInput = document.getElementById('searchInput');
+      searchInput.value = 'test';
 
-            const form = document.getElementById('pointForm');
-            const title = document.getElementById('pointFormTitle');
+      const inputEvent = new Event('input');
+      searchInput.dispatchEvent(inputEvent);
 
-            expect(form.style.display).toBe('block');
-            expect(title.textContent).toBe('Add Point');
-            expect(window.currentLatLng).toBe(latlng);
-        });
+      // Wait for debounce
+      setTimeout(() => {
+        const pointsList = document.getElementById('pointsListContent');
+        expect(pointsList.children.length).toBe(0); // No matches
+      }, 400);
     });
+  });
 
-    describe('hidePointForm', () => {
-        it('should hide form and reset state', () => {
-            window.isAddingPoint = true;
-            window.currentLatLng = { lat: 0, lng: 0 };
+  describe('sortPoints', () => {
+    it('should sort points by selected criteria', () => {
+      const sortSelect = document.getElementById('sortSelect');
+      sortSelect.value = 'name';
 
-            hidePointForm();
+      const changeEvent = new Event('change');
+      sortSelect.dispatchEvent(changeEvent);
 
-            const form = document.getElementById('pointForm');
-            expect(form.style.display).toBe('none');
-            expect(window.isAddingPoint).toBe(false);
-            expect(window.currentLatLng).toBeNull();
-        });
+      const pointsList = document.getElementById('pointsListContent');
+      expect(pointsList.children.length).toBe(0); // Empty list
     });
+  });
 
-    describe('filterPoints', () => {
-        it('should filter points by status', () => {
-            const points = [
-                { id: 1, status: 'active', latlng: { lat: 0, lng: 0 } },
-                { id: 2, status: 'pending', latlng: { lat: 1, lng: 1 } }
-            ];
+  describe('pagination', () => {
+    it('should handle page navigation', () => {
+      const prevPageBtn = document.getElementById('prevPageBtn');
+      const nextPageBtn = document.getElementById('nextPageBtn');
 
-            filterPoints('active');
+      nextPageBtn.click();
+      expect(store.pagination.currentPage).toBe(2);
 
-            expect(addMarker).toHaveBeenCalledTimes(1);
-            expect(addMarker).toHaveBeenCalledWith({ lat: 0, lng: 0 },
-                expect.objectContaining({ status: 'active' })
-            );
-        });
-
-        it('should update active class on status buttons', () => {
-            const allBtn = document.querySelector('[data-status="all"]');
-            const activeBtn = document.querySelector('[data-status="active"]');
-
-            filterPoints('active');
-
-            expect(activeBtn.classList.contains('active')).toBe(true);
-            expect(allBtn.classList.contains('active')).toBe(false);
-        });
+      prevPageBtn.click();
+      expect(store.pagination.currentPage).toBe(1);
     });
+  });
 
-    describe('searchPoints', () => {
-        it('should filter points by search query', () => {
-            const searchInput = document.getElementById('searchInput');
-            searchInput.value = 'test';
+  describe('undo/redo', () => {
+    it('should handle undo/redo operations', () => {
+      const undoBtn = document.getElementById('undoBtn');
+      const redoBtn = document.getElementById('redoBtn');
 
-            const inputEvent = new Event('input');
-            searchInput.dispatchEvent(inputEvent);
+      // Add a point
+      const point = { id: 1, name: 'Test Point' };
+      store.addPoint(point);
 
-            // Wait for debounce
-            setTimeout(() => {
-                const pointsList = document.getElementById('pointsListContent');
-                expect(pointsList.children.length).toBe(0); // No matches
-            }, 400);
-        });
+      // Undo
+      undoBtn.click();
+      expect(store.points.length).toBe(0);
+
+      // Redo
+      redoBtn.click();
+      expect(store.points.length).toBe(1);
     });
+  });
 
-    describe('sortPoints', () => {
-        it('should sort points by selected criteria', () => {
-            const sortSelect = document.getElementById('sortSelect');
-            sortSelect.value = 'name';
-
-            const changeEvent = new Event('change');
-            sortSelect.dispatchEvent(changeEvent);
-
-            const pointsList = document.getElementById('pointsListContent');
-            expect(pointsList.children.length).toBe(0); // Empty list
-        });
-    });
-
-    describe('pagination', () => {
-        it('should handle page navigation', () => {
-            const prevPageBtn = document.getElementById('prevPageBtn');
-            const nextPageBtn = document.getElementById('nextPageBtn');
-
-            nextPageBtn.click();
-            expect(pagination.currentPage).toBe(2);
-
-            prevPageBtn.click();
-            expect(pagination.currentPage).toBe(1);
-        });
-    });
-
-    describe('undo/redo', () => {
-        it('should handle undo/redo operations', () => {
-            const undoBtn = document.getElementById('undoBtn');
-            const redoBtn = document.getElementById('redoBtn');
-
-            // Add a point
-            const point = { id: 1, name: 'Test Point' };
-            addPoint(point);
-
-            // Undo
-            undoBtn.click();
-            expect(points.length).toBe(0);
-
-            // Redo
-            redoBtn.click();
-            expect(points.length).toBe(1);
-        });
-    });
-
-    describe('modal focus management', () => {
-        it('should focus first element on open and restore focus on close', () => {
-            document.body.innerHTML += `
+  describe('modal focus management', () => {
+    it('should focus first element on open and restore focus on close', () => {
+      document.body.innerHTML += `
                 <button id="beforeBtn">Before</button>
                 <div id="testModal" class="modal" role="dialog" tabindex="-1">
                     <button id="firstBtn">First</button>
@@ -190,14 +191,14 @@ describe('UI Handlers', () => {
                 </div>
             `;
 
-            const beforeBtn = document.getElementById('beforeBtn');
-            beforeBtn.focus();
+      const beforeBtn = document.getElementById('beforeBtn');
+      beforeBtn.focus();
 
-            toggleModal('testModal', true);
-            expect(document.activeElement).toBe(document.getElementById('firstBtn'));
+      toggleModal('testModal', true);
+      expect(document.activeElement).toBe(document.getElementById('firstBtn'));
 
-            toggleModal('testModal', false);
-            expect(document.activeElement).toBe(beforeBtn);
-        });
+      toggleModal('testModal', false);
+      expect(document.activeElement).toBe(beforeBtn);
     });
+  });
 });
