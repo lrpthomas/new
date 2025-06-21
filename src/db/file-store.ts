@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { DataStore, MapPoint, User } from './data-store';
 
 // Placeholder implementation for future persistent storage

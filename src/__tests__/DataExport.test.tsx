@@ -40,9 +40,9 @@ describe('DataExport CSV export', () => {
 
       // @ts-expect-error: MockBlob used for testing
       global.Blob = MockBlob as unknown as typeof Blob;
-      // @ts-ignore: override readonly properties for testing
+      // @ts-expect-error: override readonly properties for testing
       global.URL.createObjectURL = createObjectURL;
-      // @ts-ignore
+      // @ts-expect-error: legacy jsdom stub
       global.URL.revokeObjectURL = revokeObjectURL;
 
       const { getByTitle } = render(<DataExport points={points} />);
@@ -56,9 +56,9 @@ describe('DataExport CSV export', () => {
       expect(dataRow).toBe('1,10,20,0,false');
     } finally {
       global.Blob = originalBlob;
-      // @ts-ignore
+      // @ts-expect-error: legacy jsdom stub
       global.URL.createObjectURL = originalCreateObjectURL;
-      // @ts-ignore
+      // @ts-expect-error: legacy jsdom stub
       global.URL.revokeObjectURL = originalRevokeObjectURL;
     }
   });

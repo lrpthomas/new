@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // File import/export operations
-import { addMarker } from './map-init.js';
-import { showToast } from './ui-handlers.js';
-import { points, addPoint } from './state.js';
+import { addMarker } from './map-init';
+import { showToast } from './ui-handlers';
+import { points, addPoint } from './state';
 
 // Export points to CSV
 export function exportToCSV() {
@@ -261,7 +262,7 @@ export function importFromJSON(file) {
 
       // Add new points
       newPoints.forEach(p => addPoint(p));
-      
+
       // Save to localStorage
       localStorage.setItem('mapPoints', JSON.stringify(points));
 
@@ -287,7 +288,7 @@ export function importFromJSON(file) {
 
 // Export points to JSON
 export function exportToJSON() {
-  downloadFile(JSON.stringify(points), 'points.json', 'application/json');
+  downloadFile(JSON.stringify(points), 'pointson', 'application/json');
 }
 
 // Helper function to download files

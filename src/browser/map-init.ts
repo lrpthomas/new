@@ -1,79 +1,62 @@
-// Map initialization and configuration
-import { store } from './store.js';
-let map;
-let markers = L.markerClusterGroup();
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import L from 'leaflet';
+import { store } from './store';
+import { showPointForm } from './ui-handlers';
+
+let map: L.Map;
+let markers = (L as any).markerClusterGroup ? (L as any).markerClusterGroup() : L.layerGroup();
 let currentLayer = 'osm';
 
-// Initialize the map
-export function initMap() {
+export function initMap(): L.Map {
   map = L.map('map').setView([0, 0], 2);
 
-  // Add base layers
   const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
   });
-
-  import L from 'leaflet';
+  const satelliteLayer = L.tileLayer(
     'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    {
-      attribution: '© Esri',
-    }
+    { attribution: '© Esri' }
   );
-
   const terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
   });
 
-  // Add default layer
   osmLayer.addTo(map);
 
-  // Store layers for toggling
-  window.mapLayers = {
-    osm: osmLayer,
-    satellite: satelliteLayer,
-    terrain: terrainLayer,
-  };
+  (window as any).mapLayers = { osm: osmLayer, satellite: satelliteLayer, terrain: terrainLayer };
 
-  // Add marker cluster group
   map.addLayer(markers);
 
-  // Add click handler for adding points
-  map.on('click', function (e) {
+  map.on('click', e => {
     if (store.isAddingPoint) {
-      showPointForm(e.latlng);
+      showPointForm((e as L.LeafletMouseEvent).latlng);
     }
   });
+
+  return map;
 }
 
-// Toggle map layers
-export function toggleLayer(layerName) {
+export function toggleLayer(layerName: string): void {
   if (currentLayer === layerName) return;
-
-  map.removeLayer(window.mapLayers[currentLayer]);
-  map.addLayer(window.mapLayers[layerName]);
+  map.removeLayer((window as any).mapLayers[currentLayer]);
+  map.addLayer((window as any).mapLayers[layerName]);
   currentLayer = layerName;
-
   const radio = document.querySelector(`input[name="basemap"][value="${layerName}"]`);
-  if (radio) radio.checked = true;
+  if (radio instanceof HTMLInputElement) radio.checked = true;
 }
 
-export function getCurrentLayer() {
+export function getCurrentLayer(): string {
   return currentLayer;
 }
 
-// Add marker to map
-export function addMarker(latlng, data) {
-  const marker = L.marker(latlng, {
-    icon: createCustomIcon(data.status),
-  });
-
+export function addMarker(latlng: L.LatLngExpression, data: any): L.Marker {
+  const marker = L.marker(latlng, { icon: createCustomIcon(data.status) });
   marker.bindPopup(createPopupContent(data));
   markers.addLayer(marker);
   return marker;
 }
 
-// Create custom icon based on status
-function createCustomIcon(status) {
+function createCustomIcon(status: string): L.DivIcon {
   return L.divIcon({
     className: 'custom-marker',
     html: `<div class="marker-dot ${status}"></div>`,
@@ -82,8 +65,7 @@ function createCustomIcon(status) {
   });
 }
 
-// Create popup content
-function createPopupContent(data) {
+function createPopupContent(data: any): string {
   return `
         <div class="popup-content">
             <h3>${data.name}</h3>
@@ -95,17 +77,14 @@ function createPopupContent(data) {
     `;
 }
 
-// Add this function to allow toggling clustering from the UI
-export function toggleCluster() {
-  const clusterToggle = document.getElementById('clusterToggle');
+export function toggleCluster(): void {
+  const clusterToggle = document.getElementById('clusterToggle') as HTMLInputElement | null;
   if (!clusterToggle) return;
   if (clusterToggle.checked) {
     if (!map.hasLayer(markers)) {
       map.addLayer(markers);
     }
-  } else {
-    if (map.hasLayer(markers)) {
-      map.removeLayer(markers);
-    }
+  } else if (map.hasLayer(markers)) {
+    map.removeLayer(markers);
   }
 }

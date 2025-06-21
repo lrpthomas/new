@@ -1,4 +1,5 @@
-import { Pagination, UndoRedoManager } from './utils.js';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Pagination, UndoRedoManager } from './utils';
 
 /** @type {import('./types').MapPoint[]} */
 let points = [];

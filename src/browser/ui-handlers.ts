@@ -1,5 +1,6 @@
-import { addMarker } from './map-init.js';
-import { debounce, sanitizeInput, Validator } from './utils.js';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { addMarker } from './map-init';
+import { debounce, sanitizeInput, Validator } from './utils';
 import {
   points,
   currentGroupFilter,
@@ -8,8 +9,8 @@ import {
   performanceMonitor,
   setCurrentFilter,
   addPoint,
-  removePoint
-} from './state.js';
+  removePoint,
+} from './state';
 
 // Initialize UI handlers
 export function initUIHandlers() {
@@ -307,13 +308,15 @@ export function filterPoints(status) {
 
   // Filter markers
   markers.clearLayers();
-  points.filter(point => {
-    if (status === 'all') return true;
-    if (currentGroupFilter) return point.group === currentGroupFilter;
-    return point.status === status;
-  }).forEach(point => {
-    addMarker(point.latlng, point);
-  });
+  points
+    .filter(point => {
+      if (status === 'all') return true;
+      if (currentGroupFilter) return point.group === currentGroupFilter;
+      return point.status === status;
+    })
+    .forEach(point => {
+      addMarker(point.latlng, point);
+    });
 }
 
 // Show toast message

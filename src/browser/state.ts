@@ -1,4 +1,5 @@
-import { PerformanceMonitor } from './utils.js';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { PerformanceMonitor } from './utils';
 
 /** @type {Array<MapPoint>} */
 let points = [];
@@ -33,9 +34,6 @@ export function setCurrentGroupFilter(group) {
 
 export {
   points,
-  addPoint,
-  removePoint,
-  setPoints,
   currentFilter,
   currentGroupFilter,
   pagination,

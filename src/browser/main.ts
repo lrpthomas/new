@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Main application entry point
-import { initMap, toggleLayer, addMarker } from './map-init.js';
+import { initMap, toggleLayer, addMarker } from './map-init';
 import {
   togglePointsList,
   toggleLayerControls,
@@ -9,11 +10,11 @@ import {
   applyGroupFilter,
   toggleAdvancedSearch,
   toggleBulkEdit,
-  applyBulkEdit
-} from './modals.js';
-import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
-import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
-import { store } from './store.js';
+  applyBulkEdit,
+} from './modals';
+import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers';
+import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io';
+import { store } from './store';
 
 let map;
 
@@ -107,7 +108,7 @@ function promptGeoJSONImport() {
 function promptJSONImport() {
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.json';
+  input.accept = 'on';
   input.onchange = e => e.target.files[0] && importFromJSON(e.target.files[0]);
   input.click();
 }
@@ -127,7 +128,7 @@ function clearAllData() {
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   navigator.serviceWorker
-    .register('/service-worker.js')
+    .register('/service-worker')
     .then(reg => {
       reg.addEventListener('updatefound', () => {
         const w = reg.installing;

@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Modal dialog management
-import { showToast } from './ui-handlers.js';
-import { store } from './store.js';
-import { trapFocus } from './utils.js';
+import { showToast } from './ui-handlers';
+import { store } from './store';
+import { trapFocus } from './utils';
 
 // Toggle modal visibility
 export function toggleModal(modalId, show = true) {
