@@ -2,7 +2,7 @@ import { importFromCSV, importFromGeoJSON } from '../file-io.js';
 import { showToast } from '../ui-handlers.js';
 
 jest.mock('../ui-handlers.js', () => ({
-  showToast: jest.fn()
+  showToast: jest.fn(),
 }));
 
 describe('File IO error handling', () => {
@@ -14,20 +14,20 @@ describe('File IO error handling', () => {
     global.Papa = {
       parse: (_file, options) => {
         options.complete({ data: [], errors: [{ message: 'bad' }] });
-      }
+      },
     };
 
     const file = new File(['name,lat,lng\n'], 'points.csv', { type: 'text/csv' });
     importFromCSV(file);
-    expect(showToast).toHaveBeenCalled();
+    expect(showToast).toHaveBeenCalledWith(expect.stringContaining('Error importing CSV'));
   });
 
-  it('calls showToast when GeoJSON parsing fails', (done) => {
+  it('calls showToast when GeoJSON parsing fails', done => {
     const blob = new Blob(['invalid'], { type: 'application/json' });
     const file = new File([blob], 'points.geojson', { type: 'application/json' });
     importFromGeoJSON(file);
     setTimeout(() => {
-      expect(showToast).toHaveBeenCalled();
+      expect(showToast).toHaveBeenCalledWith(expect.stringContaining('Error importing GeoJSON'));
       done();
     }, 0);
   });
