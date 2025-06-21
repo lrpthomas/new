@@ -23,7 +23,7 @@ export const fileStore: DataStore = {
   async getMap(_id: string): Promise<MapPoint | undefined> {
     throw new Error('FileStore not implemented');
   },
-  async createMap(_point: MapPoint): Promise<MapPoint> {
+  async createMap(point: MapPoint): Promise<MapPoint> {
     throw new Error('FileStore not implemented');
   },
   async updateMap(_id: string, _data: Partial<MapPoint>): Promise<MapPoint | undefined> {
