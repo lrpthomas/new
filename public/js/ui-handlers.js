@@ -1,7 +1,15 @@
 import { addMarker } from './map-init.js';
 import { debounce, sanitizeInput, Validator } from './utils.js';
-import { performanceMonitor } from './state.js';
-import { store } from './store.js';
+import {
+  points,
+  currentGroupFilter,
+  pagination,
+  undoRedoManager,
+  performanceMonitor,
+  setCurrentFilter,
+  addPoint,
+  removePoint,
+} from './state.js';
 
 // Initialize UI handlers
 export function initUIHandlers() {
@@ -259,10 +267,10 @@ export function updatePointsList() {
   }
 }
 // Point selection handling
-export function togglePointSelection(pointId, isSelected) {
-  const point = store.points.find(p => p.id === pointId);
+export function togglePointSelection(id, selected) {
+  const point = points.find(p => p.id === id);
   if (point) {
-    point.selected = isSelected;
+    point.selected = selected;
   }
 }
 
@@ -299,10 +307,10 @@ export function filterPoints(status) {
 
   // Filter markers
   markers.clearLayers();
-  store.points
+  points
     .filter(point => {
       if (status === 'all') return true;
-      if (store.currentGroupFilter) return point.group === store.currentGroupFilter;
+      if (currentGroupFilter) return point.group === currentGroupFilter;
       return point.status === status;
     })
     .forEach(point => {
