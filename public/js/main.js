@@ -73,11 +73,11 @@ function loadSavedPoints() {
 }
 
 function setupLayerRadios() {
-  document.querySelectorAll('input[name="basemap"]').forEach(radio =>
-    radio.addEventListener('change', e => {
-      if (e.target.checked) toggleLayer(map, e.target.value);
-    })
-  );
+  document.querySelectorAll('input[name="basemap"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (radio.checked) toggleLayer(map, radio.value);
+    });
+  });
 }
 
 function handleLayerToggle() {
