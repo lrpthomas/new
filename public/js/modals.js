@@ -53,7 +53,7 @@ export function showGroupFilter() {
   const groups = [...new Set(store.points.map(p => p.group).filter(Boolean))];
 
   // Create group buttons
-  container.innerHTML = groups
+  container.innerHTML = ''; groups.forEach(group => { const button = document.createElement('button'); button.className = 'button secondary'; button.textContent = group; button.onclick = () => applyGroupFilter(group); container.appendChild(button); });
     .map(
       group => `
         <button class="button secondary" onclick="applyGroupFilter('${group}')">
