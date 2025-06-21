@@ -266,7 +266,6 @@ export function updatePointsList() {
     console.debug(`Points list updated in ${duration}ms`);
   }
 }
-
 // Point selection handling
 export function togglePointSelection(pointId, isSelected) {
   const point = points.find(p => p.id === pointId);
