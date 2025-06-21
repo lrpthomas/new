@@ -7,11 +7,7 @@ import {
   validateMapPoint,
   generatePointId,
 } from '../utils/dataProcessing';
-import {
-  MapPoint,
-  DataProcessingResult,
-  MapError,
-} from '../types/map.types';
+import { MapPoint, DataProcessingResult, MapError } from '../types/map.types';
 
 interface UseDataProcessingResult {
   processCSV: (data: string) => Promise<DataProcessingResult<MapPoint[]>>;
@@ -126,42 +122,38 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
     []
   );
 
-  const updatePoint = useCallback(
-    (id: string, updates: Partial<MapPoint>): MapPoint => {
-      let updatedPoint!: MapPoint;
-      setPoints(prevPoints => {
-        const pointIndex = prevPoints.findIndex(p => p.id === id);
-        if (pointIndex === -1) {
-          throw new Error(`Point with id ${id} not found`);
-        }
+  const updatePoint = useCallback((id: string, updates: Partial<MapPoint>): MapPoint => {
+    let updatedPoint!: MapPoint;
+    setPoints(prevPoints => {
+      const pointIndex = prevPoints.findIndex(p => p.id === id);
+      if (pointIndex === -1) {
+        throw new Error(`Point with id ${id} not found`);
+      }
 
-        updatedPoint = {
-          ...prevPoints[pointIndex],
-          ...updates,
+      updatedPoint = {
+        ...prevPoints[pointIndex],
+        ...updates,
+      };
+
+      try {
+        validateMapPoint(updatedPoint);
+        const newPoints = [...prevPoints];
+        newPoints[pointIndex] = updatedPoint;
+        return newPoints;
+      } catch (error) {
+        const mapError: MapError = {
+          message: (error as Error).message,
+          code: 'POINT_UPDATE_ERROR',
+          details: error,
         };
+        setErrors(prev => [...prev, mapError]);
+        throw error;
+      }
+    });
 
-        try {
-          validateMapPoint(updatedPoint);
-          const newPoints = [...prevPoints];
-          newPoints[pointIndex] = updatedPoint;
-          return newPoints;
-        } catch (error) {
-          const mapError: MapError = {
-            message: (error as Error).message,
-            code: 'POINT_UPDATE_ERROR',
-            details: error,
-          };
-          setErrors(prev => [...prev, mapError]);
-          throw error;
-        }
-      });
-
-      // updatedPoint is set synchronously inside setPoints
-      return updatedPoint;
-    },
-    []
-=======
-    [points]
+    // updatedPoint is set synchronously inside setPoints
+    return updatedPoint;
+  }, []);
 
   const deletePoint = useCallback((id: string) => {
     setPoints(prevPoints => prevPoints.filter(p => p.id !== id));
