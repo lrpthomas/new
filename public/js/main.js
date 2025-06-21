@@ -1,21 +1,25 @@
 // Main application entry point
 import { initMap, toggleLayer, addMarker } from './map-init.js';
+import {
+  togglePointsList,
+  toggleLayerControls,
+  toggleStatistics,
+  showGroupFilter,
+  closeGroupFilter,
+  applyGroupFilter,
+  toggleAdvancedSearch,
+  toggleBulkEdit,
+  applyBulkEdit
+} from './modals.js';
 import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
 import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
-import {
-  import { toggleLayerControls, toggleStatistics, showGroupFilter, closeGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
-  import { initMap, toggleLayer, addMarker } from './map-init.js'; // Removed toggleLayerControls from imports
-  import { togglePointsList, toggleLayerControls, showGroupFilter, closeGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
-  showGroupFilter,
-  import { togglePointsList, toggleLayerControls, toggleStatistics, showGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
-  toggleBulkEdit,
-  applyBulkEdit,
-} from './modals.js';
-import { points, addPoint, removePoint } from './state.js';
+import { store } from './store.js';
 
 let map;
 
-document.getElementById('layerToggleBtn')?.addEventListener('click', handleLayerToggle); document.getElementById('addPointBtn')?.addEventListener('click', () => { window.isAddingPoint = true; showToast('Point addition started.'); });
+document.addEventListener('DOMContentLoaded', initApp);
+
+async function initApp() {
   try {
     map = await initMap({ enableTileCache: true });
     initUIHandlers(map);
@@ -24,7 +28,7 @@ document.getElementById('layerToggleBtn')?.addEventListener('click', handleLayer
 
     document.getElementById('layerToggleBtn')?.addEventListener('click', handleLayerToggle);
     document.getElementById('addPointBtn')?.addEventListener('click', () => {
-      window.isAddingPoint = true;
+      store.isAddingPoint = true;
       showToast('Point addition started.');
     });
 
@@ -60,7 +64,7 @@ function loadSavedPoints() {
     if (saved) {
       const savedPoints = JSON.parse(saved);
       savedPoints.forEach(point => {
-        addPoint(point);
+        store.addPoint(point);
         addMarker(point.latlng, point);
       });
       updatePointsList();
@@ -73,11 +77,11 @@ function loadSavedPoints() {
 }
 
 function setupLayerRadios() {
-  document.querySelectorAll('input[name="basemap"]').forEach(radio =>
-    radio.addEventListener('change', e => {
-      if (e.target.checked) toggleLayer(map, e.target.value);
-    })
-  );
+  document.querySelectorAll('input[name="basemap"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (radio.checked) toggleLayer(map, radio.value);
+    });
+  });
 }
 
 function handleLayerToggle() {
@@ -110,8 +114,8 @@ function promptJSONImport() {
 
 function clearAllData() {
   if (confirm('Clear all data? This cannot be undone.')) {
-    while (points.length) {
-      removePoint(points[0].id);
+    while (store.points.length) {
+      store.removePoint(store.points[0].id);
     }
     markers && markers.clearLayers();
     updatePointsList();
@@ -135,5 +139,3 @@ function registerServiceWorker() {
     })
     .catch(err => console.error('ServiceWorker registration failed:', err));
 }
-
-document.addEventListener('DOMContentLoaded', initApp);
