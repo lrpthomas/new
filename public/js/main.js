@@ -3,7 +3,7 @@ import { initMap, toggleLayer, addMarker } from './map-init.js';
 import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
 import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
 import {
-  togglePointsList,
+  import { initMap, toggleLayer, addMarker } from './map-init.js'; import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers.js'; import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js'; import { toggleLayerControls, toggleStatistics, showGroupFilter, closeGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js'; import { store } from './store.js';
   import { togglePointsList, toggleStatistics, showGroupFilter, closeGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
   import { togglePointsList, toggleLayerControls, showGroupFilter, closeGroupFilter, toggleBulkEdit, applyBulkEdit } from './modals.js';
   showGroupFilter,
