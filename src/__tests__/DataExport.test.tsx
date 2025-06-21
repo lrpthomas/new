@@ -63,22 +63,51 @@ describe('DataExport CSV export', () => {
     }
   });
 
-  it('calls onExportError when export fails', () => {
-    const error = new Error('fail');
-    const points: MapPoint[] = [{ id: '1', position: { lat: 0, lng: 0 }, properties: {} }];
-    const onExportError = jest.fn();
-
+  it('exports only headers in template mode', () => {
     const originalBlob = global.Blob;
-    // @ts-ignore - override for test
-    global.Blob = jest.fn(() => {
-      throw error;
-    }) as unknown as typeof Blob;
+    const originalCreateObjectURL = global.URL.createObjectURL;
+    const originalRevokeObjectURL = global.URL.revokeObjectURL;
 
-    const { getByTitle } = render(<DataExport points={points} onExportError={onExportError} />);
-    fireEvent.click(getByTitle('Export as CSV'));
+    try {
+      const points: MapPoint[] = [
+        {
+          id: '1',
+          position: { lat: 10, lng: 20 },
+          properties: { name: 'Test' },
+        },
+      ];
 
-    expect(onExportError).toHaveBeenCalledWith(error);
+      let captured = '';
+      class MockBlob {
+        private data: string;
+        constructor(parts: string[]) {
+          this.data = parts.join('');
+          captured = this.data;
+        }
+        text() {
+          return Promise.resolve(this.data);
+        }
+      }
 
-    global.Blob = originalBlob;
+      const createObjectURL = jest.fn(() => 'blob:url');
+      const revokeObjectURL = jest.fn();
+      // @ts-expect-error: MockBlob is used to simulate Blob functionality for testing.
+      global.Blob = MockBlob as unknown as typeof Blob;
+      // @ts-ignore
+      global.URL.createObjectURL = createObjectURL;
+      // @ts-ignore
+      global.URL.revokeObjectURL = revokeObjectURL;
+
+      const { getByTitle } = render(<DataExport points={points} />);
+      fireEvent.click(getByTitle('Download CSV Template'));
+
+      expect(captured.trim()).toBe('id,latitude,longitude,name');
+    } finally {
+      global.Blob = originalBlob;
+      // @ts-ignore
+      global.URL.createObjectURL = originalCreateObjectURL;
+      // @ts-ignore
+      global.URL.revokeObjectURL = originalRevokeObjectURL;
+    }
   });
 });

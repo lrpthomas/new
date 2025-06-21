@@ -4,10 +4,10 @@ import { MapPoint, GeoJSONFeature, CSVRow } from '../types';
  * Validates and processes CSV data
  * @throws {Error} If data is invalid or processing fails
  */
-export const processCSVData = (data: string): CSVRow[] => {
+export const processCSVData = (data: string, allowEmptyData = false): CSVRow[] => {
   try {
     const lines = data.split('\n').filter(line => line.trim());
-    if (lines.length < 2) {
+    if (lines.length < 2 && !allowEmptyData) {
       throw new Error('CSV must contain at least a header row and one data row');
     }
 
@@ -16,7 +16,7 @@ export const processCSVData = (data: string): CSVRow[] => {
       throw new Error('CSV must contain latitude and longitude columns');
     }
 
-    return lines.slice(1).map((line, index) => {
+    const rows = lines.slice(1).map((line, index) => {
       const values = line.split(',').map(v => v.trim());
       if (values.length !== headers.length) {
         throw new Error(`Row ${index + 2} has incorrect number of columns`);
@@ -39,6 +39,8 @@ export const processCSVData = (data: string): CSVRow[] => {
 
       return row;
     });
+
+    return rows;
   } catch (error) {
     throw new Error(`CSV processing failed: ${(error as Error).message}`);
   }
