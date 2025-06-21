@@ -20,10 +20,19 @@ Maptap is a browser-based tool for visualizing, editing, and exporting geospatia
 
 ## 📦 Installing Dependencies
 
-Use [pnpm](https://pnpm.io/) for dependency management:
+Use [pnpm](https://pnpm.io/) for dependency management. After cloning the repo run:
 
 ```bash
 pnpm install
+```
+
+### Setup Commands
+
+Run the following to verify your environment before development:
+
+```bash
+pnpm lint
+pnpm test
 ```
 
 ### Quick Setup
@@ -77,6 +86,12 @@ Run the test suite with:
 
 ```bash
 pnpm test
+```
+
+Jest is used for unit tests. Pass additional flags after `--` to forward options to Jest. For example:
+
+```bash
+pnpm test -- src/components/example.test.ts
 ```
 
 Use `pnpm test:watch` while developing to re-run tests on file changes.
@@ -144,3 +159,22 @@ DATA_STORE=file # use the file-based data store
 ```
 
 These variables are loaded at runtime if present.
+
+## 📝 Commit Message Guidelines
+
+All commits must reference a ticket from the `tickets/` directory. Start the commit message with the ticket ID followed by a brief summary:
+
+```text
+MP-0: short description of the change
+```
+
+Include the pull request number in parentheses when available, e.g. `MP-3 fix map init (#105)`.
+
+## 🛠️ Manual Offline Verification
+
+To confirm the service worker caches assets correctly:
+
+1. Run `pnpm build` and `pnpm start`.
+2. Open [http://localhost:3000](http://localhost:3000) and wait for the page to finish loading.
+3. Enable offline mode in your browser's dev tools and refresh the page.
+4. The application should load without a network connection, confirming offline support.
