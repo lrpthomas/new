@@ -79,7 +79,7 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
         setIsLoading(false);
       }
     },
-    []
+    [errors, warnings]
   );
 
   const addPoint = useCallback(
