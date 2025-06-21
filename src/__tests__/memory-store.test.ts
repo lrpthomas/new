@@ -1,7 +1,6 @@
 /** @jest-environment node */
 import memoryStore from '../db/memory-store';
-import { MapPoint } from '../types/map.types';
-import { User } from '../types/user.types';
+import { MapPoint, User } from '../types';
 
 describe('memory store persistence', () => {
   beforeEach(() => {

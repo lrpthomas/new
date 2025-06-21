@@ -1,4 +1,4 @@
-import { MapPoint, GeoJSONFeature, CSVRow } from '../types/map.types';
+import { MapPoint, GeoJSONFeature, CSVRow } from '../types';
 
 /**
  * Validates and processes CSV data

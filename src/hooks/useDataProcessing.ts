@@ -9,8 +9,6 @@ import {
 } from '../utils/dataProcessing';
 import {
   MapPoint,
-  GeoJSONFeature,
-  CSVRow,
   DataProcessingResult,
   MapError,
 } from '../types/map.types';
@@ -162,7 +160,8 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
       return updatedPoint;
     },
     []
-  );
+=======
+    [points]
 
   const deletePoint = useCallback((id: string) => {
     setPoints(prevPoints => prevPoints.filter(p => p.id !== id));

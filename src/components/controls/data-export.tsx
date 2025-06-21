@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { MapPoint, GeoJSONFeature } from '../../types/map.types';
+import { MapPoint, GeoJSONFeature } from '../../types';
 import styles from '../../styles/components/data-export.module.scss';
 import { MapPrintButton } from './map-print';
 

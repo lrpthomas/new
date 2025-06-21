@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import styles from '../../styles/components/map.module.scss';
 import { useMapState } from '../../hooks/useMapState';
-import { MapMarker } from '../../types/map.types';
+import { MapMarker } from '../../types';
 
 interface MapComponentProps {
   markers: MapMarker[];
