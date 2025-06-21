@@ -9,20 +9,26 @@ export function initMap() {
   map = L.map('map').setView([0, 0], 2);
 
   // Add base layers
-  const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors',
-  });
+  const osmLayer = L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '© OpenStreetMap contributors',
+    }
+  );
 
-  import L from 'leaflet';
+  const satelliteLayer = L.tileLayer(
     'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     {
       attribution: '© Esri',
     }
   );
 
-  const terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors',
-  });
+  const terrainLayer = L.tileLayer(
+    'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '© OpenStreetMap contributors',
+    }
+  );
 
   // Add default layer
   osmLayer.addTo(map);
