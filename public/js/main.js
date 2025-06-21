@@ -13,7 +13,7 @@ import {
 } from './modals.js';
 import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
 import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
-import { points, addPoint, removePoint, setPoints } from './state.js';
+import { store } from './store.js';
 
 let map;
 
@@ -28,7 +28,7 @@ async function initApp() {
 
     document.getElementById('layerToggleBtn')?.addEventListener('click', handleLayerToggle);
     document.getElementById('addPointBtn')?.addEventListener('click', () => {
-      window.isAddingPoint = true;
+      store.isAddingPoint = true;
       showToast('Point addition started.');
     });
 
@@ -64,7 +64,7 @@ function loadSavedPoints() {
     if (saved) {
       const savedPoints = JSON.parse(saved);
       savedPoints.forEach(point => {
-        addPoint(point);
+        store.addPoint(point);
         addMarker(point.latlng, point);
       });
       updatePointsList();
@@ -114,8 +114,8 @@ function promptJSONImport() {
 
 function clearAllData() {
   if (confirm('Clear all data? This cannot be undone.')) {
-    while (points.length) {
-      removePoint(points[0].id);
+    while (store.points.length) {
+      store.removePoint(store.points[0].id);
     }
     markers && markers.clearLayers();
     updatePointsList();
