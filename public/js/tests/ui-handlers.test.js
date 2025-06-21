@@ -2,6 +2,7 @@
 import { initUIHandlers, showPointForm, hidePointForm, filterPoints } from '../ui-handlers.js';
 import { addMarker } from '../map-init.js';
 import { toggleModal } from '../modals.js';
+import { addPoint, points } from '../state.js';
 
 // Mock DOM elements
 document.body.innerHTML = `
@@ -106,6 +107,16 @@ describe('UI Handlers', () => {
                 expect.objectContaining({ status: 'active' })
             );
         });
+
+        it('should update active class on status buttons', () => {
+            const allBtn = document.querySelector('[data-status="all"]');
+            const activeBtn = document.querySelector('[data-status="active"]');
+
+            filterPoints('active');
+
+            expect(activeBtn.classList.contains('active')).toBe(true);
+            expect(allBtn.classList.contains('active')).toBe(false);
+        });
     });
 
     describe('searchPoints', () => {
@@ -157,7 +168,7 @@ describe('UI Handlers', () => {
 
             // Add a point
             const point = { id: 1, name: 'Test Point' };
-            points.push(point);
+            addPoint(point);
 
             // Undo
             undoBtn.click();

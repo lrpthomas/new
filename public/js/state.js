@@ -1,4 +1,4 @@
-import { Pagination, UndoRedoManager, PerformanceMonitor } from './utils.js';
+import { PerformanceMonitor } from './utils.js';
 
 /** @type {Array<MapPoint>} */
 let points = [];
@@ -8,19 +8,19 @@ let pagination = new Pagination([]);
 let undoRedoManager = new UndoRedoManager();
 let performanceMonitor = new PerformanceMonitor();
 
-export function setPoints(newPoints) {
-  points = newPoints;
-}
-
 export function addPoint(point) {
   points.push(point);
 }
 
 export function removePoint(id) {
   const index = points.findIndex(p => p.id === id);
-  if (index >= 0) {
+  if (index !== -1) {
     points.splice(index, 1);
   }
+}
+
+export function setPoints(newPoints) {
+  points = newPoints;
 }
 
 export function setCurrentFilter(filter) {
@@ -33,11 +33,12 @@ export function setCurrentGroupFilter(group) {
 
 export {
   points,
+  addPoint,
+  removePoint,
+  setPoints,
   currentFilter,
   currentGroupFilter,
   pagination,
   undoRedoManager,
   performanceMonitor,
-  addPoint,
-  removePoint,
 };
