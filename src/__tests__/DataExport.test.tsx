@@ -91,7 +91,7 @@ describe('DataExport CSV export', () => {
 
       const createObjectURL = jest.fn(() => 'blob:url');
       const revokeObjectURL = jest.fn();
-      // @ts-expect-error
+      // @ts-expect-error: MockBlob is used to simulate Blob functionality for testing.
       global.Blob = MockBlob as unknown as typeof Blob;
       // @ts-ignore
       global.URL.createObjectURL = createObjectURL;
