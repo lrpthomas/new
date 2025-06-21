@@ -1,13 +1,13 @@
 // File import/export operations
 import { addMarker } from './map-init.js';
 import { showToast } from './ui-handlers.js';
-import { points, addPoint } from './state.js';
+import { store } from './store.js';
 
 // Export points to CSV
 export function exportToCSV() {
   try {
     const csv = Papa.unparse(
-      points.map(point => ({
+      store.points.map(point => ({
         name: point.name,
         status: point.status,
         description: point.description,
@@ -154,7 +154,7 @@ export function importFromCSV(file) {
 export function exportToGeoJSON() {
   const geojson = {
     type: 'FeatureCollection',
-    features: points.map(point => ({
+    features: store.points.map(point => ({
       type: 'Feature',
       geometry: {
         type: 'Point',
@@ -256,18 +256,18 @@ export function importFromJSON(file) {
 
       // Merge with existing points, avoiding duplicates
       const newPoints = importedPoints.filter(
-        newPoint => !points.some(existingPoint => existingPoint.id === newPoint.id)
+        newPoint => !store.points.some(existingPoint => existingPoint.id === newPoint.id)
       );
 
       // Add new points
-      newPoints.forEach(p => addPoint(p));
-      
+      newPoints.forEach(p => store.addPoint(p));
+
       // Save to localStorage
-      localStorage.setItem('mapPoints', JSON.stringify(points));
+      localStorage.setItem('mapPoints', JSON.stringify(store.points));
 
       // Update UI
       markers.clearLayers();
-      points.forEach(point => addMarker(point.latlng, point));
+      store.points.forEach(point => addMarker(point.latlng, point));
       updatePointsList();
       updateStatistics();
 
@@ -287,7 +287,7 @@ export function importFromJSON(file) {
 
 // Export points to JSON
 export function exportToJSON() {
-  downloadFile(JSON.stringify(points), 'points.json', 'application/json');
+  downloadFile(JSON.stringify(store.points), 'points.json', 'application/json');
 }
 
 // Helper function to download files
@@ -305,7 +305,7 @@ function downloadFile(content, filename, type) {
 
 // Import points and update UI
 function importPoints(newPoints) {
-  newPoints.forEach(point => addPoint(point));
+  newPoints.forEach(point => store.addPoint(point));
   newPoints.forEach(point => addMarker(point.latlng, point));
   updatePointsList();
   updateStatistics();
