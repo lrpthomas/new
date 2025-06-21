@@ -284,9 +284,9 @@ export function filterPoints(status) {
     setCurrentFilter(status);
 
     // Update active button
-    document.querySelectorAll('.status-filter button').forEach(button => {
-        button.classList.toggle('active',
-            button.getAttribute('onclick').includes(status));
+    document.querySelectorAll('.status-filter button').forEach(btn => {
+        const btnStatus = btn.dataset.status || 'all';
+        btn.classList.toggle('active', btnStatus === status);
     });
 
     // Filter markers

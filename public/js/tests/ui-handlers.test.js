@@ -105,6 +105,16 @@ describe('UI Handlers', () => {
                 expect.objectContaining({ status: 'active' })
             );
         });
+
+        it('should update active class on status buttons', () => {
+            const allBtn = document.querySelector('[data-status="all"]');
+            const activeBtn = document.querySelector('[data-status="active"]');
+
+            filterPoints('active');
+
+            expect(activeBtn.classList.contains('active')).toBe(true);
+            expect(allBtn.classList.contains('active')).toBe(false);
+        });
     });
 
     describe('searchPoints', () => {
