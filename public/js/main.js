@@ -6,13 +6,22 @@ import {
   toggleStatistics,
   showGroupFilter,
   closeGroupFilter,
-  applyGroupFilter,
-  toggleAdvancedSearch,
   toggleBulkEdit,
   applyBulkEdit
 } from './modals.js';
-import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
-import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
+import {
+  initUIHandlers,
+  showToast,
+  updatePointsList,
+  updateStatistics
+} from './ui-handlers.js';
+import {
+  exportToGeoJSON,
+  importFromGeoJSON,
+  exportToJSON,
+  importFromJSON
+} from './file-io.js';
+import { points, addPoint, removePoint } from './state.js';
 import { store } from './store.js';
 
 let map;
