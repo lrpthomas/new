@@ -69,6 +69,8 @@ pnpm build
 pnpm start
 ```
 
+The compiled JavaScript will be written to `public/build`.
+
 ## 🧪 Running Tests
 
 Run the test suite with:
