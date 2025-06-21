@@ -25,6 +25,7 @@ app.use('/api', apiRouter);
 
 // Serve static files
 app.use(express.static('public'));
+app.use(express.static('dist'));
 
 // Catch-all: serve frontend
 app.get('*', (_req, res) => {
