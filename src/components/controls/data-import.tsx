@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useDataProcessing } from '../../hooks/useDataProcessing';
-import { MapPoint, MapError } from '../../types/map.types';
+import { MapPoint, MapError } from '../../types';
 import styles from '../../styles/components/data-import.module.scss';
 
 interface DataImportProps {
