@@ -19,8 +19,7 @@ interface SortConfig {
 export const DataTable: React.FC<DataTableProps> = ({
   points,
   onPointSelect,
-  onPointUpdate,
-  onPointDelete,
+  onPointDelete
 }) => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'id', direction: 'asc' });
   const [filterText, setFilterText] = useState('');
