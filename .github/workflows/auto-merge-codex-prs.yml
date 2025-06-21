@@ -18,6 +18,7 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'codex') ||
       github.event.pull_request.user.login == 'lrpthomas'
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@581d62f320f2a4043a1ea6ac77290c60d27485cc
