@@ -1,6 +1,6 @@
 import { addMarker } from './map-init';
 import { debounce, sanitizeInput, Validator } from './utils';
-import type { MapPoint, LatLng } from '../types/legacy.types';
+import type { LatLng } from '../types/legacy.types';
 import {
   points,
   currentGroupFilter,
