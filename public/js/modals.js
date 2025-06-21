@@ -1,19 +1,23 @@
 // Modal dialog management
 import { showToast } from './ui-handlers.js';
 import { store } from './store.js';
+import { trapFocus } from './utils.js';
 
 // Toggle modal visibility
 export function toggleModal(modalId, show = true) {
   const modal = document.getElementById(modalId);
-  if (modal) {
-    modal.style.display = show ? 'block' : 'none';
+  if (!modal) return;
 
-    // Handle focus management
-    if (show) {
-      const firstFocusable = modal.querySelector(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      if (firstFocusable) firstFocusable.focus();
+  if (show) {
+    modal.style.display = 'block';
+    // Trap focus when modal is open
+    modal._releaseFocus = trapFocus(modal);
+  } else {
+    modal.style.display = 'none';
+    // Release focus trap when modal is closed
+    if (typeof modal._releaseFocus === 'function') {
+      modal._releaseFocus();
+      modal._releaseFocus = null;
     }
   }
 }
@@ -53,15 +57,14 @@ export function showGroupFilter() {
   const groups = [...new Set(store.points.map(p => p.group).filter(Boolean))];
 
   // Create group buttons
-  container.innerHTML = ''; groups.forEach(group => { const button = document.createElement('button'); button.className = 'button secondary'; button.textContent = group; button.onclick = () => applyGroupFilter(group); container.appendChild(button); });
-    .map(
-      group => `
-        <button class="button secondary" onclick="applyGroupFilter('${group}')">
-            ${group}
-        </button>
-    `
-    )
-    .join('');
+  container.innerHTML = '';
+  groups.forEach(group => {
+    const button = document.createElement('button');
+    button.className = 'button secondary';
+    button.textContent = group;
+    button.onclick = () => applyGroupFilter(group);
+    container.appendChild(button);
+  });
 
   toggleModal('groupFilterModal', true);
 }
@@ -74,7 +77,8 @@ export function closeGroupFilter() {
 // Apply group filter
 export function applyGroupFilter(group) {
   store.currentGroupFilter = group;
-  import { filterPoints } from './path/to/filterPointsModule';
+  // You should ensure filterPoints is imported from your core filter logic if needed
+  filterPoints('all');
   closeGroupFilter();
   showToast(`Filtered by group: ${group}`);
 }
@@ -157,7 +161,7 @@ export function applyBulkEdit() {
   });
 
   // Update UI
-  filterPoints(store.currentFilter);
+  filterPoints(store.currentFilter || 'all');
   updatePointsList();
   updateStatistics();
   toggleModal('bulkEditModal', false);
