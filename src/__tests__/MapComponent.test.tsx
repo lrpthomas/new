@@ -15,16 +15,16 @@ const mockMap = {
 };
 
 jest.mock('react-leaflet', () => {
-  const MockMapContainer = React.forwardRef<any, any>((props, ref) => {
+  const MockMapContainer = React.forwardRef<HTMLDivElement, React.PropsWithChildren>((props, ref) => {
     React.useImperativeHandle(ref, () => mockMap, []);
     return React.createElement('div', null, props.children);
   });
   MockMapContainer.displayName = 'MapContainer';
   return {
     MapContainer: MockMapContainer,
-    TileLayer: (props: unknown) => React.createElement('div', null, props.children),
-    Marker: (props: unknown) => React.createElement('div', null, props.children),
-    Popup: (props: unknown) => React.createElement('div', null, props.children),
+    TileLayer: (props: React.PropsWithChildren<unknown>) => React.createElement('div', null, props.children),
+    Marker: (props: React.PropsWithChildren<unknown>) => React.createElement('div', null, props.children),
+    Popup: (props: React.PropsWithChildren<unknown>) => React.createElement('div', null, props.children),
   };
 });
 
