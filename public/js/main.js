@@ -14,7 +14,7 @@ import {
 import { store } from './store.js';
 
 let map;
-async function initApp() {
+async function initApp() { setupEventListeners(); try {
   document.getElementById('layerToggleBtn')?.addEventListener('click', handleLayerToggle);
   document.getElementById('addPointBtn')?.addEventListener('click', () => {
     store.isAddingPoint = true;
