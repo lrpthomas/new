@@ -4,9 +4,12 @@ import { fileURLToPath } from 'url';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import dotenv from 'dotenv';
 import apiRouter from './routes/api';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -35,11 +38,11 @@ app.get('*', (_req, res) => {
 app.use(
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   (err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({
-    error: 'Something went wrong!',
-    message: process.env.NODE_ENV === 'development' ? err.message : undefined,
-  });
+    console.error(err.stack);
+    res.status(500).json({
+      error: 'Something went wrong!',
+      message: process.env.NODE_ENV === 'development' ? err.message : undefined,
+    });
   }
 );
 
