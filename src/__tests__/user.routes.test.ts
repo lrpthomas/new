@@ -2,9 +2,9 @@
 import express from 'express';
 import request from 'supertest';
 import { userRoutes } from '../routes/user.routes';
-import dataStore from '../db/data-store';
+import dataStore from '../db';
 
-jest.mock('../db/data-store');
+jest.mock('../db');
 
 describe('user routes', () => {
   const app = express();
