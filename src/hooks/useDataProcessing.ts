@@ -161,7 +161,7 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
       // updatedPoint is set synchronously inside setPoints
       return updatedPoint;
     },
-    [points]
+    []
   );
 
   const deletePoint = useCallback((id: string) => {
