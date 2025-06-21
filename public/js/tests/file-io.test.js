@@ -19,7 +19,7 @@ describe('File IO error handling', () => {
 
     const file = new File(['name,lat,lng\n'], 'points.csv', { type: 'text/csv' });
     importFromCSV(file);
-    expect(showToast).toHaveBeenCalled();
+    expect(showToast).toHaveBeenCalledWith(expect.stringContaining('Error importing CSV'));
   });
 
   it('calls showToast when GeoJSON parsing fails', done => {
@@ -27,7 +27,7 @@ describe('File IO error handling', () => {
     const file = new File([blob], 'points.geojson', { type: 'application/json' });
     importFromGeoJSON(file);
     setTimeout(() => {
-      expect(showToast).toHaveBeenCalled();
+      expect(showToast).toHaveBeenCalledWith(expect.stringContaining('Error importing GeoJSON'));
       done();
     }, 0);
   });

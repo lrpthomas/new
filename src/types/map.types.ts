@@ -28,15 +28,35 @@ export interface MapBounds {
   west: number;
 }
 
+export type LatLngBounds = MapBounds;
+
 export interface Position {
   lat: number;
   lng: number;
+}
+
+export type LatLng = Position;
+
+export type PointStatus = 'active' | 'pending' | 'completed' | 'delayed' | 'inactive';
+
+export interface PaginationOptions {
+  currentPage: number;
+  itemsPerPage: number;
+  totalItems: number;
 }
 
 export interface MapPoint {
   id: string;
   position: Position;
   properties: Record<string, any>;
+  name?: string;
+  status?: PointStatus;
+  description?: string;
+  group?: string;
+  customFields?: Record<string, string>;
+  createdAt?: number;
+  updatedAt?: number;
+  selected?: boolean;
 }
 
 export interface GeoJSONFeature {
@@ -72,4 +92,4 @@ export interface DataProcessingResult<T> {
   data: T;
   warnings: string[];
   errors: MapError[];
-} 
+}

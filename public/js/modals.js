@@ -160,6 +160,11 @@ export function applyBulkEdit() {
     point.selected = false;
   });
 
+  // Clear any remaining selections
+  store.points.forEach(p => {
+    if (p.selected) p.selected = false;
+  });
+
   // Update UI
   filterPoints(store.currentFilter || 'all');
   updatePointsList();

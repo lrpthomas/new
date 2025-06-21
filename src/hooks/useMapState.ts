@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { MapViewState } from '../types/map.types';
+import { MapViewState } from '../types';
 
 const DEFAULT_CENTER: { lat: number; lng: number } = { lat: 0, lng: 0 };
 const DEFAULT_ZOOM = 2;
@@ -11,7 +11,7 @@ export const useMapState = () => {
   });
 
   const updateMapState = useCallback((newState: Partial<MapViewState>) => {
-    setMapState((prev) => ({
+    setMapState(prev => ({
       ...prev,
       ...newState,
     }));
@@ -22,4 +22,4 @@ export const useMapState = () => {
     zoom: mapState.zoom,
     setMapState: updateMapState,
   };
-}; 
+};

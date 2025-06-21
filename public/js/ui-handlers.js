@@ -8,7 +8,7 @@ import {
   performanceMonitor,
   setCurrentFilter,
   addPoint,
-  removePoint
+  removePoint,
 } from './state.js';
 
 // Initialize UI handlers
@@ -58,11 +58,11 @@ export function initUIHandlers() {
     const nextPageBtn = document.getElementById('nextPageBtn');
     if (prevPageBtn && nextPageBtn) {
       prevPageBtn.addEventListener('click', () => {
-        pagination.setPage(pagination.currentPage - 1);
+        store.pagination.setPage(store.pagination.currentPage - 1);
         updatePointsList();
       });
       nextPageBtn.addEventListener('click', () => {
-        pagination.setPage(pagination.currentPage + 1);
+        store.pagination.setPage(store.pagination.currentPage + 1);
         updatePointsList();
       });
     }
@@ -126,13 +126,13 @@ async function handlePointSubmit(e) {
     formData.customFields = customFields;
 
     // Begin undo group for the save operation
-    undoRedoManager.beginGroup();
+    store.undoRedoManager.beginGroup();
 
     // Save point
     const success = await savePoint(formData);
     if (success) {
       // End undo group
-      undoRedoManager.endGroup();
+      store.undoRedoManager.endGroup();
 
       // Update UI
       hidePointForm();
@@ -153,14 +153,14 @@ async function handlePointSubmit(e) {
 function searchPoints(query) {
   performanceMonitor.start('searchPoints');
   try {
-    const filteredPoints = points.filter(
+    const filteredPoints = store.points.filter(
       point =>
         point.name.toLowerCase().includes(query) ||
         point.description.toLowerCase().includes(query) ||
         point.group.toLowerCase().includes(query)
     );
 
-    pagination.setItems(filteredPoints);
+    store.pagination.setItems(filteredPoints);
     updatePointsList();
   } catch (error) {
     console.error('Error searching points:', error);
@@ -175,7 +175,7 @@ function searchPoints(query) {
 function sortPoints(sortBy) {
   performanceMonitor.start('sortPoints');
   try {
-    const sortedPoints = [...points].sort((a, b) => {
+    const sortedPoints = [...store.points].sort((a, b) => {
       switch (sortBy) {
         case 'name':
           return a.name.localeCompare(b.name);
@@ -190,7 +190,7 @@ function sortPoints(sortBy) {
       }
     });
 
-    pagination.setItems(sortedPoints);
+    store.pagination.setItems(sortedPoints);
     updatePointsList();
   } catch (error) {
     console.error('Error sorting points:', error);
@@ -212,8 +212,8 @@ function updateUI() {
     // Update undo/redo buttons
     const undoBtn = document.getElementById('undoBtn');
     const redoBtn = document.getElementById('redoBtn');
-    if (undoBtn) undoBtn.disabled = !undoRedoManager.canUndo();
-    if (redoBtn) redoBtn.disabled = !undoRedoManager.canRedo();
+    if (undoBtn) undoBtn.disabled = !store.undoRedoManager.canUndo();
+    if (redoBtn) redoBtn.disabled = !store.undoRedoManager.canRedo();
   } catch (error) {
     console.error('Error updating UI:', error);
     showToast('Error updating UI');
@@ -228,8 +228,8 @@ export function updatePointsList() {
   performanceMonitor.start('updatePointsList');
   try {
     const container = document.getElementById('pointsListContent');
-    const currentPoints = pagination.getCurrentPage();
-    const pageInfo = pagination.getPageInfo();
+    const currentPoints = store.pagination.getCurrentPage();
+    const pageInfo = store.pagination.getPageInfo();
 
     container.innerHTML = currentPoints
       .map(
@@ -267,10 +267,10 @@ export function updatePointsList() {
   }
 }
 // Point selection handling
-export function togglePointSelection(pointId, isSelected) {
-  const point = points.find(p => p.id === pointId);
+export function togglePointSelection(id, selected) {
+  const point = points.find(p => p.id === id);
   if (point) {
-    point.selected = isSelected;
+    point.selected = selected;
   }
 }
 
@@ -297,9 +297,9 @@ export function hidePointForm() {
 
 // Filter points by status
 export function filterPoints(status) {
-  setCurrentFilter(status);
+  store.currentFilter = status;
 
-  // Update active button
+  // Update active button state
   document.querySelectorAll('.status-filter button').forEach(btn => {
     const btnStatus = btn.dataset.status || 'all';
     btn.classList.toggle('active', btnStatus === status);
@@ -307,13 +307,15 @@ export function filterPoints(status) {
 
   // Filter markers
   markers.clearLayers();
-  points.filter(point => {
-    if (status === 'all') return true;
-    if (currentGroupFilter) return point.group === currentGroupFilter;
-    return point.status === status;
-  }).forEach(point => {
-    addMarker(point.latlng, point);
-  });
+  points
+    .filter(point => {
+      if (status === 'all') return true;
+      if (currentGroupFilter) return point.group === currentGroupFilter;
+      return point.status === status;
+    })
+    .forEach(point => {
+      addMarker(point.latlng, point);
+    });
 }
 
 // Show toast message
@@ -347,13 +349,13 @@ function initOfflineDetection() {
 // Update statistics
 export function updateStatistics() {
   const stats = {
-    total: points.length,
-    active: points.filter(p => p.status === 'active').length,
-    pending: points.filter(p => p.status === 'pending').length,
-    completed: points.filter(p => p.status === 'completed').length,
-    delayed: points.filter(p => p.status === 'delayed').length,
-    inactive: points.filter(p => p.status === 'inactive').length,
-    groups: new Set(points.map(p => p.group).filter(Boolean)).size,
+    total: store.points.length,
+    active: store.points.filter(p => p.status === 'active').length,
+    pending: store.points.filter(p => p.status === 'pending').length,
+    completed: store.points.filter(p => p.status === 'completed').length,
+    delayed: store.points.filter(p => p.status === 'delayed').length,
+    inactive: store.points.filter(p => p.status === 'inactive').length,
+    groups: new Set(store.points.map(p => p.group).filter(Boolean)).size,
   };
 
   Object.entries(stats).forEach(([key, value]) => {
@@ -371,22 +373,22 @@ async function savePoint(pointData) {
     }
 
     // Check if point exists
-    const existingIndex = points.findIndex(p => p.id === pointData.id);
+    const existingIndex = store.points.findIndex(p => p.id === pointData.id);
 
     if (existingIndex >= 0) {
       // Update existing point
-      points[existingIndex] = pointData;
+      store.points[existingIndex] = pointData;
     } else {
       // Add new point
-      addPoint(pointData);
+      store.addPoint(pointData);
     }
 
     // Save to localStorage
-    localStorage.setItem('mapPoints', JSON.stringify(points));
+    localStorage.setItem('mapPoints', JSON.stringify(store.points));
 
     // Update map
     markers.clearLayers();
-    points.forEach(point => addMarker(point.latlng, point));
+    store.points.forEach(point => addMarker(point.latlng, point));
 
     return true;
   } catch (error) {
@@ -398,7 +400,7 @@ async function savePoint(pointData) {
 
 // Edit existing point
 export function editPoint(pointId) {
-  const point = points.find(p => p.id === pointId);
+  const point = store.points.find(p => p.id === pointId);
   if (!point) {
     showToast('Point not found');
     return;
@@ -423,14 +425,14 @@ export function deletePoint(pointId) {
   }
 
   try {
-    const index = points.findIndex(p => p.id === pointId);
+    const index = store.points.findIndex(p => p.id === pointId);
     if (index >= 0) {
-      removePoint(pointId);
-      localStorage.setItem('mapPoints', JSON.stringify(points));
+      store.removePoint(pointId);
+      localStorage.setItem('mapPoints', JSON.stringify(store.points));
 
       // Update UI
       markers.clearLayers();
-      points.forEach(point => addMarker(point.latlng, point));
+      store.points.forEach(point => addMarker(point.latlng, point));
       updatePointsList();
       updateStatistics();
       showToast('Point deleted successfully');
