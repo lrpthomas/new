@@ -140,6 +140,7 @@ FIREBASE_PROJECT_ID=your-project-id
 FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
 FIREBASE_APP_ID=your-firebase-app-id
 PORT=3000 # override default port
+DATA_STORE=file # use the file-based data store
 ```
 
 These variables are loaded at runtime if present.
