@@ -1,17 +1,18 @@
 import { DataStore, MapPoint, User } from './data-store';
 
 // Placeholder implementation for future persistent storage
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export const fileStore: DataStore = {
   async listUsers(): Promise<User[]> {
     throw new Error('FileStore not implemented');
   },
-  async getUser(id: string): Promise<User | undefined> {
+  async getUser(_id: string): Promise<User | undefined> {
     throw new Error('FileStore not implemented');
   },
   async createUser(_user: User): Promise<User> {
     throw new Error('FileStore not implemented');
   },
-  async updateUser(id: string, _data: Partial<User>): Promise<User | undefined> {
+  async updateUser(_id: string, _data: Partial<User>): Promise<User | undefined> {
     throw new Error('FileStore not implemented');
   },
   async deleteUser(_id: string): Promise<boolean> {
