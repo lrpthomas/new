@@ -4,6 +4,8 @@ export interface MapMarker {
   lng: number;
   title: string;
   description: string;
+  /** Marker icon color in hex or CSS color name */
+  color?: string;
   properties?: Record<string, any>;
 }
 
@@ -72,4 +74,4 @@ export interface DataProcessingResult<T> {
   data: T;
   warnings: string[];
   errors: MapError[];
-} 
+}

@@ -62,4 +62,52 @@ describe('DataExport CSV export', () => {
       global.URL.revokeObjectURL = originalRevokeObjectURL;
     }
   });
+
+  it('exports only headers in template mode', () => {
+    const originalBlob = global.Blob;
+    const originalCreateObjectURL = global.URL.createObjectURL;
+    const originalRevokeObjectURL = global.URL.revokeObjectURL;
+
+    try {
+      const points: MapPoint[] = [
+        {
+          id: '1',
+          position: { lat: 10, lng: 20 },
+          properties: { name: 'Test' },
+        },
+      ];
+
+      let captured = '';
+      class MockBlob {
+        private data: string;
+        constructor(parts: string[]) {
+          this.data = parts.join('');
+          captured = this.data;
+        }
+        text() {
+          return Promise.resolve(this.data);
+        }
+      }
+
+      const createObjectURL = jest.fn(() => 'blob:url');
+      const revokeObjectURL = jest.fn();
+      // @ts-expect-error
+      global.Blob = MockBlob as unknown as typeof Blob;
+      // @ts-ignore
+      global.URL.createObjectURL = createObjectURL;
+      // @ts-ignore
+      global.URL.revokeObjectURL = revokeObjectURL;
+
+      const { getByTitle } = render(<DataExport points={points} />);
+      fireEvent.click(getByTitle('Download CSV Template'));
+
+      expect(captured.trim()).toBe('id,latitude,longitude,name');
+    } finally {
+      global.Blob = originalBlob;
+      // @ts-ignore
+      global.URL.createObjectURL = originalCreateObjectURL;
+      // @ts-ignore
+      global.URL.revokeObjectURL = originalRevokeObjectURL;
+    }
+  });
 });
