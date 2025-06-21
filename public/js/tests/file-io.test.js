@@ -1,4 +1,4 @@
-import { importFromCSV, importFromGeoJSON } from '../file-io.js';
+import { importFromCSV, importFromGeoJSON, importFromJSON } from '../file-io.js';
 import { showToast } from '../ui-handlers.js';
 
 jest.mock('../ui-handlers.js', () => ({
@@ -28,6 +28,16 @@ describe('File IO error handling', () => {
     importFromGeoJSON(file);
     setTimeout(() => {
       expect(showToast).toHaveBeenCalledWith(expect.stringContaining('Error importing GeoJSON'));
+      done();
+    }, 0);
+  });
+
+  it('calls showToast when JSON parsing fails', done => {
+    const blob = new Blob(['invalid'], { type: 'application/json' });
+    const file = new File([blob], 'points.json', { type: 'application/json' });
+    importFromJSON(file);
+    setTimeout(() => {
+      expect(showToast).toHaveBeenCalled();
       done();
     }, 0);
   });

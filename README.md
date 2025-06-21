@@ -15,6 +15,8 @@ Maptap is a browser-based tool for visualizing, editing, and exporting geospatia
 
 - **Frontend** – React and TypeScript components live in `src/components` with supporting hooks in `src/hooks`.
 - **Backend** – Express server code is in `src/server.ts` with API routes under `src/routes`.
+- **src/** – Main TypeScript application (React components, hooks, utilities).
+- **public/** – Legacy JavaScript version kept for reference and quick demos.
 
 ## 📦 Installing Dependencies
 
@@ -24,7 +26,15 @@ Use [pnpm](https://pnpm.io/) for dependency management:
 pnpm install
 ```
 
-After installing, run `pnpm lint` and `pnpm test` to ensure the project is set up correctly.
+### Quick Setup
+
+```bash
+pnpm lint
+pnpm test
+pnpm dev
+```
+
+Run `pnpm lint` to check formatting and `pnpm test` to execute the Jest suite before starting the development server.
 
 ## 🧹 Linting
 
@@ -73,9 +83,9 @@ Use `pnpm test:watch` while developing to re-run tests on file changes.
 
 ### Step-by-Step CSV Workflow
 
-1. Click **Import CSV** and choose a file to load your points.
-2. Drag markers on the map or edit rows in the table to update coordinates and other fields.
-3. Click **Export CSV** to download the revised dataset once your edits are complete.
+1. Click **Import** and choose a CSV file to load your points.
+2. Edit point data by dragging markers on the map or updating values in the table.
+3. Click **Export CSV** to download the updated dataset.
 
 - GeoJSON files can also be imported through the same dialog.
 
@@ -119,7 +129,7 @@ Set `PORT` in your environment to change the listening port.
 
 ## ⚙️ Environment Configuration
 
-For optional Firebase integration, create a `.env` file with your Firebase credentials. The app will fall back to local storage when these values are not provided:
+Optional environment variables can be placed in a `.env` file. The app falls back to local storage when Firebase values are not present:
 
 ```bash
 FIREBASE_API_KEY=your-api-key
@@ -127,6 +137,7 @@ FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 FIREBASE_PROJECT_ID=your-project-id
 FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
 FIREBASE_APP_ID=your-firebase-app-id
+PORT=3000 # override default port
 ```
 
 These variables are loaded at runtime if present.

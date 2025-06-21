@@ -1,4 +1,4 @@
-import { MapPoint, GeoJSONFeature, CSVRow } from '../types/map.types';
+import { MapPoint, GeoJSONFeature, CSVRow } from '../types';
 
 /**
  * Validates and processes CSV data
@@ -53,7 +53,7 @@ export const csvToGeoJSON = (csvData: CSVRow[]): GeoJSONFeature[] => {
     return csvData.map(row => {
       const lat = parseFloat(row.latitude);
       const lng = parseFloat(row.longitude);
-      
+
       const properties = { ...row };
       delete properties.latitude;
       delete properties.longitude;
@@ -62,9 +62,9 @@ export const csvToGeoJSON = (csvData: CSVRow[]): GeoJSONFeature[] => {
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: [lng, lat]
+          coordinates: [lng, lat],
         },
-        properties
+        properties,
       };
     });
   } catch (error) {
@@ -119,7 +119,7 @@ export const geoJSONToMapPoints = (features: GeoJSONFeature[]): MapPoint[] => {
       return {
         id: `point-${index}`,
         position: { lat, lng },
-        properties: feature.properties
+        properties: feature.properties,
       };
     });
   } catch (error) {
@@ -151,4 +151,4 @@ export const validateMapPoint = (point: MapPoint): void => {
  */
 export const generatePointId = (): string => {
   return `point-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-}; 
+};
