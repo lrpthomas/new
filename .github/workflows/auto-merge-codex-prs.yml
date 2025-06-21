@@ -18,11 +18,15 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'codex') ||
       github.event.pull_request.user.login == 'lrpthomas'
     runs-on: ubuntu-latest
-   steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
 
-  - name: Enable Auto-Merge
-    uses: peter-evans/enable-pull-request-automerge@v3
-    with:
-      merge-method: squash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+        
+      - name: Enable Auto-Merge
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          merge-method: squash
