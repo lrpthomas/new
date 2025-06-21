@@ -116,6 +116,11 @@ describe('UI Handlers', () => {
 
             expect(activeBtn.classList.contains('active')).toBe(true);
             expect(allBtn.classList.contains('active')).toBe(false);
+
+            filterPoints('all');
+
+            expect(allBtn.classList.contains('active')).toBe(true);
+            expect(activeBtn.classList.contains('active')).toBe(false);
         });
     });
 
