@@ -36,6 +36,52 @@ export function sanitizeInput(str) {
 }
 
 /**
+ * Trap focus within a modal and handle Escape key
+ * @param {HTMLElement} modalElement
+ * @returns {Function} cleanup
+ */
+export function trapFocus(modalElement) {
+    if (!modalElement) return () => {};
+
+    const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusableElements = Array.from(modalElement.querySelectorAll(focusableSelectors)).filter(el => !el.disabled);
+    const first = focusableElements[0];
+    const last = focusableElements[focusableElements.length - 1];
+    const previouslyFocused = document.activeElement;
+
+    function handleKeydown(e) {
+        if (e.key === 'Tab') {
+            if (focusableElements.length === 0) {
+                e.preventDefault();
+                return;
+            }
+            if (e.shiftKey) {
+                if (document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else if (document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+
+        if (e.key === 'Escape') {
+            const closeBtn = modalElement.querySelector('.close-modal');
+            if (closeBtn) closeBtn.click();
+        }
+    }
+
+    modalElement.addEventListener('keydown', handleKeydown);
+    if (first) first.focus();
+
+    return function cleanup() {
+        modalElement.removeEventListener('keydown', handleKeydown);
+        if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
+    };
+}
+
+/**
  * Enhanced cache implementation with LRU strategy
  */
 export class Cache {

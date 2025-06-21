@@ -1,17 +1,21 @@
 // Modal dialog management
 import { showToast } from './ui-handlers.js';
 import { points, currentFilter, setCurrentGroupFilter } from './state.js';
+import { trapFocus } from './utils.js';
 
 // Toggle modal visibility
 export function toggleModal(modalId, show = true) {
     const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = show ? 'block' : 'none';
+    if (!modal) return;
 
-        // Handle focus management
-        if (show) {
-            const firstFocusable = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-            if (firstFocusable) firstFocusable.focus();
+    if (show) {
+        modal.style.display = 'block';
+        modal._releaseFocus = trapFocus(modal);
+    } else {
+        modal.style.display = 'none';
+        if (typeof modal._releaseFocus === 'function') {
+            modal._releaseFocus();
+            modal._releaseFocus = null;
         }
     }
 }
