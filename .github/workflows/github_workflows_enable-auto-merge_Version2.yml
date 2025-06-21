@@ -21,6 +21,5 @@ jobs:
             console.log('GitHub Script step running');
 
       - uses: peter-evans/enable-pull-request-automerge@v3
-        with:
-          # Example configuration (customize as needed)
-          # merge-method: squash
+        with: 
+          merge-method: squash
