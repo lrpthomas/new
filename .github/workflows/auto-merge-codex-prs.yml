@@ -1,6 +1,14 @@
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled]
+
 jobs:
   enable-auto-merge:
-    # ... existing config ...
+    if: >
+      contains(github.event.pull_request.labels.*.name, 'codex') ||
+      github.event.pull_request.user.login == 'lrpthomas'
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
