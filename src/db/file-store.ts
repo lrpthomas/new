@@ -5,7 +5,7 @@ export const fileStore: DataStore = {
   async listUsers(): Promise<User[]> {
     throw new Error('FileStore not implemented');
   },
-  async getUser(_id: string): Promise<User | undefined> {
+  async getUser(id: string): Promise<User | undefined> {
     throw new Error('FileStore not implemented');
   },
   async createUser(_user: User): Promise<User> {
