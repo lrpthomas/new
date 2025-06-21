@@ -303,6 +303,8 @@ export function filterPoints(status) {
 // Show toast message
 export function showToast(message, duration = 3000) {
     const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.setAttribute('role', 'alert');
     toast.textContent = message;
     toast.style.display = 'block';
 
