@@ -3,6 +3,8 @@ import { render, fireEvent } from '@testing-library/react';
 import { DataTable } from '../components/controls/data-table';
 import { MapPoint } from '../types/map.types';
 
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 jest.mock('react-window', () => {
   const React = require('react');
   return {
