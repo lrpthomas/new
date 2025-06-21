@@ -8,7 +8,7 @@ import {
   performanceMonitor,
   setCurrentFilter,
   addPoint,
-  removePoint
+  removePoint,
 } from './state.js';
 
 // Initialize UI handlers
@@ -267,10 +267,10 @@ export function updatePointsList() {
   }
 }
 // Point selection handling
-export function togglePointSelection(pointId, isSelected) {
-  const point = points.find(p => p.id === pointId);
+export function togglePointSelection(id, selected) {
+  const point = points.find(p => p.id === id);
   if (point) {
-    point.selected = isSelected;
+    point.selected = selected;
   }
 }
 
@@ -307,13 +307,15 @@ export function filterPoints(status) {
 
   // Filter markers
   markers.clearLayers();
-  points.filter(point => {
-    if (status === 'all') return true;
-    if (currentGroupFilter) return point.group === currentGroupFilter;
-    return point.status === status;
-  }).forEach(point => {
-    addMarker(point.latlng, point);
-  });
+  points
+    .filter(point => {
+      if (status === 'all') return true;
+      if (currentGroupFilter) return point.group === currentGroupFilter;
+      return point.status === status;
+    })
+    .forEach(point => {
+      addMarker(point.latlng, point);
+    });
 }
 
 // Show toast message
