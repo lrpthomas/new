@@ -1,5 +1,5 @@
 // Utility functions
-import type { ValidationError } from '../types/legacy.types';
+// import type { ValidationError } from '../types/legacy.types';
 
 /**
  * Debounce function to limit how often a function can be called
