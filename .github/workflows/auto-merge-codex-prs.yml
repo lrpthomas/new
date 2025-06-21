@@ -21,8 +21,9 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@581d62f320f2a4043a1ea6ac77290c60d27485cc
+        uses: actions/checkout@v3
+
       - name: Enable Auto-Merge
-        uses: peter-evans/enable-pull-request-automerge@abc123def4567890abcdef1234567890abcdef12
+        uses: peter-evans/enable-pull-request-automerge@v3
         with:
           merge-method: squash
