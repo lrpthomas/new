@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { MapPoint } from '../../types/map.types';
+import { MapPoint } from '../../types';
 import styles from '../../styles/components/data-table.module.scss';
 
 interface DataTableProps {
@@ -20,7 +20,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   points,
   onPointSelect,
   onPointUpdate,
-  onPointDelete
+  onPointDelete,
 }) => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'id', direction: 'asc' });
   const [filterText, setFilterText] = useState('');
@@ -36,7 +36,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   const handleSort = useCallback((key: string) => {
     setSortConfig(current => ({
       key,
-      direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc'
+      direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc',
     }));
   }, []);
 
@@ -68,14 +68,20 @@ export const DataTable: React.FC<DataTableProps> = ({
     });
   }, [points, filterText, sortConfig]);
 
-  const handleRowClick = useCallback((point: MapPoint) => {
-    onPointSelect?.(point);
-  }, [onPointSelect]);
+  const handleRowClick = useCallback(
+    (point: MapPoint) => {
+      onPointSelect?.(point);
+    },
+    [onPointSelect]
+  );
 
-  const handleDelete = useCallback((e: React.MouseEvent, pointId: string) => {
-    e.stopPropagation();
-    onPointDelete?.(pointId);
-  }, [onPointDelete]);
+  const handleDelete = useCallback(
+    (e: React.MouseEvent, pointId: string) => {
+      e.stopPropagation();
+      onPointDelete?.(pointId);
+    },
+    [onPointDelete]
+  );
 
   return (
     <div className={styles.container}>
@@ -104,11 +110,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               <th>Latitude</th>
               <th>Longitude</th>
               {allProperties.map(property => (
-                <th
-                  key={property}
-                  onClick={() => handleSort(property)}
-                  className={styles.sortable}
-                >
+                <th key={property} onClick={() => handleSort(property)} className={styles.sortable}>
                   {property}
                   {sortConfig.key === property && (
                     <span className={styles.sortIndicator}>
@@ -122,11 +124,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           </thead>
           <tbody>
             {filteredAndSortedPoints.map(point => (
-              <tr
-                key={point.id}
-                onClick={() => handleRowClick(point)}
-                className={styles.row}
-              >
+              <tr key={point.id} onClick={() => handleRowClick(point)} className={styles.row}>
                 <td>{point.id}</td>
                 <td>{point.position.lat.toFixed(6)}</td>
                 <td>{point.position.lng.toFixed(6)}</td>
@@ -135,7 +133,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 ))}
                 <td>
                   <button
-                    onClick={(e) => handleDelete(e, point.id)}
+                    onClick={e => handleDelete(e, point.id)}
                     className={styles.deleteButton}
                     title="Delete point"
                   >
@@ -155,4 +153,4 @@ export const DataTable: React.FC<DataTableProps> = ({
       )}
     </div>
   );
-}; 
+};
