@@ -10,7 +10,7 @@ import {
 import {
   MapPoint,
   DataProcessingResult,
-  MapError
+  MapError,
 } from '../types/map.types';
 
 interface UseDataProcessingResult {
@@ -38,11 +38,26 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
       setWarnings([]);
 
       try {
-        const csvRows = processCSVData(data);
+        const csvRows = processCSVData(data, true);
         const geoJSONFeatures = csvToGeoJSON(csvRows);
         const newPoints = geoJSONToMapPoints(geoJSONFeatures);
 
-        setPoints(prevPoints => [...prevPoints, ...newPoints]);
+        setPoints(prevPoints => {
+          const map = new Map(prevPoints.map(p => [p.id, p]));
+          newPoints.forEach(p => {
+            const existing = map.get(p.id);
+            if (existing) {
+              map.set(p.id, {
+                ...existing,
+                position: p.position,
+                properties: { ...existing.properties, ...p.properties },
+              });
+            } else {
+              map.set(p.id, p);
+            }
+          });
+          return Array.from(map.values());
+        });
         return { data: newPoints, warnings, errors };
       } catch (error) {
         const mapError: MapError = {
@@ -56,7 +71,7 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
         setIsLoading(false);
       }
     },
-    []
+    [errors, warnings]
   );
 
   const processGeoJSON = useCallback(
@@ -144,8 +159,9 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
       // updatedPoint is set synchronously inside setPoints
       return updatedPoint;
     },
+    []
+=======
     [points]
-  );
 
   const deletePoint = useCallback((id: string) => {
     setPoints(prevPoints => prevPoints.filter(p => p.id !== id));
