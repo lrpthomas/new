@@ -7,7 +7,11 @@ import {
   validateMapPoint,
   generatePointId,
 } from '../utils/dataProcessing';
-import { MapPoint, GeoJSONFeature, CSVRow, DataProcessingResult, MapError } from '../types';
+import {
+  MapPoint,
+  DataProcessingResult,
+  MapError
+} from '../types/map.types';
 
 interface UseDataProcessingResult {
   processCSV: (data: string) => Promise<DataProcessingResult<MapPoint[]>>;
