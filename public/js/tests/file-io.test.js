@@ -1,8 +1,8 @@
-import { importFromCSV, importFromGeoJSON } from '../file-io.js';
+import { importFromCSV, importFromGeoJSON, importFromJSON } from '../file-io.js';
 import { showToast } from '../ui-handlers.js';
 
 jest.mock('../ui-handlers.js', () => ({
-  showToast: jest.fn()
+  showToast: jest.fn(),
 }));
 
 describe('File IO error handling', () => {
@@ -14,7 +14,7 @@ describe('File IO error handling', () => {
     global.Papa = {
       parse: (_file, options) => {
         options.complete({ data: [], errors: [{ message: 'bad' }] });
-      }
+      },
     };
 
     const file = new File(['name,lat,lng\n'], 'points.csv', { type: 'text/csv' });
@@ -22,10 +22,20 @@ describe('File IO error handling', () => {
     expect(showToast).toHaveBeenCalled();
   });
 
-  it('calls showToast when GeoJSON parsing fails', (done) => {
+  it('calls showToast when GeoJSON parsing fails', done => {
     const blob = new Blob(['invalid'], { type: 'application/json' });
     const file = new File([blob], 'points.geojson', { type: 'application/json' });
     importFromGeoJSON(file);
+    setTimeout(() => {
+      expect(showToast).toHaveBeenCalled();
+      done();
+    }, 0);
+  });
+
+  it('calls showToast when JSON parsing fails', done => {
+    const blob = new Blob(['invalid'], { type: 'application/json' });
+    const file = new File([blob], 'points.json', { type: 'application/json' });
+    importFromJSON(file);
     setTimeout(() => {
       expect(showToast).toHaveBeenCalled();
       done();

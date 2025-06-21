@@ -20,7 +20,7 @@ export function exportToCSV() {
 
     downloadFile(csv, 'points.csv', 'text/csv');
   } catch (error) {
-    showToast('Error exporting CSV file');
+    showToast(`Error exporting CSV file: ${error.message}`);
     console.error('CSV Export Error:', error);
   }
 }
@@ -235,7 +235,8 @@ export function importFromGeoJSON(file) {
     }
   };
   reader.onerror = function () {
-    showToast('Error reading GeoJSON file');
+    const message = reader.error ? reader.error.message : 'Unknown error';
+    showToast(`Error reading GeoJSON file: ${message}`);
     console.error('GeoJSON Read Error:', reader.error);
   };
   reader.readAsText(file);
@@ -261,7 +262,7 @@ export function importFromJSON(file) {
 
       // Add new points
       newPoints.forEach(p => addPoint(p));
-      
+
       // Save to localStorage
       localStorage.setItem('mapPoints', JSON.stringify(points));
 
@@ -279,7 +280,8 @@ export function importFromJSON(file) {
   };
 
   reader.onerror = function () {
-    showToast('Error reading file');
+    const message = reader.error ? reader.error.message : 'Unknown error';
+    showToast(`Error reading file: ${message}`);
   };
 
   reader.readAsText(file);

@@ -13,7 +13,7 @@ export function initMap() {
     attribution: '© OpenStreetMap contributors',
   });
 
-  import L from 'leaflet';
+  const satelliteLayer = L.tileLayer(
     'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     {
       attribution: '© Esri',
