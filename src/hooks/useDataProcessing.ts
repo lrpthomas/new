@@ -83,7 +83,7 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
   );
 
   const addPoint = useCallback(
-    (position: { lat: number; lng: number }, properties: Record<string, any> = {}) => {
+    (position: { lat: number; lng: number }, properties: Record<string, unknown> = {}) => {
       const newPoint: MapPoint = {
         id: generatePointId(),
         position,
