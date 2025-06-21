@@ -223,7 +223,7 @@ export function updatePointsList() {
     const currentPoints = store.pagination.getCurrentPage();
     const pageInfo = store.pagination.getPageInfo();
 
-    container.innerHTML = currentPoints
+    container.textContent = ''; currentPoints.forEach(point => { const pointDiv = document.createElement('div'); pointDiv.className = 'point-item'; pointDiv.dataset.id = point.id; pointDiv.innerHTML = \`<input type="checkbox" class="point-select" onchange="togglePointSelection('${point.id}', this.checked)" ${point.selected ? 'checked' : ''}> <h4>${sanitizeInput(point.name)}</h4> <p>Status: ${sanitizeInput(point.status)}</p> ${point.group ? \`<p>Group: ${sanitizeInput(point.group)}</p>\` : ''} <p>Created: ${new Date(point.createdAt).toLocaleString()}</p> <button onclick="editPoint('${point.id}')">Edit</button> <button onclick="deletePoint('${point.id}')">Delete</button>\`; container.appendChild(pointDiv); });
       .map(
         point => `
             <div class="point-item" data-id="${point.id}">
