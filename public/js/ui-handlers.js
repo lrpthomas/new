@@ -251,10 +251,10 @@ export function updatePointsList() {
     }
 }
 
-export function togglePointSelection(pointId, isSelected) {
-    const point = points.find(p => p.id === pointId);
+export function togglePointSelection(id, selected) {
+    const point = points.find(p => p.id === id);
     if (point) {
-        point.selected = isSelected;
+        point.selected = selected;
     }
 }
 
