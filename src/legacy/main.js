@@ -1,5 +1,5 @@
 // Main application entry point
-import { initMap, toggleLayer, addMarker } from './map-init.js';
+import { initMap, toggleLayer, addMarker } from './map-init';
 import {
   togglePointsList,
   toggleLayerControls,
@@ -8,21 +8,21 @@ import {
   closeGroupFilter,
   toggleBulkEdit,
   applyBulkEdit
-} from './modals.js';
+} from './modals';
 import {
   initUIHandlers,
   showToast,
   updatePointsList,
   updateStatistics
-} from './ui-handlers.js';
+} from './ui-handlers';
 import {
   exportToGeoJSON,
   importFromGeoJSON,
   exportToJSON,
   importFromJSON
-} from './file-io.js';
-import { points, addPoint, removePoint } from './state.js';
-import { store } from './store.js';
+} from './file-io';
+import { points, addPoint, removePoint } from './state';
+import { store } from './store';
 
 let map;
 

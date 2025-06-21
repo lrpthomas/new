@@ -1,10 +1,10 @@
 // Modal dialog management
-import { showToast } from './ui-handlers.js';
-import { store } from './store.js';
-import { trapFocus } from './utils.js';
+import { showToast } from './ui-handlers';
+import { store } from './store';
+import { trapFocus } from './utils';
 
 // Toggle modal visibility
-export function toggleModal(modalId, show = true) {
+export function toggleModal(modalId: string, show = true): void {
   const modal = document.getElementById(modalId);
   if (!modal) return;
 
@@ -23,13 +23,13 @@ export function toggleModal(modalId, show = true) {
 }
 
 // Toggle points list modal
-export function togglePointsList() {
+export function togglePointsList(): void {
   const modal = document.getElementById('pointsList');
   toggleModal('pointsList', modal.style.display !== 'block');
 }
 
 // Toggle layer controls
-export function toggleLayerControls() {
+export function toggleLayerControls(): void {
   const controls = document.getElementById('layerControls');
   const button = document.getElementById('toggleLayersButton');
 
@@ -43,13 +43,13 @@ export function toggleLayerControls() {
 }
 
 // Toggle statistics panel
-export function toggleStatistics() {
+export function toggleStatistics(): void {
   const panel = document.getElementById('statisticsPanel');
   panel.classList.toggle('hidden');
 }
 
 // Show group filter modal
-export function showGroupFilter() {
+export function showGroupFilter(): void {
   const modal = document.getElementById('groupFilterModal');
   const container = document.getElementById('groupFilterList');
 
@@ -70,12 +70,12 @@ export function showGroupFilter() {
 }
 
 // Close group filter modal
-export function closeGroupFilter() {
+export function closeGroupFilter(): void {
   toggleModal('groupFilterModal', false);
 }
 
 // Apply group filter
-export function applyGroupFilter(group) {
+export function applyGroupFilter(group: string): void {
   store.currentGroupFilter = group;
   // You should ensure filterPoints is imported from your core filter logic if needed
   filterPoints('all');
@@ -84,12 +84,12 @@ export function applyGroupFilter(group) {
 }
 
 // Toggle advanced search modal
-export function toggleAdvancedSearch() {
+export function toggleAdvancedSearch(): void {
   toggleModal('advancedSearch');
 }
 
 // Apply advanced search
-export function applyAdvancedSearch() {
+export function applyAdvancedSearch(): void {
   const name = document.getElementById('searchName').value.toLowerCase();
   const status = document.getElementById('searchStatus').value;
   const group = document.getElementById('searchGroup').value.toLowerCase();
@@ -110,7 +110,7 @@ export function applyAdvancedSearch() {
 }
 
 // Reset advanced search
-export function resetAdvancedSearch() {
+export function resetAdvancedSearch(): void {
   document.getElementById('searchName').value = '';
   document.getElementById('searchStatus').value = '';
   document.getElementById('searchGroup').value = '';
@@ -119,7 +119,7 @@ export function resetAdvancedSearch() {
 }
 
 // Toggle bulk edit modal
-export function toggleBulkEdit() {
+export function toggleBulkEdit(): void {
   const modal = document.getElementById('bulkEditModal');
   const form = document.getElementById('bulkEditForm');
 
@@ -146,7 +146,7 @@ export function toggleBulkEdit() {
 }
 
 // Apply bulk edit
-export function applyBulkEdit() {
+export function applyBulkEdit(): void {
   const status = document.getElementById('bulkStatus').value;
   const group = document.getElementById('bulkGroup').value;
 

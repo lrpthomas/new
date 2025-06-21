@@ -1,33 +1,33 @@
-import { PerformanceMonitor } from './utils.js';
+import { Pagination, UndoRedoManager, PerformanceMonitor } from './utils';
+import type { MapPoint } from '../types/legacy.types';
 
-/** @type {Array<MapPoint>} */
-let points = [];
+let points: MapPoint[] = [];
 let currentFilter = 'all';
 let currentGroupFilter = null;
-let pagination = new Pagination([]);
+let pagination = new Pagination([] as MapPoint[]);
 let undoRedoManager = new UndoRedoManager();
 let performanceMonitor = new PerformanceMonitor();
 
-export function addPoint(point) {
+export function addPoint(point: MapPoint): void {
   points.push(point);
 }
 
-export function removePoint(id) {
+export function removePoint(id: string): void {
   const index = points.findIndex(p => p.id === id);
   if (index !== -1) {
     points.splice(index, 1);
   }
 }
 
-export function setPoints(newPoints) {
+export function setPoints(newPoints: MapPoint[]): void {
   points = newPoints;
 }
 
-export function setCurrentFilter(filter) {
+export function setCurrentFilter(filter: string): void {
   currentFilter = filter;
 }
 
-export function setCurrentGroupFilter(group) {
+export function setCurrentGroupFilter(group: string | null): void {
   currentGroupFilter = group;
 }
 

@@ -1,8 +1,8 @@
 // Integration tests for UI handlers
-import { initUIHandlers, showPointForm, hidePointForm, filterPoints } from '../ui-handlers.js';
-import { addMarker } from '../map-init.js';
-import { toggleModal } from '../modals.js';
-import { addPoint, points } from '../state.js';
+import { initUIHandlers, showPointForm, hidePointForm, filterPoints } from '../ui-handlers';
+import { addMarker } from '../map-init';
+import { toggleModal } from '../modals';
+import { addPoint, points } from '../state';
 
 // Mock DOM elements
 document.body.innerHTML = `
@@ -29,7 +29,7 @@ document.body.innerHTML = `
 `;
 
 // Mock map functions
-jest.mock('../map-init.js', () => ({
+jest.mock('../map-init', () => ({
     addMarker: jest.fn()
 }));
 

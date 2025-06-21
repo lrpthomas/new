@@ -1,14 +1,14 @@
-import { Pagination, UndoRedoManager } from './utils.js';
+import { Pagination, UndoRedoManager } from './utils';
+import type { MapPoint, LatLng } from '../types/legacy.types';
 
-/** @type {import('./types').MapPoint[]} */
-let points = [];
+let points: MapPoint[] = [];
 let currentFilter = 'all';
 let currentGroupFilter = null;
-const pagination = new Pagination([]);
+const pagination = new Pagination([] as MapPoint[]);
 const undoRedoManager = new UndoRedoManager();
 
 let isAddingPoint = false;
-let currentLatLng = null;
+let currentLatLng: LatLng | null = null;
 
 // expose globals for legacy usage
 Object.defineProperty(window, 'isAddingPoint', {
@@ -26,45 +26,45 @@ Object.defineProperty(window, 'currentLatLng', {
 });
 
 export const store = {
-  get points() {
+  get points(): MapPoint[] {
     return points;
   },
-  set points(value) {
+  set points(value: MapPoint[]) {
     points = value;
   },
-  addPoint(point) {
+  addPoint(point: MapPoint) {
     points.push(point);
   },
-  removePoint(id) {
+  removePoint(id: string) {
     const index = points.findIndex(p => p.id === id);
     if (index >= 0) {
       points.splice(index, 1);
     }
   },
-  get currentFilter() {
+  get currentFilter(): string {
     return currentFilter;
   },
-  set currentFilter(filter) {
+  set currentFilter(filter: string) {
     currentFilter = filter;
   },
-  get currentGroupFilter() {
+  get currentGroupFilter(): string | null {
     return currentGroupFilter;
   },
-  set currentGroupFilter(group) {
+  set currentGroupFilter(group: string | null) {
     currentGroupFilter = group;
   },
   pagination,
   undoRedoManager,
-  get isAddingPoint() {
+  get isAddingPoint(): boolean {
     return isAddingPoint;
   },
-  set isAddingPoint(val) {
+  set isAddingPoint(val: boolean) {
     isAddingPoint = val;
   },
-  get currentLatLng() {
+  get currentLatLng(): LatLng | null {
     return currentLatLng;
   },
-  set currentLatLng(val) {
+  set currentLatLng(val: LatLng | null) {
     currentLatLng = val;
   },
 };

@@ -1,10 +1,11 @@
 // File import/export operations
-import { addMarker } from './map-init.js';
-import { showToast } from './ui-handlers.js';
-import { points, addPoint } from './state.js';
+import { addMarker } from './map-init';
+import { showToast } from './ui-handlers';
+import { points, addPoint } from './state';
+import type { MapPoint } from '../types/legacy.types';
 
 // Export points to CSV
-export function exportToCSV() {
+export function exportToCSV(): void {
   try {
     const csv = Papa.unparse(
       points.map(point => ({
@@ -26,7 +27,7 @@ export function exportToCSV() {
 }
 
 // Import points from CSV
-export function importFromCSV(file) {
+export function importFromCSV(file: File): void {
   if (!file) {
     showToast('No file selected');
     return;
@@ -151,7 +152,7 @@ export function importFromCSV(file) {
 }
 
 // Export points to GeoJSON
-export function exportToGeoJSON() {
+export function exportToGeoJSON(): void {
   const geojson = {
     type: 'FeatureCollection',
     features: points.map(point => ({
@@ -174,7 +175,7 @@ export function exportToGeoJSON() {
 }
 
 // Import points from GeoJSON
-export function importFromGeoJSON(file) {
+export function importFromGeoJSON(file: File): void {
   if (!file) {
     showToast('No file selected');
     return;
@@ -242,7 +243,7 @@ export function importFromGeoJSON(file) {
 }
 
 // Import points from JSON file
-export function importFromJSON(file) {
+export function importFromJSON(file: File): void {
   const reader = new FileReader();
 
   reader.onload = function (e) {
@@ -286,12 +287,12 @@ export function importFromJSON(file) {
 }
 
 // Export points to JSON
-export function exportToJSON() {
+export function exportToJSON(): void {
   downloadFile(JSON.stringify(points), 'points.json', 'application/json');
 }
 
 // Helper function to download files
-function downloadFile(content, filename, type) {
+function downloadFile(content: string, filename: string, type: string): void {
   const blob = new Blob([content], { type });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -304,7 +305,7 @@ function downloadFile(content, filename, type) {
 }
 
 // Import points and update UI
-function importPoints(newPoints) {
+function importPoints(newPoints: MapPoint[]): void {
   newPoints.forEach(point => addPoint(point));
   newPoints.forEach(point => addMarker(point.latlng, point));
   updatePointsList();

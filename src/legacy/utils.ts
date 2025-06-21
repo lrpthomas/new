@@ -1,5 +1,5 @@
 // Utility functions
-import { CacheItem, ValidationError } from './types.js';
+import type { CacheItem, ValidationError } from '../types/legacy.types';
 
 /**
  * Debounce function to limit how often a function can be called

@@ -1,11 +1,16 @@
 // Map initialization and configuration
-import { store } from './store.js';
-let map;
-let markers = L.markerClusterGroup();
+import L from 'leaflet';
+import { store } from './store';
+import { showPointForm } from './ui-handlers';
+import type { MapPoint } from '../types/legacy.types';
+
+let map: L.Map;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let markers: any = L.markerClusterGroup();
 let currentLayer = 'osm';
 
 // Initialize the map
-export function initMap() {
+export function initMap(): void {
   map = L.map('map').setView([0, 0], 2);
 
   // Add base layers
@@ -13,7 +18,7 @@ export function initMap() {
     attribution: '© OpenStreetMap contributors',
   });
 
-  import L from 'leaflet';
+  const satelliteLayer = L.tileLayer(
     'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     {
       attribution: '© Esri',
@@ -46,7 +51,7 @@ export function initMap() {
 }
 
 // Toggle map layers
-export function toggleLayer(layerName) {
+export function toggleLayer(layerName: string): void {
   if (currentLayer === layerName) return;
 
   map.removeLayer(window.mapLayers[currentLayer]);
@@ -57,12 +62,12 @@ export function toggleLayer(layerName) {
   if (radio) radio.checked = true;
 }
 
-export function getCurrentLayer() {
+export function getCurrentLayer(): string {
   return currentLayer;
 }
 
 // Add marker to map
-export function addMarker(latlng, data) {
+export function addMarker(latlng: L.LatLngExpression, data: MapPoint): L.Marker {
   const marker = L.marker(latlng, {
     icon: createCustomIcon(data.status),
   });
@@ -73,7 +78,7 @@ export function addMarker(latlng, data) {
 }
 
 // Create custom icon based on status
-function createCustomIcon(status) {
+function createCustomIcon(status: string): L.DivIcon {
   return L.divIcon({
     className: 'custom-marker',
     html: `<div class="marker-dot ${status}"></div>`,
@@ -83,7 +88,7 @@ function createCustomIcon(status) {
 }
 
 // Create popup content
-function createPopupContent(data) {
+function createPopupContent(data: MapPoint): string {
   return `
         <div class="popup-content">
             <h3>${data.name}</h3>
@@ -96,7 +101,7 @@ function createPopupContent(data) {
 }
 
 // Add this function to allow toggling clustering from the UI
-export function toggleCluster() {
+export function toggleCluster(): void {
   const clusterToggle = document.getElementById('clusterToggle');
   if (!clusterToggle) return;
   if (clusterToggle.checked) {

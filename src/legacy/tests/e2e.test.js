@@ -1,6 +1,6 @@
 // End-to-end tests for critical user flows
-import { initMap } from '../map-init.js';
-import { initUIHandlers } from '../ui-handlers.js';
+import { initMap } from '../map-init';
+import { initUIHandlers } from '../ui-handlers';
 
 describe('End-to-End Tests', () => {
     beforeEach(() => {

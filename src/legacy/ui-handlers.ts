@@ -1,5 +1,6 @@
-import { addMarker } from './map-init.js';
-import { debounce, sanitizeInput, Validator } from './utils.js';
+import { addMarker } from './map-init';
+import { debounce, sanitizeInput, Validator } from './utils';
+import type { MapPoint, LatLng } from '../types/legacy.types';
 import {
   points,
   currentGroupFilter,
@@ -9,10 +10,10 @@ import {
   setCurrentFilter,
   addPoint,
   removePoint
-} from './state.js';
+} from './state';
 
 // Initialize UI handlers
-export function initUIHandlers() {
+export function initUIHandlers(): void {
   try {
     performanceMonitor.start('initUIHandlers');
 
@@ -224,7 +225,7 @@ function updateUI() {
 }
 
 // Update points list with pagination and performance monitoring
-export function updatePointsList() {
+export function updatePointsList(): void {
   performanceMonitor.start('updatePointsList');
   try {
     const container = document.getElementById('pointsListContent');
@@ -267,7 +268,7 @@ export function updatePointsList() {
   }
 }
 // Point selection handling
-export function togglePointSelection(pointId, isSelected) {
+export function togglePointSelection(pointId: string, isSelected: boolean): void {
   const point = points.find(p => p.id === pointId);
   if (point) {
     point.selected = isSelected;
@@ -275,7 +276,7 @@ export function togglePointSelection(pointId, isSelected) {
 }
 
 // Show/hide point form
-export function showPointForm(latlng = null) {
+export function showPointForm(latlng: LatLng | null = null): void {
   const form = document.getElementById('pointForm');
   const title = document.getElementById('pointFormTitle');
 
@@ -289,14 +290,14 @@ export function showPointForm(latlng = null) {
   form.style.display = 'block';
 }
 
-export function hidePointForm() {
+export function hidePointForm(): void {
   document.getElementById('pointForm').style.display = 'none';
   window.isAddingPoint = false;
   window.currentLatLng = null;
 }
 
 // Filter points by status
-export function filterPoints(status) {
+export function filterPoints(status: string): void {
   setCurrentFilter(status);
 
   // Update active button state
@@ -317,7 +318,7 @@ export function filterPoints(status) {
 }
 
 // Show toast message
-export function showToast(message, duration = 3000) {
+export function showToast(message: string, duration = 3000): void {
   const toast = document.getElementById('toast');
   if (!toast) return;
   toast.setAttribute('role', 'alert');
@@ -345,7 +346,7 @@ function initOfflineDetection() {
 }
 
 // Update statistics
-export function updateStatistics() {
+export function updateStatistics(): void {
   const stats = {
     total: points.length,
     active: points.filter(p => p.status === 'active').length,
@@ -397,7 +398,7 @@ async function savePoint(pointData) {
 }
 
 // Edit existing point
-export function editPoint(pointId) {
+export function editPoint(pointId: string): void {
   const point = points.find(p => p.id === pointId);
   if (!point) {
     showToast('Point not found');
@@ -417,7 +418,7 @@ export function editPoint(pointId) {
 }
 
 // Delete point
-export function deletePoint(pointId) {
+export function deletePoint(pointId: string): void {
   if (!confirm('Are you sure you want to delete this point?')) {
     return;
   }

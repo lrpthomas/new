@@ -1,5 +1,5 @@
 // Unit tests for utility functions
-import { debounce, sanitizeInput, Cache, RateLimiter, Pagination, UndoRedoManager } from '../utils.js';
+import { debounce, sanitizeInput, Cache, RateLimiter, Pagination, UndoRedoManager } from '../utils';
 
 describe('Utility Functions', () => {
     describe('debounce', () => {

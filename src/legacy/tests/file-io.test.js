@@ -1,7 +1,7 @@
-import { importFromCSV, importFromGeoJSON } from '../file-io.js';
-import { showToast } from '../ui-handlers.js';
+import { importFromCSV, importFromGeoJSON } from '../file-io';
+import { showToast } from '../ui-handlers';
 
-jest.mock('../ui-handlers.js', () => ({
+jest.mock('../ui-handlers', () => ({
   showToast: jest.fn()
 }));
 
