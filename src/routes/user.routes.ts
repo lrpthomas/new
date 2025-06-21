@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import dataStore from '../db/data-store';
+import dataStore from '../db';
 
 const router = Router();
 
