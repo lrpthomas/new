@@ -262,7 +262,7 @@ export function updatePointsList() {
 export function togglePointSelection(pointId, isSelected) {
   const point = store.points.find(p => p.id === pointId);
   if (point) {
-    point.selected = isSelected;
+    point.selected = selected;
   }
 }
 
@@ -291,7 +291,7 @@ export function hidePointForm() {
 export function filterPoints(status) {
   store.currentFilter = status;
 
-  // Update active button
+  // Update active button state
   document.querySelectorAll('.status-filter button').forEach(btn => {
     const btnStatus = btn.dataset.status || 'all';
     btn.classList.toggle('active', btnStatus === status);
@@ -302,7 +302,6 @@ export function filterPoints(status) {
   store.points
     .filter(point => {
       if (status === 'all') return true;
-      if (store.currentGroupFilter) return point.group === store.currentGroupFilter;
       return point.status === status;
     })
     .forEach(point => {

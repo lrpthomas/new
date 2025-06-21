@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { DataExport } from '../components/controls/data-export';
-import { MapPoint } from '../types/map.types';
+import { MapPoint } from '../types';
 
 describe('DataExport CSV export', () => {
   it('preserves 0 and false values when exporting CSV', () => {
@@ -61,5 +61,24 @@ describe('DataExport CSV export', () => {
       // @ts-ignore
       global.URL.revokeObjectURL = originalRevokeObjectURL;
     }
+  });
+
+  it('calls onExportError when export fails', () => {
+    const error = new Error('fail');
+    const points: MapPoint[] = [{ id: '1', position: { lat: 0, lng: 0 }, properties: {} }];
+    const onExportError = jest.fn();
+
+    const originalBlob = global.Blob;
+    // @ts-ignore - override for test
+    global.Blob = jest.fn(() => {
+      throw error;
+    }) as unknown as typeof Blob;
+
+    const { getByTitle } = render(<DataExport points={points} onExportError={onExportError} />);
+    fireEvent.click(getByTitle('Export as CSV'));
+
+    expect(onExportError).toHaveBeenCalledWith(error);
+
+    global.Blob = originalBlob;
   });
 });
