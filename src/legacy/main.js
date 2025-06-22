@@ -22,8 +22,6 @@ import {
   importFromJSON
 } from './file-io';
 import { store } from './store';
-// Remove the duplicate import statement
-
 let map;
 
 document.addEventListener('DOMContentLoaded', initApp);
