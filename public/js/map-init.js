@@ -1,5 +1,6 @@
 // Map initialization and configuration
 import { store } from './store.js';
+import { showPointForm } from './ui-handlers.js';
 let map;
 let markers = L.markerClusterGroup();
 let currentLayer = 'osm';
