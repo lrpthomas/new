@@ -5,8 +5,9 @@ import {
   hidePointForm,
   filterPoints,
   togglePointSelection,
+  updateMapMarkers,
 } from '../ui-handlers.js';
-import { addMarker } from '../map-init.js';
+import { addMarker, clearMarkers } from '../map-init.js';
 import { toggleModal } from '../modals.js';
 import { store } from '../store.js';
 
@@ -217,6 +218,22 @@ describe('UI Handlers', () => {
 
       toggleModal('testModal', false);
       expect(document.activeElement).toBe(beforeBtn);
+    });
+  });
+
+  describe('updateMapMarkers', () => {
+    it('clears existing markers and adds markers for all points', () => {
+      store.points = [
+        { id: '1', latlng: { lat: 0, lng: 0 } },
+        { id: '2', latlng: { lat: 1, lng: 1 } },
+      ];
+
+      updateMapMarkers();
+
+      expect(clearMarkers).toHaveBeenCalled();
+      expect(addMarker).toHaveBeenCalledTimes(2);
+      expect(addMarker).toHaveBeenCalledWith({ lat: 0, lng: 0 }, store.points[0]);
+      expect(addMarker).toHaveBeenCalledWith({ lat: 1, lng: 1 }, store.points[1]);
     });
   });
 });
