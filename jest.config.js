@@ -4,11 +4,13 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '^\.\/types\.js$': '<rootDir>/public/js/types.ts',
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
-  testMatch: ['**/__tests__/**/*.test.(ts|tsx)'],
+  testMatch: ['**/__tests__/**/*.test.(ts|tsx)', '<rootDir>/public/js/tests/**/*.test.js'],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.js$': 'babel-jest',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(react-leaflet|@react-leaflet|react-leaflet-cluster)/)',
