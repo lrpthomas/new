@@ -262,7 +262,7 @@ export function updatePointsList() {
 export function togglePointSelection(pointId, isSelected) {
   const point = store.points.find(p => p.id === pointId);
   if (point) {
-    point.selected = selected;
+    point.selected = isSelected;
   }
 }
 
