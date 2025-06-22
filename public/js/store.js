@@ -12,7 +12,7 @@ export const performanceMonitor = new PerformanceMonitor();
 
 let isAddingPoint = false;
 let currentLatLng = null;
-const performanceMonitor = new PerformanceMonitor();
+// const performanceMonitor = new PerformanceMonitor(); // remove this line
 
 // expose globals for legacy usage
 Object.defineProperty(window, 'isAddingPoint', {
