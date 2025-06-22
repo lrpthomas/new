@@ -1,5 +1,5 @@
 // Main application entry point
-import { initMap, toggleLayer, addMarker } from './map-init.js';
+import { initMap, toggleLayer, addMarker, clearMarkers } from './map-init.js';
 import {
   togglePointsList,
   toggleLayerControls,
@@ -115,7 +115,7 @@ function clearAllData() {
     while (store.points.length) {
       store.removePoint(store.points[0].id);
     }
-    markers && markers.clearLayers();
+    clearMarkers();
     updatePointsList();
     updateStatistics();
     showToast('All data cleared');
