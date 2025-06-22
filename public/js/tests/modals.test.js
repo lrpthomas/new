@@ -1,10 +1,16 @@
+jest.mock('../ui-handlers.js', () => ({
+  filterPoints: jest.fn(),
+  updatePointsList: jest.fn(),
+  updateStatistics: jest.fn(),
+  showToast: jest.fn(),
+}));
+jest.mock('../map-init.js', () => ({
+  addMarker: jest.fn(),
+  clearMarkers: jest.fn(),
+}));
+
 import { applyBulkEdit } from '../modals.js';
 import { store } from '../store.js';
-
-// Set up global functions used by applyBulkEdit
-global.filterPoints = jest.fn();
-global.updatePointsList = jest.fn();
-global.updateStatistics = jest.fn();
 
 describe('applyBulkEdit', () => {
   beforeEach(() => {
