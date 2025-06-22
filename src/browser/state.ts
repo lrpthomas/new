@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PerformanceMonitor } from './utils';
 
 /** @type {Array<MapPoint>} */
