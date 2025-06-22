@@ -115,3 +115,7 @@ export function toggleCluster() {
     }
   }
 }
+
+export function clearMarkers() {
+  markers.clearLayers();
+}
