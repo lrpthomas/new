@@ -128,7 +128,7 @@ function clearAllData() {
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   navigator.serviceWorker
-    .register('/service-worker')
+    .register('/service-worker.js')
     .then(reg => {
       reg.addEventListener('updatefound', () => {
         const w = reg.installing;
