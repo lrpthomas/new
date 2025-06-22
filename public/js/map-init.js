@@ -78,6 +78,10 @@ export function addMarker(latlng, data) {
   return marker;
 }
 
+export function clearMarkers() {
+  markers.clearLayers();
+}
+
 // Create custom icon based on status
 function createCustomIcon(status) {
   return L.divIcon({
