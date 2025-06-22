@@ -37,6 +37,7 @@ document.body.innerHTML = `
 // Mock map functions
 jest.mock('../map-init.js', () => ({
   addMarker: jest.fn(),
+  clearMarkers: jest.fn(),
 }));
 
 describe('UI Handlers', () => {
