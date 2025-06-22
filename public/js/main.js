@@ -9,7 +9,15 @@ import {
   toggleBulkEdit,
   applyBulkEdit
 } from './modals.js';
-import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
+import {
+  initUIHandlers,
+  showToast,
+  updatePointsList,
+  updateStatistics,
+  editPoint,
+  deletePoint,
+  togglePointSelection,
+} from './ui-handlers.js';
 import {
   exportToGeoJSON,
   importFromGeoJSON,
@@ -18,6 +26,11 @@ import {
   importFromCSV,
 } from './file-io.js';
 import { store } from './store.js';
+
+// Expose selected UI handlers globally for legacy inline handlers
+window.editPoint = editPoint;
+window.deletePoint = deletePoint;
+window.togglePointSelection = togglePointSelection;
 
 let map;
 
