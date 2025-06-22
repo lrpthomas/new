@@ -1,7 +1,13 @@
 // Modal dialog management
-import { showToast } from './ui-handlers.js';
+import {
+  showToast,
+  filterPoints,
+  updatePointsList,
+  updateStatistics,
+} from './ui-handlers.js';
 import { store } from './store.js';
 import { trapFocus } from './utils.js';
+import { addMarker, clearMarkers } from './map-init.js';
 
 // Toggle modal visibility
 export function toggleModal(modalId, show = true) {
@@ -102,7 +108,7 @@ export function applyAdvancedSearch() {
   });
 
   // Update markers
-  markers.clearLayers();
+  clearMarkers();
   filteredPoints.forEach(point => addMarker(point.latlng, point));
 
   toggleAdvancedSearch();
