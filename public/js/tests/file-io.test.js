@@ -4,6 +4,10 @@ import { showToast } from '../ui-handlers.js';
 jest.mock('../ui-handlers.js', () => ({
   showToast: jest.fn(),
 }));
+jest.mock('../map-init.js', () => ({
+  addMarker: jest.fn(),
+  clearMarkers: jest.fn(),
+}));
 
 describe('File IO error handling', () => {
   beforeEach(() => {
