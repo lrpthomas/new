@@ -7,7 +7,7 @@
  * @returns {Function} - The debounced function
  */
 export function debounce(
-  func: (...args: any[]) => void,
+  func: (...args: unknown[]) => void,
   wait: number = 300,
   immediate: boolean = false
 ): (...args: any[]) => void {
