@@ -1,5 +1,11 @@
 // Integration tests for UI handlers
-import { initUIHandlers, showPointForm, hidePointForm, filterPoints } from '../ui-handlers.js';
+import {
+  initUIHandlers,
+  showPointForm,
+  hidePointForm,
+  filterPoints,
+  togglePointSelection,
+} from '../ui-handlers.js';
 import { addMarker } from '../map-init.js';
 import { toggleModal } from '../modals.js';
 import { store } from '../store.js';
@@ -31,6 +37,7 @@ document.body.innerHTML = `
 // Mock map functions
 jest.mock('../map-init.js', () => ({
   addMarker: jest.fn(),
+  clearMarkers: jest.fn(),
 }));
 
 describe('UI Handlers', () => {
@@ -178,6 +185,17 @@ describe('UI Handlers', () => {
       // Redo
       redoBtn.click();
       expect(store.points.length).toBe(1);
+    });
+  });
+
+  describe('togglePointSelection', () => {
+    it('should set the selected property of the point', () => {
+      const point = { id: 'id', name: 'Test Point', selected: false };
+      store.points = [point];
+
+      togglePointSelection('id', true);
+
+      expect(point.selected).toBe(true);
     });
   });
 
