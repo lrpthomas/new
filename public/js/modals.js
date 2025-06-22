@@ -83,7 +83,6 @@ export function closeGroupFilter() {
 // Apply group filter
 export function applyGroupFilter(group) {
   store.currentGroupFilter = group;
-  // You should ensure filterPoints is imported from your core filter logic if needed
   filterPoints('all');
   closeGroupFilter();
   showToast(`Filtered by group: ${group}`);
