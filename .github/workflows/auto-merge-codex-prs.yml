@@ -1,3 +1,7 @@
+permissions:
+  pull-requests: write
+  contents: read
+
 on:
   pull_request:
     types: [opened, reopened, synchronize, labeled]
@@ -32,4 +36,6 @@ jobs:
         if: steps.mergeable.outputs.mergeable == 'true'
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
+          pull-request-number: ${{ github.event.pull_request.number }}
           merge-method: squash
+

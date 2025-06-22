@@ -38,11 +38,8 @@ describe('DataExport CSV export', () => {
       const createObjectURL = jest.fn(() => 'blob:url');
       const revokeObjectURL = jest.fn();
 
-      // @ts-expect-error: MockBlob used for testing
       global.Blob = MockBlob as unknown as typeof Blob;
-      // @ts-expect-error override for readonly property during test
       global.URL.createObjectURL = createObjectURL;
-      // @ts-expect-error revokeObjectURL mocked for test
       global.URL.revokeObjectURL = revokeObjectURL;
 
       const { getByTitle } = render(<DataExport points={points} />);
@@ -56,9 +53,7 @@ describe('DataExport CSV export', () => {
       expect(dataRow).toBe('1,10,20,0,false');
     } finally {
       global.Blob = originalBlob;
-      // @ts-expect-error restore original after test
       global.URL.createObjectURL = originalCreateObjectURL;
-      // @ts-expect-error restore original after test
       global.URL.revokeObjectURL = originalRevokeObjectURL;
     }
   });
