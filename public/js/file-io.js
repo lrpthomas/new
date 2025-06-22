@@ -1,6 +1,6 @@
 // File import/export operations
-import { addMarker } from './map-init.js';
-import { showToast } from './ui-handlers.js';
+import { addMarker, clearMarkers } from './map-init.js';
+import { showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
 import { store } from './store.js';
 
 // Export points to CSV
@@ -267,7 +267,7 @@ export function importFromJSON(file) {
       localStorage.setItem('mapPoints', JSON.stringify(store.points));
 
       // Update UI
-      markers.clearLayers();
+      clearMarkers();
       store.points.forEach(point => addMarker(point.latlng, point));
       updatePointsList();
       updateStatistics();
