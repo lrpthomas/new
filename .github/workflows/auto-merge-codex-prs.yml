@@ -1,3 +1,7 @@
+permissions:
+  pull-requests: write
+  contents: read
+
 on:
   pull_request:
     types: [opened, reopened, synchronize, labeled]
