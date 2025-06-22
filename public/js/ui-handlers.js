@@ -193,6 +193,12 @@ function sortPoints(sortBy) {
   }
 }
 
+// Refresh map markers based on current points
+export function updateMapMarkers() {
+  clearMarkers();
+  store.points.forEach(p => addMarker(p.latlng, p));
+}
+
 // Update UI elements with performance monitoring
 function updateUI() {
   performanceMonitor.start('updateUI');
