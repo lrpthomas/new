@@ -44,7 +44,7 @@ export function sanitizeInput(str: string | null | undefined): string {
  * @param {HTMLElement} modalElement
  * @returns {Function} cleanup
  */
-export function trapFocus(modalElement) {
+export function trapFocus(modalElement: HTMLElement) {
   if (!modalElement) return () => {};
 
   const focusableSelectors =
