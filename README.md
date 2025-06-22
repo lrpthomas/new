@@ -18,6 +18,27 @@ Maptap is a browser-based tool for visualizing, editing, and exporting geospatia
 - **src/** – Main TypeScript application (React components, hooks, utilities).
 - **public/** – Legacy JavaScript version kept for reference and quick demos.
 
+## 🔄 Data Flow
+
+Maptap follows a straightforward data pipeline:
+
+1. **UI components** dispatch actions to the global store.
+2. **Global store** updates application state and triggers persistence.
+3. **Persistence** writes to **IndexedDB** or **Firebase** depending on configuration.
+4. **Sync service** listens for changes and keeps data synchronized.
+
+> Firebase integration is optional; see [ticket MP-6](tickets/MP-6-doc-readme-update.md) for environment variables.
+
+```mermaid
+graph TD
+    A[UI Components] --> B[Global Store]
+    B --> C{Persistence}
+    C --> D[IndexedDB]
+    C --> E[Firebase]
+    D --> F[Sync Service]
+    E --> F
+```
+
 ## 📦 Installing Dependencies
 
 Use [pnpm](https://pnpm.io/) for dependency management:

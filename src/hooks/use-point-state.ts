@@ -1,27 +1,54 @@
-import { useState } from 'react';
+import { useCallback, useContext } from 'react';
 import { MapPoint } from '../types/map.types';
+import { MapStoreContext } from '../store';
 
 export const usePointState = () => {
-  const [points, setPoints] = useState<MapPoint[]>([]);
-  const [currentFilter, setCurrentFilter] = useState<string>('all');
-  const [currentGroupFilter, setCurrentGroupFilter] = useState<string | null>(null);
+  const { state, dispatch } = useContext(MapStoreContext);
 
-  const addPoint = (point: MapPoint): void => {
-    setPoints(prev => [...prev, point]);
-  };
+  const addPoint = useCallback(
+    (point: MapPoint): void => {
+      dispatch({ type: 'ADD_POINT', payload: point });
+    },
+    [dispatch]
+  );
 
-  const removePoint = (id: string): void => {
-    setPoints(prev => prev.filter(p => p.id !== id));
-  };
+  const removePoint = useCallback(
+    (id: string): void => {
+      dispatch({ type: 'REMOVE_POINT', payload: id });
+    },
+    [dispatch]
+  );
+
+  const setPoints = useCallback(
+    (points: MapPoint[]): void => {
+      dispatch({ type: 'SET_POINTS', payload: points });
+    },
+    [dispatch]
+  );
+
+  const setCurrentFilter = useCallback(
+    (filter: string): void => {
+      dispatch({ type: 'SET_FILTER', payload: filter });
+    },
+    [dispatch]
+  );
+
+  const setCurrentGroupFilter = useCallback(
+    (group: string | null): void => {
+      dispatch({ type: 'SET_GROUP_FILTER', payload: group });
+    },
+    [dispatch]
+  );
 
   return {
-    points,
+    points: state.points,
     addPoint,
     removePoint,
     setPoints,
-    currentFilter,
+    currentFilter: state.currentFilter,
     setCurrentFilter,
-    currentGroupFilter,
+    currentGroupFilter: state.currentGroupFilter,
     setCurrentGroupFilter,
   };
 };
+
