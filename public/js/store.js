@@ -1,4 +1,4 @@
-import { Pagination, UndoRedoManager } from './utils.js';
+import { Pagination, UndoRedoManager, PerformanceMonitor } from './utils.js';
 
 /** @type {import('./types').MapPoint[]} */
 let points = [];
@@ -6,6 +6,9 @@ let currentFilter = 'all';
 let currentGroupFilter = null;
 const pagination = new Pagination([]);
 const undoRedoManager = new UndoRedoManager();
+
+/** @type {PerformanceMonitor} */
+export const performanceMonitor = new PerformanceMonitor();
 
 let isAddingPoint = false;
 let currentLatLng = null;
@@ -55,6 +58,7 @@ export const store = {
   },
   pagination,
   undoRedoManager,
+  performanceMonitor,
   get isAddingPoint() {
     return isAddingPoint;
   },
