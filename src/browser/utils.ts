@@ -1,6 +1,4 @@
 // Utility functions
-import {} from '../types/legacy.types';
-
 /**
  * Debounce function to limit how often a function can be called
  * @param {Function} func - The function to debounce
