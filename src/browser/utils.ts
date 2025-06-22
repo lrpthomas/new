@@ -32,7 +32,7 @@ export function debounce(
  * @param {string} str - The string to sanitize
  * @returns {string} - The sanitized string
  */
-export function sanitizeInput(str) {
+export function sanitizeInput(str: string | null | undefined): string {
   if (str == null) return '';
   const div = document.createElement('div');
   div.textContent = str;
