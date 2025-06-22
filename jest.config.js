@@ -4,7 +4,7 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '^./types\.js$': '<rootDir>/public/js/types.ts',
+    '^./types.js$': '<rootDir>/public/js/types.ts',
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   testMatch: ['**/__tests__/**/*.test.(ts|tsx)', '<rootDir>/public/js/tests/**/*.test.js'],
