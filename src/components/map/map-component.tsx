@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster';
 import styles from '../../styles/components/map.module.scss';
 import { useMapState } from '../../hooks/useMapState';
 import { MapMarker } from '../../types';
@@ -10,12 +11,14 @@ interface MapComponentProps {
   markers: MapMarker[];
   onMarkerDragEnd?: (marker: MapMarker, newPosition: [number, number]) => void;
   onMapClick?: (position: [number, number]) => void;
+  enableClustering?: boolean;
 }
 
 export const MapComponent: React.FC<MapComponentProps> = ({
   markers,
   onMarkerDragEnd,
   onMapClick,
+  enableClustering = true,
 }) => {
   const mapRef = useRef<L.Map>(null);
   const clickHandlerRef = useRef<(e: L.LeafletMouseEvent) => void>();
@@ -78,24 +81,49 @@ export const MapComponent: React.FC<MapComponentProps> = ({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {markers.map(marker => (
-        <Marker
-          key={marker.id}
-          position={[marker.lat, marker.lng]}
-          icon={createColoredIcon(marker.color)}
-          draggable={true}
-          eventHandlers={{
-            dragend: e => handleMarkerDragEnd(marker, e),
-          }}
-        >
-          <Popup>
-            <div>
-              <h3>{marker.title}</h3>
-              <p>{marker.description}</p>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+      {enableClustering ? (
+        <MarkerClusterGroup>
+          {markers.map(marker => (
+            <Marker
+              key={marker.id}
+              position={[marker.lat, marker.lng]}
+              icon={createColoredIcon(marker.color)}
+              draggable={true}
+              eventHandlers={{
+                dragend: e => handleMarkerDragEnd(marker, e),
+              }}
+            >
+              <Popup>
+                <div>
+                  <h3>{marker.title}</h3>
+                  <p>{marker.description}</p>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MarkerClusterGroup>
+      ) : (
+        <>
+          {markers.map(marker => (
+            <Marker
+              key={marker.id}
+              position={[marker.lat, marker.lng]}
+              icon={createColoredIcon(marker.color)}
+              draggable={true}
+              eventHandlers={{
+                dragend: e => handleMarkerDragEnd(marker, e),
+              }}
+            >
+              <Popup>
+                <div>
+                  <h3>{marker.title}</h3>
+                  <p>{marker.description}</p>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </>
+      )}
     </MapContainer>
   );
 };
