@@ -20,6 +20,6 @@ jobs:
             // Example script; replace with your logic if needed
             console.log('GitHub Script step running');
 
-      - uses: peter-evans/enable-pull-request-automerge@v3
+      - uses: peter-evans/enable-pull-request-automerge@v
         with: 
           merge-method: squash
