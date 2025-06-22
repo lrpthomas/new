@@ -1,7 +1,6 @@
 // File import/export operations
 import { addMarker, clearMarkers } from './map-init.js';
 import { showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
-import { store } from './store.js';
 
 // Export points to CSV
 export function exportToCSV() {

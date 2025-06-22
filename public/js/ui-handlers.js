@@ -1,4 +1,4 @@
-import { addMarker } from './map-init.js';
+import { addMarker, clearMarkers } from './map-init.js';
 import { debounce, sanitizeInput, Validator } from './utils.js';
 import { store } from './store.js';
 const { performanceMonitor } = store;
@@ -262,7 +262,7 @@ export function updatePointsList() {
 export function togglePointSelection(pointId, isSelected) {
   const point = store.points.find(p => p.id === pointId);
   if (point) {
-    point.selected = selected;
+    point.selected = isSelected;
   }
 }
 
@@ -298,7 +298,7 @@ export function filterPoints(status) {
   });
 
   // Filter markers
-  markers.clearLayers();
+  clearMarkers();
   store.points
     .filter(point => {
       if (status === 'all') return true;
@@ -378,7 +378,7 @@ async function savePoint(pointData) {
     localStorage.setItem('mapPoints', JSON.stringify(store.points));
 
     // Update map
-    markers.clearLayers();
+    clearMarkers();
     store.points.forEach(point => addMarker(point.latlng, point));
 
     return true;
@@ -422,7 +422,7 @@ export function deletePoint(pointId) {
       localStorage.setItem('mapPoints', JSON.stringify(store.points));
 
       // Update UI
-      markers.clearLayers();
+      clearMarkers();
       store.points.forEach(point => addMarker(point.latlng, point));
       updatePointsList();
       updateStatistics();

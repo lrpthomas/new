@@ -13,6 +13,10 @@ jest.mock('../map-init.js', () => ({
   addMarker: jest.fn(),
   clearMarkers: jest.fn(),
 }));
+jest.mock('../map-init.js', () => ({
+  addMarker: jest.fn(),
+  clearMarkers: jest.fn(),
+}));
 
 describe('File IO error handling', () => {
   beforeEach(() => {
