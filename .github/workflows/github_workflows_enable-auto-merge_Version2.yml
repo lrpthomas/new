@@ -1,0 +1,25 @@
+name: Enable Auto Merge
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  enable-auto-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            // Example script; replace with your logic if needed
+            console.log('GitHub Script step running');
+
+      - uses: peter-evans/enable-pull-request-automerge@v
+        with: 
+          merge-method: squash

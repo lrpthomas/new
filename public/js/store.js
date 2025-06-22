@@ -7,6 +7,9 @@ let currentGroupFilter = null;
 const pagination = new Pagination([]);
 const undoRedoManager = new UndoRedoManager();
 
+/** @type {PerformanceMonitor} */
+export const performanceMonitor = new PerformanceMonitor();
+
 let isAddingPoint = false;
 let currentLatLng = null;
 const performanceMonitor = new PerformanceMonitor();
@@ -57,6 +60,7 @@ export const store = {
   pagination,
   performanceMonitor,
   undoRedoManager,
+  performanceMonitor,
   get isAddingPoint() {
     return isAddingPoint;
   },

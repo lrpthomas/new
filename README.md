@@ -15,16 +15,56 @@ Maptap is a browser-based tool for visualizing, editing, and exporting geospatia
 
 - **Frontend** – React and TypeScript components live in `src/components` with supporting hooks in `src/hooks`.
 - **Backend** – Express server code is in `src/server.ts` with API routes under `src/routes`.
+- **src/** – Main TypeScript application (React components, hooks, utilities).
+- **public/** – Legacy JavaScript version kept for reference and quick demos.
+
+## 🔄 Data Flow
+
+Maptap follows a straightforward data pipeline:
+
+1. **UI components** dispatch actions to the global store.
+2. **Global store** updates application state and triggers persistence.
+3. **Persistence** writes to **IndexedDB** or **Firebase** depending on configuration.
+4. **Sync service** listens for changes and keeps data synchronized.
+
+> Firebase integration is optional; see [ticket MP-6](tickets/MP-6-doc-readme-update.md) for environment variables.
+
+```mermaid
+graph TD
+    A[UI Components] --> B[Global Store]
+    B --> C{Persistence}
+    C --> D[IndexedDB]
+    C --> E[Firebase]
+    D --> F[Sync Service]
+    E --> F
+```
 
 ## 📦 Installing Dependencies
 
-Use [pnpm](https://pnpm.io/) for dependency management:
+Use [pnpm](https://pnpm.io/) for dependency management. After cloning the repo run:
 
 ```bash
 pnpm install
 ```
 
-After installing, run `pnpm lint` and `pnpm test` to ensure the project is set up correctly.
+### Setup Commands
+
+Run the following to verify your environment before development:
+
+```bash
+pnpm lint
+pnpm test
+```
+
+### Quick Setup
+
+```bash
+pnpm lint
+pnpm test
+pnpm dev
+```
+
+Run `pnpm lint` to check formatting and `pnpm test` to execute the Jest suite before starting the development server.
 
 ## 🧹 Linting
 
@@ -59,6 +99,8 @@ pnpm build
 pnpm start
 ```
 
+The compiled JavaScript will be written to `public/build`.
+
 ## 🧪 Running Tests
 
 Run the test suite with:
@@ -67,15 +109,21 @@ Run the test suite with:
 pnpm test
 ```
 
+Jest is used for unit tests. Pass additional flags after `--` to forward options to Jest. For example:
+
+```bash
+pnpm test -- src/components/example.test.ts
+```
+
 Use `pnpm test:watch` while developing to re-run tests on file changes.
 
 ## 📥 Importing and Exporting Data
 
 ### Step-by-Step CSV Workflow
 
-1. Click **Import CSV** and choose a file to load your points.
-2. Drag markers on the map or edit rows in the table to update coordinates and other fields.
-3. Click **Export CSV** to download the revised dataset once your edits are complete.
+1. Click **Import** and choose a CSV file to load your points.
+2. Edit point data by dragging markers on the map or updating values in the table.
+3. Click **Export CSV** to download the updated dataset.
 
 - GeoJSON files can also be imported through the same dialog.
 
@@ -119,7 +167,7 @@ Set `PORT` in your environment to change the listening port.
 
 ## ⚙️ Environment Configuration
 
-For optional Firebase integration, create a `.env` file with your Firebase credentials. The app will fall back to local storage when these values are not provided:
+Optional environment variables can be placed in a `.env` file. The app falls back to local storage when Firebase values are not present:
 
 ```bash
 FIREBASE_API_KEY=your-api-key
@@ -127,6 +175,27 @@ FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 FIREBASE_PROJECT_ID=your-project-id
 FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
 FIREBASE_APP_ID=your-firebase-app-id
+PORT=3000 # override default port
+DATA_STORE=file # use the file-based data store
 ```
 
 These variables are loaded at runtime if present.
+
+## 📝 Commit Message Guidelines
+
+All commits must reference a ticket from the `tickets/` directory. Start the commit message with the ticket ID followed by a brief summary:
+
+```text
+MP-0: short description of the change
+```
+
+Include the pull request number in parentheses when available, e.g. `MP-3 fix map init (#105)`.
+
+## 🛠️ Manual Offline Verification
+
+To confirm the service worker caches assets correctly:
+
+1. Run `pnpm build` and `pnpm start`.
+2. Open [http://localhost:3000](http://localhost:3000) and wait for the page to finish loading.
+3. Enable offline mode in your browser's dev tools and refresh the page.
+4. The application should load without a network connection, confirming offline support.

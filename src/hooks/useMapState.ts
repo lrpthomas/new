@@ -1,25 +1,21 @@
-import { useState, useCallback } from 'react';
-import { MapViewState } from '../types/map.types';
-
-const DEFAULT_CENTER: { lat: number; lng: number } = { lat: 0, lng: 0 };
-const DEFAULT_ZOOM = 2;
+import { useCallback, useContext } from 'react';
+import { MapViewState } from '../types';
+import { MapStoreContext } from '../store';
 
 export const useMapState = () => {
-  const [mapState, setMapState] = useState<MapViewState>({
-    center: DEFAULT_CENTER,
-    zoom: DEFAULT_ZOOM,
-  });
+  const { state, dispatch } = useContext(MapStoreContext);
 
-  const updateMapState = useCallback((newState: Partial<MapViewState>) => {
-    setMapState((prev) => ({
-      ...prev,
-      ...newState,
-    }));
-  }, []);
+  const updateMapState = useCallback(
+    (newState: Partial<MapViewState>) => {
+      dispatch({ type: 'SET_MAP_VIEW', payload: newState });
+    },
+    [dispatch]
+  );
 
   return {
-    center: mapState.center,
-    zoom: mapState.zoom,
+    center: state.mapView.center,
+    zoom: state.mapView.zoom,
     setMapState: updateMapState,
   };
-}; 
+};
+

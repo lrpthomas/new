@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { MapPoint } from '../../types/map.types';
 import styles from '../../styles/components/data-table.module.scss';
 
 interface DataTableProps {
   points: MapPoint[];
   onPointSelect?: (point: MapPoint) => void;
-  onPointUpdate?: (point: MapPoint) => void;
   onPointDelete?: (pointId: string) => void;
 }
 
@@ -19,7 +19,6 @@ interface SortConfig {
 export const DataTable: React.FC<DataTableProps> = ({
   points,
   onPointSelect,
-  onPointUpdate,
   onPointDelete
 }) => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'id', direction: 'asc' });
@@ -36,7 +35,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   const handleSort = useCallback((key: string) => {
     setSortConfig(current => ({
       key,
-      direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc'
+      direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc',
     }));
   }, []);
 
@@ -45,11 +44,11 @@ export const DataTable: React.FC<DataTableProps> = ({
   }, []);
 
   const filteredAndSortedPoints = useMemo(() => {
-    let filtered = points.filter(point => {
+    const filtered = points.filter(point => {
       const searchText = filterText.toLowerCase();
       return (
         point.id.toLowerCase().includes(searchText) ||
-        Object.entries(point.properties).some(([key, value]) =>
+        Object.entries(point.properties).some(([, value]) =>
           String(value).toLowerCase().includes(searchText)
         )
       );
@@ -68,14 +67,54 @@ export const DataTable: React.FC<DataTableProps> = ({
     });
   }, [points, filterText, sortConfig]);
 
-  const handleRowClick = useCallback((point: MapPoint) => {
-    onPointSelect?.(point);
-  }, [onPointSelect]);
+  const handleRowClick = useCallback(
+    (point: MapPoint) => {
+      onPointSelect?.(point);
+    },
+    [onPointSelect]
+  );
 
-  const handleDelete = useCallback((e: React.MouseEvent, pointId: string) => {
-    e.stopPropagation();
-    onPointDelete?.(pointId);
-  }, [onPointDelete]);
+  const handleDelete = useCallback(
+    (e: React.MouseEvent, pointId: string) => {
+      e.stopPropagation();
+      onPointDelete?.(pointId);
+    },
+    [onPointDelete]
+  );
+
+  const Row = useCallback(function Row({ index, style }: ListChildComponentProps) {
+      const point = filteredAndSortedPoints[index];
+      return (
+        <tr
+          style={style}
+          key={point.id}
+          onClick={() => handleRowClick(point)}
+          className={styles.row}
+        >
+          <td>{point.id}</td>
+          <td>{point.position.lat.toFixed(6)}</td>
+          <td>{point.position.lng.toFixed(6)}</td>
+          {allProperties.map(property => (
+            <td key={property}>{point.properties[property] || '-'}</td>
+          ))}
+          <td>
+            <button
+              onClick={e => handleDelete(e, point.id)}
+              className={styles.deleteButton}
+              title="Delete point"
+            >
+              🗑️
+            </button>
+          </td>
+        </tr>
+      );
+    },
+    [filteredAndSortedPoints, handleRowClick, handleDelete, allProperties]
+  );
+
+  const OuterElement = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(function OuterElement(props, ref) {
+    return <tbody {...props} ref={ref as React.RefObject<HTMLTableSectionElement>} />;
+  });
 
   return (
     <div className={styles.container}>
@@ -104,11 +143,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               <th>Latitude</th>
               <th>Longitude</th>
               {allProperties.map(property => (
-                <th
-                  key={property}
-                  onClick={() => handleSort(property)}
-                  className={styles.sortable}
-                >
+                <th key={property} onClick={() => handleSort(property)} className={styles.sortable}>
                   {property}
                   {sortConfig.key === property && (
                     <span className={styles.sortIndicator}>
@@ -120,31 +155,15 @@ export const DataTable: React.FC<DataTableProps> = ({
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
-            {filteredAndSortedPoints.map(point => (
-              <tr
-                key={point.id}
-                onClick={() => handleRowClick(point)}
-                className={styles.row}
-              >
-                <td>{point.id}</td>
-                <td>{point.position.lat.toFixed(6)}</td>
-                <td>{point.position.lng.toFixed(6)}</td>
-                {allProperties.map(property => (
-                  <td key={property}>{point.properties[property] || '-'}</td>
-                ))}
-                <td>
-                  <button
-                    onClick={(e) => handleDelete(e, point.id)}
-                    className={styles.deleteButton}
-                    title="Delete point"
-                  >
-                    🗑️
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          <FixedSizeList
+            height={400}
+            itemCount={filteredAndSortedPoints.length}
+            itemSize={40}
+            width="100%"
+            outerElementType={OuterElement}
+          >
+            {Row}
+          </FixedSizeList>
         </table>
       </div>
 
@@ -155,4 +174,6 @@ export const DataTable: React.FC<DataTableProps> = ({
       )}
     </div>
   );
-}; 
+};
+
+DataTable.displayName = 'DataTable';
