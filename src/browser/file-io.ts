@@ -288,7 +288,7 @@ export function importFromJSON(file) {
 
 // Export points to JSON
 export function exportToJSON() {
-  downloadFile(JSON.stringify(points), 'pointson', 'application/json');
+  downloadFile(JSON.stringify(points), 'points.json', 'application/json');
 }
 
 // Helper function to download files
