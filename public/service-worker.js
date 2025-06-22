@@ -50,3 +50,19 @@ self.addEventListener('fetch', e => {
     })
   );
 });
+
+self.addEventListener('message', event => {
+  if (event.data === 'queue-edit' && 'sync' in self.registration) {
+    self.registration.sync.register('sync-edits').catch(() => {});
+  }
+});
+
+self.addEventListener('sync', event => {
+  if (event.tag === 'sync-edits') {
+    event.waitUntil(
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => client.postMessage({ type: 'sync-edits' }));
+      })
+    );
+  }
+});
