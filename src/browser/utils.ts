@@ -10,7 +10,7 @@ export function debounce(
   func: (...args: unknown[]) => void,
   wait: number = 300,
   immediate: boolean = false
-): (...args: any[]) => void {
+): (...args: unknown[]) => void {
   let timeout: ReturnType<typeof setTimeout> | null;
   return function executedFunction(...args: any[]) {
     const context = this;
