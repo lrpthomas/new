@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { DataExport } from '../components/controls/data-export';
-import { MapPoint } from '../types/map.types';
+import { MapPoint } from '../types';
 
 describe('DataExport CSV export', () => {
   it('preserves 0 and false values when exporting CSV', () => {
@@ -38,11 +38,8 @@ describe('DataExport CSV export', () => {
       const createObjectURL = jest.fn(() => 'blob:url');
       const revokeObjectURL = jest.fn();
 
-      // @ts-expect-error: MockBlob used for testing
       global.Blob = MockBlob as unknown as typeof Blob;
-      // @ts-ignore: override readonly properties for testing
       global.URL.createObjectURL = createObjectURL;
-      // @ts-ignore
       global.URL.revokeObjectURL = revokeObjectURL;
 
       const { getByTitle } = render(<DataExport points={points} />);
@@ -56,9 +53,7 @@ describe('DataExport CSV export', () => {
       expect(dataRow).toBe('1,10,20,0,false');
     } finally {
       global.Blob = originalBlob;
-      // @ts-ignore
       global.URL.createObjectURL = originalCreateObjectURL;
-      // @ts-ignore
       global.URL.revokeObjectURL = originalRevokeObjectURL;
     }
   });

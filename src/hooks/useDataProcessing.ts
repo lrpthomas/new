@@ -5,15 +5,9 @@ import {
   csvToGeoJSON,
   geoJSONToMapPoints,
   validateMapPoint,
-  generatePointId
+  generatePointId,
 } from '../utils/dataProcessing';
-import {
-  MapPoint,
-  GeoJSONFeature,
-  CSVRow,
-  DataProcessingResult,
-  MapError
-} from '../types/map.types';
+import { MapPoint, DataProcessingResult, MapError } from '../types/map.types';
 
 interface UseDataProcessingResult {
   processCSV: (data: string) => Promise<DataProcessingResult<MapPoint[]>>;
@@ -33,76 +27,100 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
   const [warnings, setWarnings] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const processCSV = useCallback(async (data: string): Promise<DataProcessingResult<MapPoint[]>> => {
-    setIsLoading(true);
-    setErrors([]);
-    setWarnings([]);
+  const processCSV = useCallback(
+    async (data: string): Promise<DataProcessingResult<MapPoint[]>> => {
+      setIsLoading(true);
+      setErrors([]);
+      setWarnings([]);
 
-    try {
-      const csvRows = processCSVData(data);
-      const geoJSONFeatures = csvToGeoJSON(csvRows);
-      const newPoints = geoJSONToMapPoints(geoJSONFeatures);
+      try {
+        const csvRows = processCSVData(data, true);
+        const geoJSONFeatures = csvToGeoJSON(csvRows);
+        const newPoints = geoJSONToMapPoints(geoJSONFeatures);
 
-      setPoints(prevPoints => [...prevPoints, ...newPoints]);
-      return { data: newPoints, warnings, errors };
-    } catch (error) {
-      const mapError: MapError = {
-        message: (error as Error).message,
-        code: 'CSV_PROCESSING_ERROR',
-        details: error
+        setPoints(prevPoints => {
+          const map = new Map(prevPoints.map(p => [p.id, p]));
+          newPoints.forEach(p => {
+            const existing = map.get(p.id);
+            if (existing) {
+              map.set(p.id, {
+                ...existing,
+                position: p.position,
+                properties: { ...existing.properties, ...p.properties },
+              });
+            } else {
+              map.set(p.id, p);
+            }
+          });
+          return Array.from(map.values());
+        });
+        return { data: newPoints, warnings, errors };
+      } catch (error) {
+        const mapError: MapError = {
+          message: (error as Error).message,
+          code: 'CSV_PROCESSING_ERROR',
+          details: error,
+        };
+        setErrors(prev => [...prev, mapError]);
+        return { data: [], warnings, errors: [mapError] };
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [errors, warnings]
+  );
+
+  const processGeoJSON = useCallback(
+    async (data: string): Promise<DataProcessingResult<MapPoint[]>> => {
+      setIsLoading(true);
+      setErrors([]);
+      setWarnings([]);
+
+      try {
+        const features = processGeoJSONData(data);
+        const newPoints = geoJSONToMapPoints(features);
+
+        setPoints(prevPoints => [...prevPoints, ...newPoints]);
+        return { data: newPoints, warnings, errors };
+      } catch (error) {
+        const mapError: MapError = {
+          message: (error as Error).message,
+          code: 'GEOJSON_PROCESSING_ERROR',
+          details: error,
+        };
+        setErrors(prev => [...prev, mapError]);
+        return { data: [], warnings, errors: [mapError] };
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
+
+  const addPoint = useCallback(
+    (position: { lat: number; lng: number }, properties: Record<string, any> = {}) => {
+      const newPoint: MapPoint = {
+        id: generatePointId(),
+        position,
+        properties,
       };
-      setErrors(prev => [...prev, mapError]);
-      return { data: [], warnings, errors: [mapError] };
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
-  const processGeoJSON = useCallback(async (data: string): Promise<DataProcessingResult<MapPoint[]>> => {
-    setIsLoading(true);
-    setErrors([]);
-    setWarnings([]);
-
-    try {
-      const features = processGeoJSONData(data);
-      const newPoints = geoJSONToMapPoints(features);
-
-      setPoints(prevPoints => [...prevPoints, ...newPoints]);
-      return { data: newPoints, warnings, errors };
-    } catch (error) {
-      const mapError: MapError = {
-        message: (error as Error).message,
-        code: 'GEOJSON_PROCESSING_ERROR',
-        details: error
-      };
-      setErrors(prev => [...prev, mapError]);
-      return { data: [], warnings, errors: [mapError] };
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const addPoint = useCallback((position: { lat: number; lng: number }, properties: Record<string, any> = {}) => {
-    const newPoint: MapPoint = {
-      id: generatePointId(),
-      position,
-      properties
-    };
-
-    try {
-      validateMapPoint(newPoint);
-      setPoints(prevPoints => [...prevPoints, newPoint]);
-      return newPoint;
-    } catch (error) {
-      const mapError: MapError = {
-        message: (error as Error).message,
-        code: 'POINT_VALIDATION_ERROR',
-        details: error
-      };
-      setErrors(prev => [...prev, mapError]);
-      throw error;
-    }
-  }, []);
+      try {
+        validateMapPoint(newPoint);
+        setPoints(prevPoints => [...prevPoints, newPoint]);
+        return newPoint;
+      } catch (error) {
+        const mapError: MapError = {
+          message: (error as Error).message,
+          code: 'POINT_VALIDATION_ERROR',
+          details: error,
+        };
+        setErrors(prev => [...prev, mapError]);
+        throw error;
+      }
+    },
+    []
+  );
 
   const updatePoint = useCallback((id: string, updates: Partial<MapPoint>): MapPoint => {
     let updatedPoint!: MapPoint;
@@ -114,7 +132,7 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
 
       updatedPoint = {
         ...prevPoints[pointIndex],
-        ...updates
+        ...updates,
       };
 
       try {
@@ -126,7 +144,7 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
         const mapError: MapError = {
           message: (error as Error).message,
           code: 'POINT_UPDATE_ERROR',
-          details: error
+          details: error,
         };
         setErrors(prev => [...prev, mapError]);
         throw error;
@@ -135,7 +153,7 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
 
     // updatedPoint is set synchronously inside setPoints
     return updatedPoint;
-  }, [points]);
+  }, []);
 
   const deletePoint = useCallback((id: string) => {
     setPoints(prevPoints => prevPoints.filter(p => p.id !== id));
@@ -150,6 +168,6 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
     points,
     errors,
     warnings,
-    isLoading
+    isLoading,
   };
 };
