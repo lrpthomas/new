@@ -1,1 +1,3 @@
-src/browser/*
+src/browser/**/*.js
+src/browser/**/*.map
+src/browser/**/*.json
