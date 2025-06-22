@@ -1,8 +1,17 @@
 import { importFromCSV, importFromGeoJSON, importFromJSON } from '../file-io.js';
-import { showToast } from '../ui-handlers.js';
+import { showToast, updatePointsList, updateStatistics } from '../ui-handlers.js';
+import { clearMarkers } from '../map-init.js';
+import { store } from '../store.js';
 
 jest.mock('../ui-handlers.js', () => ({
   showToast: jest.fn(),
+  updatePointsList: jest.fn(),
+  updateStatistics: jest.fn(),
+}));
+
+jest.mock('../map-init.js', () => ({
+  addMarker: jest.fn(),
+  clearMarkers: jest.fn(),
 }));
 jest.mock('../map-init.js', () => ({
   addMarker: jest.fn(),
@@ -44,5 +53,61 @@ describe('File IO error handling', () => {
       expect(showToast).toHaveBeenCalled();
       done();
     }, 0);
+  });
+});
+
+describe('File IO success updates', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    global.L = { latLng: (lat, lng) => ({ lat, lng }) };
+    store.points = [];
+  });
+
+  it('invokes UI updates on CSV import confirm', () => {
+    document.body.innerHTML = `
+      <div id="csvPreviewModal"></div>
+      <div id="csvPreviewTable"></div>
+      <select id="latField"></select>
+      <select id="lngField"></select>
+      <select id="labelField"></select>
+      <button id="confirmCsvImportBtn"></button>
+    `;
+
+    global.Papa = {
+      parse: (_file, options) => {
+        options.complete({
+          data: [{ latitude: '1', longitude: '2', name: 'test' }],
+          errors: [],
+        });
+      },
+    };
+
+    const file = new File(['latitude,longitude,name\n1,2,test'], 'points.csv', { type: 'text/csv' });
+    importFromCSV(file);
+
+    document.getElementById('latField').value = 'latitude';
+    document.getElementById('lngField').value = 'longitude';
+    document.getElementById('labelField').value = 'name';
+
+    document.getElementById('confirmCsvImportBtn').onclick();
+
+    expect(updatePointsList).toHaveBeenCalled();
+    expect(updateStatistics).toHaveBeenCalled();
+  });
+
+  it('invokes UI updates on JSON import', () => {
+    global.FileReader = class {
+      readAsText() {
+        this.onload({ target: { result: JSON.stringify([{ id: '1', latlng: { lat: 0, lng: 0 } }]) } });
+      }
+    };
+
+    const blob = new Blob(['[]'], { type: 'application/json' });
+    const file = new File([blob], 'points.json', { type: 'application/json' });
+    importFromJSON(file);
+
+    expect(clearMarkers).toHaveBeenCalled();
+    expect(updatePointsList).toHaveBeenCalled();
+    expect(updateStatistics).toHaveBeenCalled();
   });
 });
