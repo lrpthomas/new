@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // Utility functions
-import { CacheItem, ValidationError } from '../types/legacy.types';
+import {} from '../types/legacy.types';
 
 /**
  * Debounce function to limit how often a function can be called
