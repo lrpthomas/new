@@ -8,9 +8,13 @@ import {} from '../types/legacy.types';
  * @param {boolean} immediate - Whether to call the function immediately
  * @returns {Function} - The debounced function
  */
-export function debounce(func, wait = 300, immediate = false) {
-  let timeout;
-  return function executedFunction(...args) {
+export function debounce(
+  func: (...args: any[]) => void,
+  wait: number = 300,
+  immediate: boolean = false
+): (...args: any[]) => void {
+  let timeout: ReturnType<typeof setTimeout> | null;
+  return function executedFunction(...args: any[]) {
     const context = this;
     const later = () => {
       timeout = null;
