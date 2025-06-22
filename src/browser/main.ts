@@ -108,7 +108,7 @@ function promptGeoJSONImport() {
 function promptJSONImport() {
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = 'on';
+  input.accept = '.json';
   input.onchange = e => e.target.files[0] && importFromJSON(e.target.files[0]);
   input.click();
 }
