@@ -12,7 +12,7 @@ export function debounce(
   immediate: boolean = false
 ): (...args: unknown[]) => void {
   let timeout: ReturnType<typeof setTimeout> | null;
-  return function executedFunction(...args: any[]) {
+  return function executedFunction(...args: unknown[]) {
     const context = this;
     const later = () => {
       timeout = null;
