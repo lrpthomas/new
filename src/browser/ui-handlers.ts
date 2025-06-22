@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { addMarker } from './map-init';
-import { debounce, sanitizeInput, Validator } from './utils';
+import { sanitizeInput, Validator } from './utils';
 import {
   points,
   currentGroupFilter,
