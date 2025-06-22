@@ -13,7 +13,7 @@ export function debounce(
 ): (...args: unknown[]) => void {
   let timeout: ReturnType<typeof setTimeout> | null;
   return function executedFunction(...args: unknown[]) {
-    const context = this;
+    return (...args: any[]) => {
     const later = () => {
       timeout = null;
       if (!immediate) func.apply(context, args);
