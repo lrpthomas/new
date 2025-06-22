@@ -10,7 +10,13 @@ import {
   applyBulkEdit
 } from './modals.js';
 import { initUIHandlers, showToast, updatePointsList, updateStatistics } from './ui-handlers.js';
-import { exportToGeoJSON, importFromGeoJSON, exportToJSON, importFromJSON } from './file-io.js';
+import {
+  exportToGeoJSON,
+  importFromGeoJSON,
+  exportToJSON,
+  importFromJSON,
+  importFromCSV,
+} from './file-io.js';
 import { store } from './store.js';
 
 let map;
