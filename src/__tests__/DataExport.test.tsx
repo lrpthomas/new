@@ -13,13 +13,13 @@ describe('DataExport CSV export', () => {
     try {
       const points: MapPoint[] = [
         {
-          id: '1',
-          position: { lat: 10, lng: 20 },
+          createMapPoint({ id: '1',
+          position: { lat: 10, lng: 20 }),
           properties: {
             zeroValue: 0,
             falseValue: false,
-          },
-        },
+          }),
+        }),
       ];
 
       const captured: string[] = [];

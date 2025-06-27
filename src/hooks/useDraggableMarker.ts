@@ -1,3 +1,4 @@
+import { MapPoint } from "../types";
 import { useCallback, useState } from 'react';
 import { debounce } from 'lodash';
 

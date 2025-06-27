@@ -77,18 +77,6 @@ export const detectFieldType = (values: string[]): 'number' | 'date' | 'boolean'
 };
 
 // Coordinate validation
-const validateCoordinates = (lat: number, lng: number): boolean => {
-  return (
-    typeof lat === 'number' && 
-    typeof lng === 'number' &&
-    lat >= -90 && 
-    lat <= 90 && 
-    lng >= -180 && 
-    lng <= 180 &&
-    !isNaN(lat) && 
-    !isNaN(lng)
-  );
-};
 
 // Find coordinate fields in CSV headers
 const findCoordinateFields = (headers: string[], config: CSVValidationConfig) => {

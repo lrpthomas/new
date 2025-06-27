@@ -39,7 +39,7 @@ export function trapFocus(modalElement: HTMLElement | null): () => void {
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
   const focusableElements = Array.from(
     modalElement.querySelectorAll<HTMLElement>(focusableSelectors)
-  ).filter(el => !el.disabled);
+  ).filter((el: any) => !el.disabled);
   const first = focusableElements[0];
   const last = focusableElements[focusableElements.length - 1];
   const previouslyFocused = document.activeElement as HTMLElement | null;

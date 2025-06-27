@@ -1,3 +1,4 @@
+import { createMapPoint } from "../types";
 import { useState, useCallback } from 'react';
 import {
   processCSVData,
@@ -99,11 +100,11 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
 
   const addPoint = useCallback(
     (position: { lat: number; lng: number }, properties: Record<string, any> = {}) => {
-      const newPoint: MapPoint = {
+      const newPoint = createMapPoint({
         id: generatePointId(),
         position,
-        properties,
-      };
+        properties
+      });
 
       try {
         validateMapPoint(newPoint);
