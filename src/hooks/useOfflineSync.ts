@@ -14,6 +14,9 @@ async function pushOperations(ops: OfflineOperation[]): Promise<void> {
         if (point.position && !point.latlng) {
           point.latlng = point.position;
         }
+        if (point.position && !point.latlng) {
+          point.latlng = point.position;
+        }
         return fetch(`/api/maps/${point.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },

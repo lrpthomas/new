@@ -61,6 +61,7 @@ export const csvToGeoJSON = (csvData: CSVRow[]): GeoJSONFeature[] => {
       delete properties.longitude;
 
       const position = { lat, lng };
+      const position = { lat, lng };
       return {
         type: 'Feature',
         geometry: {
@@ -119,6 +120,7 @@ export const geoJSONToMapPoints = (features: GeoJSONFeature[]): MapPoint[] => {
   try {
     return features.map((feature, index) => {
       const [lng, lat] = feature.geometry.coordinates;
+      const position = { lat, lng };
       const position = { lat, lng };
       return {
         id: `point-${index}`,
