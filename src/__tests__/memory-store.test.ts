@@ -1,3 +1,4 @@
+import { createMapPoint } from "../types";
 /** @jest-environment node */
 import memoryStore from '../db/memory-store';
 import { MapPoint, User } from '../types';
@@ -15,7 +16,7 @@ describe('memory store persistence', () => {
   });
 
   it('creates and lists map points', async () => {
-    const point: MapPoint = { id: 'm1', position: { lat: 0, lng: 0 }, properties: {} };
+    const point = createMapPoint({ id: 'm1', position: { lat: 0, lng: 0 }, properties: {} });
     await memoryStore.createMap(point);
     const maps = await memoryStore.listMaps();
     expect(maps).toHaveLength(1);
@@ -34,7 +35,7 @@ describe('memory store persistence', () => {
   });
 
   it('updates and deletes a map point', async () => {
-    const point: MapPoint = { id: 'm2', position: { lat: 1, lng: 1 }, properties: {} };
+    const point = createMapPoint({ id: 'm2', position: { lat: 1, lng: 1 }, properties: {} });
     await memoryStore.createMap(point);
     const updated = await memoryStore.updateMap('m2', { position: { lat: 2, lng: 2 } });
     expect(updated?.position.lat).toBe(2);

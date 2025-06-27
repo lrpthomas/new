@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { DataTable } from '../components/controls/data-table';
-import { MapPoint } from '../types/map.types';
-
-/* eslint-disable @typescript-eslint/no-var-requires */
+import { createMapPoint } from '../types';
 
 jest.mock('react-window', () => {
   return {
@@ -24,9 +22,9 @@ jest.mock('react-window', () => {
 });
 
 describe('DataTable filtering', () => {
-  const points: MapPoint[] = [
-    { id: '1', position: { lat: 0, lng: 0 }, properties: { name: 'Alpha' } },
-    { id: '2', position: { lat: 1, lng: 1 }, properties: { name: 'Beta' } },
+  const points = [
+    createMapPoint({ id: '1', position: { lat: 0, lng: 0 }, properties: { name: 'Alpha' } }),
+    createMapPoint({ id: '2', position: { lat: 1, lng: 1 }, properties: { name: 'Beta' } }),
   ];
 
   it('filters rows based on text input', () => {
@@ -39,10 +37,10 @@ describe('DataTable filtering', () => {
 });
 
 describe('DataTable sorting', () => {
-  const points: MapPoint[] = [
-    { id: '1', position: { lat: 0, lng: 0 }, properties: { name: 'Charlie' } },
-    { id: '2', position: { lat: 0, lng: 1 }, properties: { name: 'Alpha' } },
-    { id: '3', position: { lat: 0, lng: 2 }, properties: { name: 'Bravo' } },
+  const points = [
+    createMapPoint({ id: '1', position: { lat: 0, lng: 0 }, properties: { name: 'Charlie' } }),
+    createMapPoint({ id: '2', position: { lat: 0, lng: 1 }, properties: { name: 'Alpha' } }),
+    createMapPoint({ id: '3', position: { lat: 0, lng: 2 }, properties: { name: 'Bravo' } }),
   ];
 
   it('sorts rows by column when header clicked', () => {
@@ -58,11 +56,9 @@ describe('DataTable sorting', () => {
 });
 
 describe('DataTable virtualization', () => {
-  const points: MapPoint[] = Array.from({ length: 20 }, (_, i) => ({
-    id: String(i + 1),
-    position: { lat: 0, lng: 0 },
-    properties: {},
-  }));
+  const points = Array.from({ length: 20 }, (_, i) => 
+    createMapPoint({ id: String(i + 1), position: { lat: 0, lng: 0 }, properties: {} })
+  );
 
   it('renders only visible rows', () => {
     const { getAllByRole } = render(<DataTable points={points} />);

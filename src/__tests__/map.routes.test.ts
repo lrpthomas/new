@@ -1,3 +1,4 @@
+import { createMapPoint } from "../types";
 /** @jest-environment node */
 import express from 'express';
 import request from 'supertest';
@@ -19,7 +20,7 @@ describe('map routes', () => {
 
   it('lists maps', async () => {
     mockStore.listMaps.mockResolvedValue([
-      { id: '1', position: { lat: 0, lng: 0 }, properties: {} },
+      createMapPoint({ id: '1', position: { lat: 0, lng: 0 }, properties: {} }),
     ]);
     const res = await request(app).get('/maps');
     expect(res.status).toBe(200);
@@ -27,7 +28,7 @@ describe('map routes', () => {
   });
 
   it('gets a map', async () => {
-    mockStore.getMap.mockResolvedValue({ id: '1', position: { lat: 0, lng: 0 }, properties: {} });
+    mockStore.getMap.mockResolvedValue(createMapPoint({ id: '1', position: { lat: 0, lng: 0 }, properties: {} }));
     const res = await request(app).get('/maps/1');
     expect(res.status).toBe(200);
     expect(res.body.id).toBe('1');
@@ -40,7 +41,7 @@ describe('map routes', () => {
   });
 
   it('creates a map', async () => {
-    const body = { id: '1', position: { lat: 0, lng: 0 }, properties: {} };
+    const body = createMapPoint({ id: '1', position: { lat: 0, lng: 0 }, properties: {} });
     mockStore.createMap.mockResolvedValue(body);
     const res = await request(app).post('/maps').send(body);
     expect(res.status).toBe(201);
