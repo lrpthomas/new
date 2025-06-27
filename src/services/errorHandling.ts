@@ -1,0 +1,1 @@
+export class ErrorHandlerManager {} export class OfflineStateManager {} export class StorageErrorHandler {} export const errorHandler = new ErrorHandlerManager(); export const offlineManager = new OfflineStateManager();
