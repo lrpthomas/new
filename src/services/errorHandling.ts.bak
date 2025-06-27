@@ -1,5 +1,5 @@
 // MP-5: Complete error handling service with all expected methods
-import { ApplicationError, ErrorCategory, ErrorSeverity } from '../types/map.types';
+import { ApplicationError, ErrorCategory, ErrorSeverity } from '../types';
 
 export class ErrorHandlerManager {
   private errors: ApplicationError[] = [];
@@ -204,4 +204,4 @@ export const errorHandler = new ErrorHandlerManager();
 export const offlineManager = new OfflineStateManager();
 
 // Re-export types
-export { ApplicationError, ErrorCategory, ErrorSeverity } from '../types/map.types';
+export { ApplicationError, ErrorCategory, ErrorSeverity } from '../types';

@@ -11,9 +11,6 @@ async function pushOperations(ops: OfflineOperation[]): Promise<void> {
     ops.map(op => {
       if (op.type === 'update') {
         const point = op.payload as MapPoint;
-        if (point.position && !point.latlng) {
-          point.latlng = point.position;
-        }
         return fetch(`/api/maps/${point.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },

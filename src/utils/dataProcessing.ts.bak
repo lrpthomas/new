@@ -122,8 +122,7 @@ export const geoJSONToMapPoints = (features: GeoJSONFeature[]): MapPoint[] => {
       const position = { lat, lng };
       return {
         id: `point-${index}`,
-        position,
-        latlng: position, // Add backward compatibility
+        position: { lat, lng },
         properties: feature.properties,
       };
     });
