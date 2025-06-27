@@ -4,12 +4,8 @@
 import {
   extractCSVTemplate,
   importCSVWithValidation,
-  exportCSVWithValidation,
-  mergeCSVData,
-  detectFieldType,
-  CSVProcessingError
+  detectFieldType
 } from '../utils/csvProcessor';
-import { MapPoint } from '../types/map.types';
 
 describe('MP-1: CSV Processor', () => {
   const validCSV = `id,name,lat,lng,description,status
