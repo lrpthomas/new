@@ -97,6 +97,7 @@ export const processGeoJSONData = (data: string): GeoJSONFeature[] => {
       }
 
       const [lng, lat] = feature.geometry.coordinates;
+        const position = { lat, lng };
       if (typeof lng !== 'number' || typeof lat !== 'number') {
         throw new Error(`Invalid coordinates in feature at index ${index}`);
       }
@@ -120,6 +121,7 @@ export const geoJSONToMapPoints = (features: GeoJSONFeature[]): MapPoint[] => {
   try {
     return features.map((feature, index) => {
       const [lng, lat] = feature.geometry.coordinates;
+        const position = { lat, lng };
       const position = { lat, lng };
       const position = { lat, lng };
       return {
