@@ -1,0 +1,6 @@
+
+  "agent:autonomous": "python3 agents/autonomous-claude-master.py",
+  "agent:frontend": "python3 agents/claude-frontend-agent.py", 
+  "agent:backend": "python3 agents/claude-backend-agent.py",
+  "agent:accessibility": "python3 agents/claude-accessibility-agent.py",
+  "deploy:autonomous": "pnpm lint && pnpm test --watchAll=false && pnpm build && pnpm agent:autonomous"

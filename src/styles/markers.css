@@ -1,0 +1,23 @@
+/* Draggable marker styles */
+.marker-dragging {
+  cursor: grabbing !important;
+  filter: brightness(1.2);
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+}
+
+.leaflet-marker-icon:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.leaflet-marker-icon:hover {
+  cursor: grab;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .leaflet-marker-icon {
+    filter: contrast(1.5);
+  }
+}
