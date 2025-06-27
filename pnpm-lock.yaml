@@ -55,7 +55,7 @@ importers:
         specifier: ^14.1.0
         version: 14.3.1(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@testing-library/user-event':
-        specifier: ^14.5.1
+        specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@9.3.4)
       '@types/cors':
         specifier: ^2.8.17
@@ -85,7 +85,7 @@ importers:
         specifier: ^18.2.0
         version: 18.3.7(@types/react@18.3.23)
       '@types/react-window':
-        specifier: ^1.8.5
+        specifier: ^1.8.8
         version: 1.8.8
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.13.0
