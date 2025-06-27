@@ -486,3 +486,98 @@ export default {
   detectFieldType,
   CSVProcessingError
 };
+
+// MP-1: Enhanced field detection and validation
+export interface CSVValidationResult {
+  isValid: boolean;
+  errors: Array<{ line: number; field: string; message: string; suggestion?: string }>;
+  warnings: Array<{ line: number; field: string; message: string }>;
+  coordinateFormat: 'lat_lng' | 'latitude_longitude' | 'decimal_degrees' | 'unknown';
+}
+
+export function detectCoordinateFormat(headers: string[]): string {
+  const lowerHeaders = headers.map(h => h.toLowerCase().trim());
+  
+  if (lowerHeaders.includes('lat') && lowerHeaders.includes('lng')) return 'lat_lng';
+  if (lowerHeaders.includes('latitude') && lowerHeaders.includes('longitude')) return 'latitude_longitude';
+  if (lowerHeaders.includes('x') && lowerHeaders.includes('y')) return 'decimal_degrees';
+  
+  return 'unknown';
+}
+
+export function validateCoordinates(lat: number, lng: number): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  
+  if (lat < -90 || lat > 90) {
+    errors.push(`Latitude ${lat} is out of range. Must be between -90 and 90.`);
+  }
+  
+  if (lng < -180 || lng > 180) {
+    errors.push(`Longitude ${lng} is out of range. Must be between -180 and 180.`);
+  }
+  
+  return { isValid: errors.length === 0, errors };
+}
+
+export function enhancedCSVValidation(csvData: string): CSVValidationResult {
+  const lines = csvData.split('\n');
+  const headers = lines[0]?.split(',').map(h => h.trim()) || [];
+  
+  const result: CSVValidationResult = {
+    isValid: true,
+    errors: [],
+    warnings: [],
+    coordinateFormat: detectCoordinateFormat(headers) as any
+  };
+  
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line.trim()) continue;
+    
+    const values = line.split(',').map(v => v.trim());
+    
+    // Validate each row
+    if (values.length !== headers.length) {
+      result.errors.push({
+        line: i + 1,
+        field: 'row',
+        message: `Row has ${values.length} columns but header has ${headers.length}`,
+        suggestion: 'Check for missing commas or extra values'
+      });
+      result.isValid = false;
+    }
+    
+    // Validate coordinates if present
+    const latIndex = headers.findIndex(h => h.toLowerCase().includes('lat'));
+    const lngIndex = headers.findIndex(h => h.toLowerCase().includes('lng') || h.toLowerCase().includes('lon'));
+    
+    if (latIndex >= 0 && lngIndex >= 0) {
+      const lat = parseFloat(values[latIndex]);
+      const lng = parseFloat(values[lngIndex]);
+      
+      if (isNaN(lat) || isNaN(lng)) {
+        result.errors.push({
+          line: i + 1,
+          field: 'coordinates',
+          message: 'Invalid coordinate values',
+          suggestion: 'Ensure coordinates are valid numbers'
+        });
+        result.isValid = false;
+      } else {
+        const coordValidation = validateCoordinates(lat, lng);
+        if (!coordValidation.isValid) {
+          coordValidation.errors.forEach(error => {
+            result.errors.push({
+              line: i + 1,
+              field: 'coordinates',
+              message: error
+            });
+          });
+          result.isValid = false;
+        }
+      }
+    }
+  }
+  
+  return result;
+}
