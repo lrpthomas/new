@@ -224,8 +224,9 @@ export const importCSVWithValidation = (
         const lat = parseFloat(latValue);
         const lng = parseFloat(lngValue);
 
-        if (!validateCoordinates(lat, lng)) {
-          warnings.push(`Line ${lineNumber}: Invalid coordinates (${latValue}, ${lngValue})`);
+        const coordinateValidation = validateCoordinates(lat, lng);
+        if (!coordinateValidation.isValid) {
+          warnings.push(`Line ${lineNumber}: Invalid coordinates (${latValue}, ${lngValue}) - ${coordinateValidation.errors.join(', ')}`);
           continue;
         }
 
