@@ -35,18 +35,19 @@ export const MapComponent: React.FC<MapComponentProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!mapRef.current) return;
+    const mapInstance = mapRef.current;
+    if (!mapInstance) return;
 
     const handler = (e: L.LeafletMouseEvent) => {
       onMapClick?.([e.latlng.lat, e.latlng.lng]);
     };
 
     clickHandlerRef.current = handler;
-    mapRef.current.on('click', handler);
+    mapInstance.on('click', handler);
 
     return () => {
-      if (mapRef.current && clickHandlerRef.current) {
-        mapRef.current.off('click', clickHandlerRef.current);
+      if (mapInstance && clickHandlerRef.current) {
+        mapInstance.off('click', clickHandlerRef.current);
       }
     };
   }, [onMapClick]);

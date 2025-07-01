@@ -62,4 +62,4 @@ router.delete('/:id', async (req: Request, res: Response) => {
   }
 });
 
-export const userRoutes = router;
+export { router as userRoutes };

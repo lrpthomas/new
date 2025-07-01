@@ -1,6 +1,6 @@
 import { MapPoint } from "../types";
 import { useCallback, useState } from 'react';
-import { debounce } from 'lodash';
+import { debounce } from '../utils/helpers';
 
 export const useDraggableMarker = (
   point: MapPoint,
@@ -9,9 +9,9 @@ export const useDraggableMarker = (
   const [isDragging, setIsDragging] = useState(false);
   
   const debouncedUpdate = useCallback(
-    debounce((id: string, lat: number, lng: number) => {
+    debounce(((id: string, lat: number, lng: number) => {
       onUpdate(id, lat, lng);
-    }, 100),
+    }) as (...args: unknown[]) => void, 100),
     [onUpdate]
   );
   
