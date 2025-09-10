@@ -33,4 +33,9 @@ yarn-error.log*
 *.sw?
 
 # TypeScript
-*.tsbuildinfo 
+*.tsbuildinfo
+
+# Agents generated files
+/agents/**/*.js
+/agents/**/*.js.map
+/agents/**/*.d.ts.map
