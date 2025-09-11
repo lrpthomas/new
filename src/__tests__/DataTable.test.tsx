@@ -56,7 +56,7 @@ describe('DataTable sorting', () => {
 });
 
 describe('DataTable virtualization', () => {
-  const points = Array.from({ length: 20 }, (_, i) => 
+  const points = Array.from({ length: 20 }, (_, i) =>
     createMapPoint({ id: String(i + 1), position: { lat: 0, lng: 0 }, properties: {} })
   );
 
@@ -64,5 +64,52 @@ describe('DataTable virtualization', () => {
     const { getAllByRole } = render(<DataTable points={points} />);
     const rows = getAllByRole('row');
     expect(rows).toHaveLength(11); // 10 visible + header
+  });
+});
+
+describe('DataTable field utilities', () => {
+  const points = [
+    createMapPoint({
+      id: '1',
+      position: { lat: 0, lng: 0 },
+      properties: { name: 'Alpha', type: 'A' },
+    }),
+  ];
+
+  it('filters columns based on field search', () => {
+    const { getByPlaceholderText, queryByText, getByText } = render(<DataTable points={points} />);
+    expect(getByText('name')).toBeInTheDocument();
+    expect(getByText('type')).toBeInTheDocument();
+    const fieldInput = getByPlaceholderText('Search fields...');
+    fireEvent.change(fieldInput, { target: { value: 'name' } });
+    expect(getByText('name')).toBeInTheDocument();
+    expect(queryByText('type')).not.toBeInTheDocument();
+  });
+
+  it('reorders columns via drag and drop', () => {
+    const { getByText, getAllByRole } = render(<DataTable points={points} />);
+    const typeHeader = getByText('type');
+    const nameHeader = getByText('name');
+    const dataTransfer = {
+      data: {} as Record<string, string>,
+      setData(key: string, val: string) {
+        this.data[key] = val;
+      },
+      getData(key: string) {
+        return this.data[key];
+      },
+      effectAllowed: 'all',
+      dropEffect: 'move',
+      files: [],
+      items: [],
+      types: [],
+    } as unknown as DataTransfer;
+    fireEvent.dragStart(typeHeader, { dataTransfer });
+    fireEvent.dragOver(nameHeader, { dataTransfer });
+    fireEvent.drop(nameHeader, { dataTransfer });
+    const headers = getAllByRole('columnheader').map(h => h.textContent?.trim());
+    const typeIndex = headers.indexOf('type');
+    const nameIndex = headers.indexOf('name');
+    expect(typeIndex).toBeLessThan(nameIndex);
   });
 });
