@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { MapPoint } from '../../types/map.types';
 import styles from '../../styles/components/data-table.module.scss';
@@ -16,13 +16,11 @@ interface SortConfig {
   direction: SortDirection;
 }
 
-export const DataTable: React.FC<DataTableProps> = ({
-  points,
-  onPointSelect,
-  onPointDelete
-}) => {
+export const DataTable: React.FC<DataTableProps> = ({ points, onPointSelect, onPointDelete }) => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'id', direction: 'asc' });
   const [filterText, setFilterText] = useState('');
+  const [fieldOrder, setFieldOrder] = useState<string[]>([]);
+  const [fieldFilter, setFieldFilter] = useState('');
 
   const allProperties = useMemo(() => {
     const properties = new Set<string>();
@@ -39,9 +37,46 @@ export const DataTable: React.FC<DataTableProps> = ({
     }));
   }, []);
 
+  useEffect(() => {
+    setFieldOrder(allProperties);
+  }, [allProperties]);
+
   const handleFilter = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setFilterText(e.target.value.toLowerCase());
   }, []);
+
+  const handleFieldFilter = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFieldFilter(e.target.value.toLowerCase());
+  }, []);
+
+  const handleDragStart = useCallback(
+    (e: React.DragEvent<HTMLTableHeaderCellElement>, index: number) => {
+      e.dataTransfer.setData('text/plain', String(index));
+    },
+    []
+  );
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+  }, []);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent<HTMLTableHeaderCellElement>, index: number) => {
+      const fromIndex = Number(e.dataTransfer.getData('text/plain'));
+      setFieldOrder(current => {
+        const updated = [...current];
+        const [moved] = updated.splice(fromIndex, 1);
+        updated.splice(index, 0, moved);
+        return updated;
+      });
+    },
+    []
+  );
+
+  const displayedFields = useMemo(() => {
+    const search = fieldFilter.toLowerCase();
+    return fieldOrder.filter(f => f.toLowerCase().includes(search));
+  }, [fieldOrder, fieldFilter]);
 
   const filteredAndSortedPoints = useMemo(() => {
     const filtered = points.filter(point => {
@@ -82,7 +117,8 @@ export const DataTable: React.FC<DataTableProps> = ({
     [onPointDelete]
   );
 
-  const Row = useCallback(function Row({ index, style }: ListChildComponentProps) {
+  const Row = useCallback(
+    function Row({ index, style }: ListChildComponentProps) {
       const point = filteredAndSortedPoints[index];
       return (
         <tr
@@ -94,7 +130,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           <td>{point.id}</td>
           <td>{point.position.lat.toFixed(6)}</td>
           <td>{point.position.lng.toFixed(6)}</td>
-          {allProperties.map(property => (
+          {displayedFields.map(property => (
             <td key={property}>{point.properties[property] || '-'}</td>
           ))}
           <td>
@@ -109,10 +145,13 @@ export const DataTable: React.FC<DataTableProps> = ({
         </tr>
       );
     },
-    [filteredAndSortedPoints, handleRowClick, handleDelete, allProperties]
+    [filteredAndSortedPoints, handleRowClick, handleDelete, displayedFields]
   );
 
-  const OuterElement = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(function OuterElement(props, ref) {
+  const OuterElement = React.forwardRef<
+    HTMLTableSectionElement,
+    React.HTMLAttributes<HTMLTableSectionElement>
+  >(function OuterElement(props, ref) {
     return <tbody {...props} ref={ref as React.RefObject<HTMLTableSectionElement>} />;
   });
 
@@ -124,6 +163,13 @@ export const DataTable: React.FC<DataTableProps> = ({
           placeholder="Filter points..."
           value={filterText}
           onChange={handleFilter}
+          className={styles.filterInput}
+        />
+        <input
+          type="text"
+          placeholder="Search fields..."
+          value={fieldFilter}
+          onChange={handleFieldFilter}
           className={styles.filterInput}
         />
       </div>
@@ -142,16 +188,27 @@ export const DataTable: React.FC<DataTableProps> = ({
               </th>
               <th>Latitude</th>
               <th>Longitude</th>
-              {allProperties.map(property => (
-                <th key={property} onClick={() => handleSort(property)} className={styles.sortable}>
-                  {property}
-                  {sortConfig.key === property && (
-                    <span className={styles.sortIndicator}>
-                      {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                    </span>
-                  )}
-                </th>
-              ))}
+              {displayedFields.map(property => {
+                const fieldIndex = fieldOrder.indexOf(property);
+                return (
+                  <th
+                    key={property}
+                    onClick={() => handleSort(property)}
+                    className={styles.sortable}
+                    draggable
+                    onDragStart={e => handleDragStart(e, fieldIndex)}
+                    onDragOver={handleDragOver}
+                    onDrop={e => handleDrop(e, fieldIndex)}
+                  >
+                    {property}
+                    {sortConfig.key === property && (
+                      <span className={styles.sortIndicator}>
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </th>
+                );
+              })}
               <th>Actions</th>
             </tr>
           </thead>
