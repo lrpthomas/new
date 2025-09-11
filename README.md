@@ -66,6 +66,15 @@ pnpm dev
 
 Run `pnpm lint` to check formatting and `pnpm test` to execute the Jest suite before starting the development server.
 
+### Build
+
+```bash
+pnpm install
+pnpm build
+```
+
+This compiles TypeScript sources into the `public/build` directory. The build artifacts are generated during CI and are not committed to the repository.
+
 ## 🧹 Linting
 
 Run ESLint to check code quality:
