@@ -1,7 +1,7 @@
 // src/utils/csvProcessor.ts  
 // MP-1: feat: enhanced CSV import/export with validation and field merge logic
 
-import { MapPoint, Position, DataProcessingResult } from '../types/map.types';
+import { MapPoint, DataProcessingResult } from '../types/map.types';
 
 // CSV validation configuration
 interface CSVValidationConfig {
@@ -223,9 +223,12 @@ export const importCSVWithValidation = (
 
         const lat = parseFloat(latValue);
         const lng = parseFloat(lngValue);
+        const coordCheck = validateCoordinates(lat, lng);
 
-        if (!validateCoordinates(lat, lng)) {
-          warnings.push(`Line ${lineNumber}: Invalid coordinates (${latValue}, ${lngValue})`);
+        if (!coordCheck.isValid) {
+          warnings.push(
+            `Line ${lineNumber}: ${coordCheck.errors.join('; ') || 'Invalid coordinates'} (${latValue}, ${lngValue})`
+          );
           continue;
         }
 
