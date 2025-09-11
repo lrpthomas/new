@@ -11,7 +11,7 @@ dotenv.config();
 
 const __dirname = path.dirname(__filename);
 
-const app = express();
+export const app = express();
 const port = process.env.PORT || 3000;
 
 // Security middleware
