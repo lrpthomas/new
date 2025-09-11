@@ -1,9 +1,10 @@
 // src/components/Map/DraggableMarker.tsx
 // MP-0: fix: remove unused imports and update ts-ignore
 
+// biome-ignore format: preserve existing style
+import type { LatLngExpression, Marker as LeafletMarker } from 'leaflet';
 import React from 'react';
 import { Marker } from 'react-leaflet';
-import { LatLngExpression } from 'leaflet';
 
 interface DraggableMarkerProps {
   position: LatLngExpression;
@@ -16,7 +17,7 @@ const DraggableMarker: React.FC<DraggableMarkerProps> = ({
   onDragEnd, 
   children 
 }) => {
-  const markerRef = React.useRef<any>(null);
+  const markerRef = React.useRef<LeafletMarker | null>(null);
 
   const eventHandlers = React.useMemo(
     () => ({

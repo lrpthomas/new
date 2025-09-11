@@ -1,3 +1,4 @@
+// biome-ignore format: preserve existing style
 import { createMapPoint } from "../types";
 import { useState, useCallback } from 'react';
 import {
@@ -8,12 +9,12 @@ import {
   validateMapPoint,
   generatePointId,
 } from '../utils/dataProcessing';
-import { MapPoint, DataProcessingResult, MapError } from '../types/map.types';
+import type { MapPoint, DataProcessingResult, MapError } from '../types/map.types';
 
 interface UseDataProcessingResult {
   processCSV: (data: string) => Promise<DataProcessingResult<MapPoint[]>>;
   processGeoJSON: (data: string) => Promise<DataProcessingResult<MapPoint[]>>;
-  addPoint: (position: { lat: number; lng: number }, properties?: Record<string, any>) => MapPoint;
+  addPoint: (position: { lat: number; lng: number }, properties?: Record<string, unknown>) => MapPoint;
   updatePoint: (id: string, updates: Partial<MapPoint>) => MapPoint;
   deletePoint: (id: string) => void;
   points: MapPoint[];
@@ -95,11 +96,11 @@ export const useDataProcessing = (initialPoints: MapPoint[] = []): UseDataProces
         setIsLoading(false);
       }
     },
-    []
+    [warnings, errors]
   );
 
   const addPoint = useCallback(
-    (position: { lat: number; lng: number }, properties: Record<string, any> = {}) => {
+    (position: { lat: number; lng: number }, properties: Record<string, unknown> = {}) => {
       const newPoint = createMapPoint({
         id: generatePointId(),
         position,

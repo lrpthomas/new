@@ -5,7 +5,7 @@ export interface MapMarker {
   title: string;
   description: string;
   color?: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
 }
 
 export interface Position {
@@ -27,7 +27,7 @@ export interface MapPoint {
   id: string;
   position: Position;
   latlng: LatLng; // For backward compatibility
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   name?: string;
   status?: PointStatus;
   description?: string;
@@ -67,7 +67,7 @@ export interface GeoJSONFeature {
     type: 'Point';
     coordinates: [number, number];
   };
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
 }
 
 export interface GeoJSONFeatureCollection {
@@ -82,12 +82,12 @@ export interface CSVRow {
 export interface MapError {
   message: string;
   code: string;
-  details?: any;
+  details?: unknown;
 }
 
 export interface MapValidationError extends MapError {
   field?: string;
-  value?: any;
+  value?: unknown;
 }
 
 export interface DataProcessingResult<T> {
@@ -214,7 +214,7 @@ export interface ApplicationError extends MapError {
   category: ErrorCategory;
   severity: ErrorSeverity;
   timestamp: number;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 export interface RequiredMapPoint extends Omit<MapPoint, 'name' | 'description' | 'status' | 'group'> {
@@ -225,7 +225,7 @@ export interface RequiredMapPoint extends Omit<MapPoint, 'name' | 'description' 
 
 export interface CreateMapPointInput {
   position: Position;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   name?: string;
   description?: string;
   status?: PointStatus;
@@ -270,7 +270,7 @@ export interface MapClickEvent {
 }
 
 export interface MarkerDragEvent {
-  target: any;
+  target: unknown;
   oldLatLng: LatLng;
   latlng: LatLng;
 }

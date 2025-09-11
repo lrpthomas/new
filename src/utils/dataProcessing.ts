@@ -1,4 +1,4 @@
-import { MapPoint, GeoJSONFeature, CSVRow } from '../types';
+import type { MapPoint, GeoJSONFeature, CSVRow } from '../types';
 
 /**
  * Validates and processes CSV data
@@ -60,8 +60,6 @@ export const csvToGeoJSON = (csvData: CSVRow[]): GeoJSONFeature[] => {
       delete properties.latitude;
       delete properties.longitude;
 
-      const position = { lat, lng };
-      const position = { lat, lng };
       return {
         type: 'Feature',
         geometry: {
@@ -82,12 +80,12 @@ export const csvToGeoJSON = (csvData: CSVRow[]): GeoJSONFeature[] => {
  */
 export const processGeoJSONData = (data: string): GeoJSONFeature[] => {
   try {
-    const parsed = JSON.parse(data);
+    const parsed = JSON.parse(data) as { features: GeoJSONFeature[] };
     if (!parsed.features || !Array.isArray(parsed.features)) {
       throw new Error('Invalid GeoJSON: missing features array');
     }
 
-    return parsed.features.map((feature: any, index: number) => {
+    return parsed.features.map((feature: GeoJSONFeature, index: number) => {
       if (!feature.geometry || !feature.geometry.coordinates) {
         throw new Error(`Invalid feature at index ${index}: missing geometry or coordinates`);
       }
@@ -97,8 +95,6 @@ export const processGeoJSONData = (data: string): GeoJSONFeature[] => {
       }
 
       const [lng, lat] = feature.geometry.coordinates;
-        const position = { lat, lng };
-        const position = { lat, lng };
       if (typeof lng !== 'number' || typeof lat !== 'number') {
         throw new Error(`Invalid coordinates in feature at index ${index}`);
       }
@@ -122,9 +118,6 @@ export const geoJSONToMapPoints = (features: GeoJSONFeature[]): MapPoint[] => {
   try {
     return features.map((feature, index) => {
       const [lng, lat] = feature.geometry.coordinates;
-        const position = { lat, lng };
-        const position = { lat, lng };
-      const position = { lat, lng };
       const position = { lat, lng };
       return {
         id: `point-${index}`,

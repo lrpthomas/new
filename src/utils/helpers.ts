@@ -1,3 +1,4 @@
+// biome-ignore format: preserve existing style
 export interface CacheItem<T> {
   value: T;
   timestamp: number;
@@ -39,7 +40,7 @@ export function trapFocus(modalElement: HTMLElement | null): () => void {
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
   const focusableElements = Array.from(
     modalElement.querySelectorAll<HTMLElement>(focusableSelectors)
-  ).filter((el: any) => !el.disabled);
+  ).filter(el => !(el as HTMLElement & { disabled?: boolean }).disabled);
   const first = focusableElements[0];
   const last = focusableElements[focusableElements.length - 1];
   const previouslyFocused = document.activeElement as HTMLElement | null;
@@ -279,6 +280,7 @@ export class UndoRedoManager<T> {
   }
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass: validation utilities
 export class Validator {
   static validatePoint(point: {
     name?: string;

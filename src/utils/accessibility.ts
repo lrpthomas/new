@@ -1,3 +1,4 @@
+// biome-ignore format: preserve existing style
 // MP-4: Complete accessibility implementation with proper exports
 export interface AccessibilityOptions {
   announceChanges?: boolean;
@@ -68,7 +69,7 @@ export class FocusManager {
 
   private isDisabled(element: HTMLElement): boolean {
     return element.hasAttribute('disabled') || 
-           (element as any).disabled === true ||
+           (element as (HTMLElement & { disabled?: boolean })).disabled === true ||
            element.getAttribute('aria-disabled') === 'true';
   }
 
@@ -192,6 +193,7 @@ export class KeyboardNavigationHandler {
   }
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass: utility wrapper for aria attributes
 export class AriaAttributeManager {
   static setRole(element: HTMLElement, role: string) {
     element.setAttribute('role', role);
@@ -202,6 +204,7 @@ export class AriaAttributeManager {
   }
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass: screen reader helpers
 export class ScreenReaderUtils {
   static createLiveRegion(priority: 'polite' | 'assertive' = 'polite') {
     const region = document.createElement('div');

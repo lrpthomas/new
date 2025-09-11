@@ -1,6 +1,8 @@
-import { MapPoint } from "../types";
-import { useCallback, useState } from 'react';
+// biome-ignore format: preserve existing style
+import type { LeafletEvent, Marker as LeafletMarker } from 'leaflet';
 import { debounce } from 'lodash';
+import { useCallback, useState } from 'react';
+import type { MapPoint } from "../types";
 
 export const useDraggableMarker = (
   point: MapPoint,
@@ -12,15 +14,15 @@ export const useDraggableMarker = (
     debounce((id: string, lat: number, lng: number) => {
       onUpdate(id, lat, lng);
     }, 100),
-    [onUpdate]
+    []
   );
   
   const handleDragStart = useCallback(() => {
     setIsDragging(true);
   }, []);
   
-  const handleDragEnd = useCallback((event: any) => {
-    const { lat, lng } = event.target.getLatLng();
+  const handleDragEnd = useCallback((event: LeafletEvent) => {
+    const { lat, lng } = (event.target as LeafletMarker).getLatLng();
     setIsDragging(false);
     debouncedUpdate(point.id, lat, lng);
   }, [point.id, debouncedUpdate]);

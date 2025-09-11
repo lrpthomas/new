@@ -3,7 +3,7 @@ export type FieldType = 'string' | 'number' | 'boolean' | 'date' | 'coordinates'
 interface FieldTypeInfo {
   type: FieldType;
   format?: string;
-  examples: any[];
+  examples: unknown[];
 }
 
 const DATE_PATTERNS = [
@@ -21,7 +21,7 @@ const COORDINATE_PATTERNS = [
   /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/, // Decimal degrees
 ];
 
-export const detectFieldType = (values: any[]): FieldTypeInfo => {
+export const detectFieldType = (values: unknown[]): FieldTypeInfo => {
   if (values.length === 0) {
     return { type: 'string', examples: [] };
   }
@@ -66,7 +66,7 @@ export const detectFieldType = (values: any[]): FieldTypeInfo => {
   }
 
   // Check for numbers
-  if (validValues.every(v => !isNaN(Number(v)))) {
+  if (validValues.every(v => !Number.isNaN(Number(v)))) {
     const numbers = validValues.map(v => Number(v));
     const hasDecimals = numbers.some(n => n % 1 !== 0);
     return {
@@ -115,7 +115,7 @@ export const getFieldTypeDisplay = (typeInfo: FieldTypeInfo): string => {
   }
 };
 
-export const validateFieldValue = (value: any, typeInfo: FieldTypeInfo): boolean => {
+export const validateFieldValue = (value: unknown, typeInfo: FieldTypeInfo): boolean => {
   switch (typeInfo.type) {
     case 'boolean':
       return typeof value === 'boolean' || 
@@ -130,7 +130,7 @@ export const validateFieldValue = (value: any, typeInfo: FieldTypeInfo): boolean
       return COORDINATE_PATTERNS.some(pattern => pattern.test(value));
     
     case 'number':
-      return !isNaN(Number(value));
+      return !Number.isNaN(Number(value));
     
     default:
       return true;

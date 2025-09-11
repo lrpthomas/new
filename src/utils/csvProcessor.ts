@@ -1,7 +1,7 @@
 // src/utils/csvProcessor.ts  
 // MP-1: feat: enhanced CSV import/export with validation and field merge logic
 
-import { MapPoint, Position, DataProcessingResult } from '../types/map.types';
+import type { MapPoint, Position, DataProcessingResult, MapError } from '../types/map.types';
 
 // CSV validation configuration
 interface CSVValidationConfig {
@@ -36,11 +36,17 @@ export class CSVProcessingError extends Error {
     public code: string,
     public line?: number,
     public field?: string,
-    public value?: any
+    public value?: unknown
   ) {
     super(message);
     this.name = 'CSVProcessingError';
   }
+}
+
+interface CSVError extends MapError {
+  line?: number;
+  field?: string;
+  value?: unknown;
 }
 
 // Field type detection
@@ -154,7 +160,7 @@ export const importCSVWithValidation = (
   config: Partial<CSVValidationConfig> = {}
 ): DataProcessingResult<MapPoint[]> => {
   const validationConfig = { ...DEFAULT_CSV_CONFIG, ...config };
-  const errors: any[] = [];
+  const errors: CSVError[] = [];
   const warnings: string[] = [];
   const points: MapPoint[] = [];
 
@@ -236,7 +242,7 @@ export const importCSVWithValidation = (
           properties: {},
           name: row.name || row.title || `Point ${i}`,
           description: row.description || '',
-          status: (row.status as any) || 'active',
+          status: row.status || 'active',
           group: row.group || '',
           createdAt: Date.now(),
           updatedAt: Date.now()
@@ -372,7 +378,7 @@ export const mergeCSVData = (
   mergeStrategy: 'replace' | 'merge' | 'append' = 'merge'
 ): DataProcessingResult<MapPoint[]> => {
   const warnings: string[] = [];
-  const errors: any[] = [];
+  const errors: CSVError[] = [];
 
   try {
     if (mergeStrategy === 'append') {
@@ -515,7 +521,7 @@ export function enhancedCSVValidation(csvData: string): CSVValidationResult {
     isValid: true,
     errors: [],
     warnings: [],
-    coordinateFormat: detectCoordinateFormat(headers) as any
+    coordinateFormat: detectCoordinateFormat(headers) as CSVValidationResult['coordinateFormat']
   };
   
   for (let i = 1; i < lines.length; i++) {

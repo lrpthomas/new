@@ -1,5 +1,9 @@
 // MP-5: Complete error handling service with all expected methods
-import { ApplicationError, ErrorCategory, ErrorSeverity } from '../types/map.types';
+import {
+  type ApplicationError,
+  ErrorCategory,
+  ErrorSeverity,
+} from '../types/map.types';
 
 export class ErrorHandlerManager {
   private errors: ApplicationError[] = [];
@@ -95,7 +99,7 @@ export class ErrorHandlerManager {
 export class OfflineStateManager {
   private isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
   private listeners: ((online: boolean) => void)[] = [];
-  private pendingActions: Array<{ type: string; payload: any }> = [];
+  private pendingActions: Array<{ type: string; payload: unknown }> = [];
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -123,7 +127,7 @@ export class OfflineStateManager {
     return this.getOnlineStatus();
   }
 
-  queueOfflineAction(type: string, payload: any): void {
+  queueOfflineAction(type: string, payload: unknown): void {
     this.pendingActions.push({ type, payload });
   }
 

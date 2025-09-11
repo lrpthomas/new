@@ -1,10 +1,9 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'node:path';
 import apiRouter from './routes/api';
 
 dotenv.config();
