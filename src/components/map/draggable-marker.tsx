@@ -1,9 +1,9 @@
-// src/components/Map/DraggableMarker.tsx
+// src/components/map/draggable-marker.tsx
 // MP-0: fix: remove unused imports and update ts-ignore
 
 import React from 'react';
 import { Marker } from 'react-leaflet';
-import { LatLngExpression } from 'leaflet';
+import L, { LatLngExpression } from 'leaflet';
 
 interface DraggableMarkerProps {
   position: LatLngExpression;
@@ -11,12 +11,8 @@ interface DraggableMarkerProps {
   children?: React.ReactNode;
 }
 
-const DraggableMarker: React.FC<DraggableMarkerProps> = ({ 
-  position, 
-  onDragEnd, 
-  children 
-}) => {
-  const markerRef = React.useRef<any>(null);
+const DraggableMarker: React.FC<DraggableMarkerProps> = ({ position, onDragEnd, children }) => {
+  const markerRef = React.useRef<L.Marker | null>(null);
 
   const eventHandlers = React.useMemo(
     () => ({
@@ -32,12 +28,7 @@ const DraggableMarker: React.FC<DraggableMarkerProps> = ({
   );
 
   return (
-    <Marker
-      draggable={true}
-      eventHandlers={eventHandlers}
-      position={position}
-      ref={markerRef}
-    >
+    <Marker draggable={true} eventHandlers={eventHandlers} position={position} ref={markerRef}>
       {children}
     </Marker>
   );

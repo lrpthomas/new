@@ -11,3 +11,5 @@ if (typeof Blob !== 'undefined' && !Blob.prototype.text) {
     });
   };
 }
+
+export {};
