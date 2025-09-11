@@ -1,4 +1,5 @@
 import { MapPoint, GeoJSONFeature, CSVRow } from '../types';
+import { validateCoordinates } from './csvProcessor';
 
 /**
  * Validates and processes CSV data
@@ -33,7 +34,8 @@ export const processCSVData = (data: string, allowEmptyData = false): CSVRow[] =
       if (isNaN(lat) || isNaN(lng)) {
         throw new Error(`Invalid coordinates in row ${index + 2}`);
       }
-      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      const { isValid } = validateCoordinates(lat, lng);
+      if (!isValid) {
         throw new Error(`Coordinates out of range in row ${index + 2}`);
       }
 
@@ -60,8 +62,6 @@ export const csvToGeoJSON = (csvData: CSVRow[]): GeoJSONFeature[] => {
       delete properties.latitude;
       delete properties.longitude;
 
-      const position = { lat, lng };
-      const position = { lat, lng };
       return {
         type: 'Feature',
         geometry: {
@@ -97,13 +97,11 @@ export const processGeoJSONData = (data: string): GeoJSONFeature[] => {
       }
 
       const [lng, lat] = feature.geometry.coordinates;
-        const position = { lat, lng };
-        const position = { lat, lng };
       if (typeof lng !== 'number' || typeof lat !== 'number') {
         throw new Error(`Invalid coordinates in feature at index ${index}`);
       }
-
-      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      const { isValid } = validateCoordinates(lat, lng);
+      if (!isValid) {
         throw new Error(`Coordinates out of range in feature at index ${index}`);
       }
 
@@ -122,9 +120,6 @@ export const geoJSONToMapPoints = (features: GeoJSONFeature[]): MapPoint[] => {
   try {
     return features.map((feature, index) => {
       const [lng, lat] = feature.geometry.coordinates;
-        const position = { lat, lng };
-        const position = { lat, lng };
-      const position = { lat, lng };
       const position = { lat, lng };
       return {
         id: `point-${index}`,
@@ -151,8 +146,8 @@ export const validateMapPoint = (point: MapPoint): void => {
   if (typeof lat !== 'number' || typeof lng !== 'number') {
     throw new Error('Invalid coordinate types');
   }
-
-  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+  const { isValid } = validateCoordinates(lat, lng);
+  if (!isValid) {
     throw new Error('Coordinates out of range');
   }
 };
